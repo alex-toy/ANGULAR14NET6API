@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Services.Players;
+
 namespace SoccerPlayerApi
 {
     public class Program
@@ -6,14 +10,36 @@ namespace SoccerPlayerApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            string connectionString = builder.Configuration.GetConnectionString("default")!;
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString);
+            });
+
+            builder.Services.AddScoped<IPlayerService, PlayerService>();
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
+
+
+
+
             var app = builder.Build();
+
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //    dbContext.Database.Migrate();
+            //}
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -28,6 +54,8 @@ namespace SoccerPlayerApi
 
 
             app.MapControllers();
+
+            app.UseCors("CorsPolicy");
 
             app.Run();
         }

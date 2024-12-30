@@ -11,15 +11,12 @@ import { PlayerService } from '../services/player.service';
 export class PlayersComponent {
 
   players : Player[] = [new Player(1, "ronaldo", "123"), new Player(2, "mbappe", "556")];
-  playerForm = new FormGroup({
-    name : new FormControl(''),
-    jerseyNumber : new FormControl(null),
-  });
+  newPlayer : Player = new Player(0, "", "");
 
   constructor(private playerService : PlayerService) { }
 
-  ngOnInit(){
-    this.getPlayers();
+  async ngOnInit(){
+    await this.getPlayers();
   }
 
   async getPlayers(){
@@ -31,6 +28,25 @@ export class PlayersComponent {
   }
 
   async deletePlayer(playerId : number){
-    await this.playerService.delete(playerId).subscribe(data => console.log(data));
+    await this.playerService.delete(playerId).subscribe(data => this.players = this.players.filter(player => player.id !== playerId));
+  }
+
+  async updatePlayer(player: Player) {
+    const updatedPlayer = new Player(player.id, this.newPlayer.name, this.newPlayer.jerseyNumber);
+    await this.playerService.update(updatedPlayer).subscribe(data => {
+      this.newPlayer = new Player(0, "", "");
+      const index = this.players.findIndex(p => p.id === player.id);
+      if (index !== -1) this.players[index] = updatedPlayer;
+    });
+  }
+
+  async createPlayer() {
+    if (this.newPlayer.name && this.newPlayer.jerseyNumber) {
+      await this.playerService.create(this.newPlayer).subscribe(data => {
+        let temp = new Player(data, this.newPlayer.name, this.newPlayer.jerseyNumber);
+        this.players.push(new Player(data, this.newPlayer.name, this.newPlayer.jerseyNumber));
+        this.newPlayer = new Player(0, "", "");
+      });
+    }
   }
 }

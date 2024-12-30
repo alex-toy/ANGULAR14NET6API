@@ -9,26 +9,29 @@ import { environment } from 'src/environments/environment';
 })
 export class PlayerService {
 
-  private url = environment.apiUrl
+  private url = `${environment.apiUrl}/player`;
 
   constructor(private httpClient : HttpClient) { }
+
+  getById() : Observable<Player> {
+    return this.httpClient.get<Player>(`${this.url}/player`)
+  }
 
   getAll() : Observable<Player[]> {
     return this.httpClient.get<Player[]>(`${this.url}/players`)
   }
 
-  create(player : Player) : Observable<any> {
+  create(player : Player) : Observable<number> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.post(`${this.url}/player`, player.toJson(), { headers : header })
+    return this.httpClient.post<number>(`${this.url}/player`, player.toJson(), { headers : header })
   }
 
-  edit(player : Player) : Observable<any> {
+  update(player : Player) : Observable<number> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.put(`${this.url}/player`, player.toJson(), { headers : header })
+    return this.httpClient.put<number>(`${this.url}/player`, player.toJson(), { headers : header })
   }
 
-  delete(id : number) : Observable<any> {
-    const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.delete(`${this.url}/player/${id}`)
+  delete(id : number) : Observable<boolean> {
+    return this.httpClient.delete<boolean>(`${this.url}/player/${id}`)
   }
 }

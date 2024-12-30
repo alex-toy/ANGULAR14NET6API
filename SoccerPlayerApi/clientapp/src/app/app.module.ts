@@ -7,6 +7,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PlayersComponent } from './players/players.component';
 import { CreatePlayerComponent } from './players/create-player/create-player.component';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     NoopAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule  
   ],
   providers: [
   
