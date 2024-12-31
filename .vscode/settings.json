@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/af783b88-9530-433e-9520-32a8accf75a5/resourceGroups/alexeirg/providers/Microsoft.Web/sites/soccerplayerclient",
+    "appService.deploySubpath": "SoccerPlayerApi\\clientapp\\dist\\clientapp"
+}

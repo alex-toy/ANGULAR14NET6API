@@ -1,3 +1,7 @@
 .vs
 bin
 obj
+*.pubxml
+soccerplayerAPI - FTP.pubxml.user
+soccerplayerAPI - Web Deploy.pubxml.user
+.deployment
