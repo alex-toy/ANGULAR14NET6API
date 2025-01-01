@@ -1,7 +1,6 @@
-﻿namespace SoccerPlayerApi.Services.Dimensions
+﻿namespace SoccerPlayerApi.Services.Dimensions;
+
+public interface IDimensionService
 {
-    public interface IDimensionService
-    {
-        void Test();
-    }
+    Task Test();
 }

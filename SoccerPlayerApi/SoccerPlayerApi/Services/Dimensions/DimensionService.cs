@@ -1,5 +1,4 @@
 ﻿using SoccerPlayerApi.Entities;
-using SoccerPlayerApi.Entities.Dimensions;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 
@@ -14,38 +13,46 @@ public class DimensionService : IDimensionService
         _context = context;
     }
 
-    public void Test()
+    public async Task Test()
     {
-        // Simulate data for Categories
-        var allproducts = new Dimension { Id = 1, Type = "Category", Level = "AllProducts" };
-        var family = new Dimension { Id = 2, Level = "family", Ancestor = allproducts };
-        var product = new Dimension { Id = 4, Level = "product", Ancestor = family };
+        // Simulate data for Dimensions
+        var product = new Dimension { Id = 1, Value = "Product" };
+        var location = new Dimension { Id = 1, Value = "Location" };
+        var time = new Dimension { Id = 1, Value = "Time" };
+        //await _context.Dimensions.AddRangeAsync(new List<Dimension>() { product, location, time });
 
-        DimensionValue<Dimension> smartPhone = new() { Dimension = product, Value = "smartPhone" };
-        DimensionValue<Dimension> home = new() { Dimension = family, Value = "home" };
-        DimensionValue<Dimension> professional = new() { Dimension = family, Value = "professional" };
-        DimensionValue<Dimension> totalproducts = new() { Dimension = allproducts, Value = "electronics" };
+        // Simulate data for product Levels
+        var allproducts = new Level { Id = 1, Dimension = product, Value = "AllProducts" };
+        var family = new Level { Id = 2, Dimension = product, Value = "family", Ancestor = allproducts };
+        var productsku = new Level { Id = 4, Dimension = product, Value = "product", Ancestor = family };
 
-        // Simulate data for Locations
-        var country = new Location { Id = 1, Level = "country" };
-        var region = new Location { Id = 2, Level = "region", Ancestor = country };
-        var city = new Location { Id = 6, Level = "city", Ancestor = region };
+        DimensionValue smartPhone = new() { Level = productsku, Value = "smartPhone" };
+        DimensionValue home = new() { Level = family, Value = "home" };
+        DimensionValue professional = new() { Level = family, Value = "professional" };
+        DimensionValue totalproducts = new() { Level = allproducts, Value = "electronics" };
 
-        LocationValue paris = new() { Dimension = city, Value = "paris" };
-        LocationValue rhone = new() { Dimension = region, Value = "rhone" };
-        LocationValue france = new() { Dimension = country, Value = "france" };
+        // Simulate data for Location levels
+        var country = new Level { Id = 1, Dimension = location, Value = "country" };
+        var region = new Level { Id = 2, Dimension = location, Value = "region", Ancestor = country };
+        var city = new Level { Id = 6, Dimension = location, Value = "city", Ancestor = region };
 
-        // Simulate data for Time
-        var year = new Time { Id = 1, Level = "YEAR" };
-        var month = new Time { Id = 1, Level = "MONTH", Ancestor = year };
-        var week = new Time { Id = 1, Level = "WEEK", Ancestor = month };
-        var day = new Time { Id = 1, Level = "Day", Ancestor = week };
+        DimensionValue paris = new() { Level = city, Value = "paris" };
+        DimensionValue rhone = new() { Level = region, Value = "rhone" };
+        DimensionValue france = new() { Level = country, Value = "france" };
 
-        TimeValue d1 = new() { Dimension = day, Value = "2024-08-07" };
-        TimeValue d2 = new() { Dimension = day, Value = "2024-08-09" };
-        TimeValue w1 = new() { Dimension = week, Value = "2024-08-W1" };
-        TimeValue m1 = new() { Dimension = month, Value = "2024-08" };
-        TimeValue Y2024 = new() { Dimension = year, Value = "2024" };
+        // Simulate data for Time levels
+        var year = new Level { Id = 1, Dimension = time, Value = "YEAR" };
+        var month = new Level { Id = 1, Dimension = time, Value = "MONTH", Ancestor = year };
+        var week = new Level { Id = 1, Dimension = time, Value = "WEEK", Ancestor = month };
+        var day = new Level { Id = 1, Dimension = time, Value = "Day", Ancestor = week };
+
+        DimensionValue d1 = new() { Level = day, Value = "2024-08-07" };
+        DimensionValue d2 = new() { Level = day, Value = "2024-08-09" };
+        DimensionValue w1 = new() { Level = week, Value = "2024-08-W1" };
+        DimensionValue m1 = new() { Level = month, Value = "2024-08" };
+        DimensionValue Y2024 = new() { Level = year, Value = "2024" };
+
+        //await _context.SaveChangesAsync();
 
         // Simulate data for Sales
         var salesData = new List<Sale>
@@ -86,9 +93,9 @@ public class DimensionService : IDimensionService
         foreach (var sale in salesData)
         {
             Console.WriteLine($"Sales: {sale.SalesAmount} in {sale.Location.Value} for {sale.Category.Value} on {sale.Time.Value}");
-            Console.WriteLine($"{sale.Category.Dimension.Level} - {sale.Category.Dimension.Ancestor?.Level}");
-            Console.WriteLine($"{sale.Location.Dimension.Level} - {sale.Location.Dimension.Ancestor?.Level}");
-            Console.WriteLine($"{sale.Time.Dimension.Level} - {sale.Time.Dimension.Ancestor?.Level}");
+            Console.WriteLine($"{sale.Category.Level.Dimension.Value} - {sale.Category.Level.Value}");
+            Console.WriteLine($"{sale.Location.Level.Dimension.Value} - {sale.Location.Level.Value}");
+            Console.WriteLine($"{sale.Time.Level.Dimension.Value} - {sale.Time.Level.Value}");
             Console.WriteLine("**********************************************");
         }
     }

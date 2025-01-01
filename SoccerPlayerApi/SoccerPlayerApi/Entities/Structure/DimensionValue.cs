@@ -1,12 +1,11 @@
 ﻿namespace SoccerPlayerApi.Entities.Structure;
 
-public class DimensionValue<T> where T : Dimension
+public class DimensionValue
 {
     public int Id { get; set; }
-    public string Type { get; set; }
 
-    public int DimensionId { get; set; }
-    public T Dimension { get; set; }
+    public int LevelId { get; set; }
+    public Level Level { get; set; }
 
     public string Value { get; set; }
 }

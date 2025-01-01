@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\RelationsShips\CategoryRelationship.cs" />
-    <Compile Remove="Entities\RelationsShips\LocationRelationship.cs" />
+    <Compile Remove="Entities\RelationsShips\**" />
+    <Content Remove="Entities\RelationsShips\**" />
+    <EmbeddedResource Remove="Entities\RelationsShips\**" />
+    <None Remove="Entities\RelationsShips\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,10 +25,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Entities\RelationsShips\" />
   </ItemGroup>
 
 </Project>
