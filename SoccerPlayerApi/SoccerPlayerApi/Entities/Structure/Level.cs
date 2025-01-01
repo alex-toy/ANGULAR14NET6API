@@ -8,4 +8,6 @@ public class Level
 
     public int AncestorId { get; set; }
     public Level? Ancestor { get; set; }
+
+    public List<Level> Children { get; set; }
 }
