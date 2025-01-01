@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi
@@ -17,6 +18,7 @@ namespace SoccerPlayerApi
             });
 
             builder.Services.AddScoped<IPlayerService, PlayerService>();
+            builder.Services.AddScoped<IDimensionService, DimensionService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -38,11 +40,11 @@ namespace SoccerPlayerApi
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate();
-            }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //    dbContext.Database.Migrate();
+            //}
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

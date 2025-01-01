@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Entities;
+using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi.Controllers
@@ -12,12 +13,14 @@ namespace SoccerPlayerApi.Controllers
         private readonly ILogger<PlayerController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IPlayerService _playerService;
+        private readonly IDimensionService _dimensionService;
 
-        public PlayerController(ILogger<PlayerController> logger, IConfiguration configuration, IPlayerService playerService)
+        public PlayerController(ILogger<PlayerController> logger, IConfiguration configuration, IPlayerService playerService, IDimensionService dimensionService)
         {
             _logger = logger;
             _configuration = configuration;
             _playerService = playerService;
+            _dimensionService = dimensionService;
         }
 
         [HttpGet("player/{playerId}")]
@@ -31,6 +34,7 @@ namespace SoccerPlayerApi.Controllers
         public async Task<IEnumerable<Player>> GetAll()
         {
             IEnumerable<Player> articles = await _playerService.GetAllAsync();
+            _dimensionService.Test();
             return articles;
         }
 
