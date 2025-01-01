@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoccerPlayerApi.Repo;
 
@@ -11,9 +12,10 @@ using SoccerPlayerApi.Repo;
 namespace SoccerPlayerApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250101095539_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +125,7 @@ namespace SoccerPlayerApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facts");
+                    b.ToTable("Sales");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Level", b =>
@@ -162,7 +164,7 @@ namespace SoccerPlayerApi.Migrations
                         .IsRequired();
 
                     b.HasOne("SoccerPlayerApi.Entities.Structure.Fact", "Fact")
-                        .WithMany("DimensionFacts")
+                        .WithMany("DimensionValues")
                         .HasForeignKey("FactId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -203,7 +205,7 @@ namespace SoccerPlayerApi.Migrations
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
                 {
-                    b.Navigation("DimensionFacts");
+                    b.Navigation("DimensionValues");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Level", b =>

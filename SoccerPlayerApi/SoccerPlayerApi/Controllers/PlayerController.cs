@@ -33,8 +33,8 @@ namespace SoccerPlayerApi.Controllers
         [HttpGet("players")]
         public async Task<IEnumerable<Player>> GetAll()
         {
-            IEnumerable<Player> articles = await _playerService.GetAllAsync();
-            _dimensionService.Test();
+            IEnumerable<Player> articles = await _playerService.GetAllAsync(x => true);
+            await _dimensionService.Test();
             return articles;
         }
 

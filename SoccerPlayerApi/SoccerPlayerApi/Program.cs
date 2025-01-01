@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
@@ -17,6 +18,9 @@ namespace SoccerPlayerApi
                 options.UseSqlServer(connectionString);
             });
 
+            builder.Services.AddScoped<IGenericRepo<Dimension>, GenericRepo<Dimension>>();
+            builder.Services.AddScoped<IGenericRepo<Fact>, GenericRepo<Fact>>();
+            builder.Services.AddScoped<IGenericRepo<DimensionValue>, GenericRepo<DimensionValue>>();
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IDimensionService, DimensionService>();
 

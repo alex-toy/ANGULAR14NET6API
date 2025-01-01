@@ -19,7 +19,7 @@ public class PlayerService : IPlayerService
         return await _context.Players.FirstOrDefaultAsync(p => p.Id == playerId);
     }
 
-    public async Task<IEnumerable<Player>> GetAllAsync()
+    public async Task<IEnumerable<Player>> GetAllAsync(Func<Player, bool> predicate)
     {
         return await _context.Players.ToListAsync();
     }

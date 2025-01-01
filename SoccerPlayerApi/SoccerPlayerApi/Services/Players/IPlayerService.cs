@@ -3,6 +3,6 @@ using SoccerPlayerApi.Repo;
 
 namespace SoccerPlayerApi.Services.Players;
 
-public interface IPlayerService : IGenericService<Player>
+public interface IPlayerService : IGenericRepo<Player>
 {
 }
