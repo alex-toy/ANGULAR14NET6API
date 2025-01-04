@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SoccerPlayerApi.Dtos;
+using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
@@ -19,8 +19,8 @@ public class DimensionController
         _dimensionService = dimensionService;
     }
 
-    [HttpPost("sale")]
-    public async Task<int> CreateFact(FactCreateDto fact)
+    [HttpPost("createfact")]
+    public async Task<FactCreateResultDto> CreateFact(FactCreateDto fact)
     {
         return await _dimensionService.CreateFactAsync(fact);
     }
@@ -43,10 +43,10 @@ public class DimensionController
         return await _dimensionService.CreateDimensionValueAsync(dimensionValue);
     }
 
-    [HttpGet("facts")]
-    public async Task<IEnumerable<Fact>> GetFacts()
+    [HttpPost("facts")]
+    public async Task<GetFactsResultDto> GetFacts(GetFactDto filter)
     {
-        IEnumerable<Fact> articles = await _dimensionService.GetFacts();
-        return articles;
+        IEnumerable<GetFactResultDto> articles = await _dimensionService.GetFacts(filter);
+        return new GetFactsResultDto { Facts = articles, IsSuccess = true };
     }
 }

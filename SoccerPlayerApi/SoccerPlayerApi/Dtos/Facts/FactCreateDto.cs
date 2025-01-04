@@ -1,4 +1,4 @@
-﻿namespace SoccerPlayerApi.Dtos;
+﻿namespace SoccerPlayerApi.Dtos.Facts;
 
 public class FactCreateDto
 {
