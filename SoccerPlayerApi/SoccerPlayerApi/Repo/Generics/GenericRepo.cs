@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Entities;
 
-namespace SoccerPlayerApi.Repo;
+namespace SoccerPlayerApi.Repo.Generics;
 
 public class GenericRepo<T> : IGenericRepo<T> where T : Entity
 {
@@ -27,7 +27,8 @@ public class GenericRepo<T> : IGenericRepo<T> where T : Entity
 
     public async Task<IEnumerable<T>> GetAllAsync(Func<T, bool> predicate)
     {
-        List<T> entities = await _context.Set<T>().Where(x => predicate(x)).ToListAsync();
+        //List<T> entities = await _context.Set<T>().Where(x => predicate(x)).ToListAsync();
+        List<T> entities = await _context.Set<T>().Where(x => true).ToListAsync();
         return entities;
     }
 

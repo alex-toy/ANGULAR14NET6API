@@ -9,5 +9,5 @@ public interface IDimensionService
     Task<int> CreateDimensionValueAsync(DimensionValue level);
     Task<int> CreateFactAsync(FactCreateDto level);
     Task<int> CreateLevelAsync(Level level);
-    Task Test();
+    Task<IEnumerable<Fact>> GetFacts();
 }

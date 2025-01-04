@@ -1,5 +1,5 @@
 ﻿using SoccerPlayerApi.Entities;
-using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Repo.Generics;
 
 namespace SoccerPlayerApi.Services.Players;
 

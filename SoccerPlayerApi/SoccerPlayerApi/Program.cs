@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
 

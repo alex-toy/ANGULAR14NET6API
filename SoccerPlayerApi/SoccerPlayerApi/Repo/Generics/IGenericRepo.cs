@@ -1,6 +1,6 @@
 ﻿using SoccerPlayerApi.Entities;
 
-namespace SoccerPlayerApi.Repo;
+namespace SoccerPlayerApi.Repo.Generics;
 
 public interface IGenericRepo<T> where T : Entity
 {
