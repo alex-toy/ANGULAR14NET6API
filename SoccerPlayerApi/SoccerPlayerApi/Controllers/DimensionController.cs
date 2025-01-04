@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
@@ -32,13 +34,13 @@ public class DimensionController
     }
 
     [HttpPost("level")]
-    public async Task<int> CreateLevel(Level dimension)
+    public async Task<int> CreateLevel(CreateLevelDto dimension)
     {
         return await _dimensionService.CreateLevelAsync(dimension);
     }
 
-    [HttpPost("dimension-value")]
-    public async Task<int> CreateDimensionValue(DimensionValue dimensionValue)
+    [HttpPost("dimensionvalue")]
+    public async Task<int> CreateDimensionValue(DimensionValueCreateDto dimensionValue)
     {
         return await _dimensionService.CreateDimensionValueAsync(dimensionValue);
     }

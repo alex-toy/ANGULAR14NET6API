@@ -2,6 +2,7 @@
 
 public class DimensionResultDto
 {
+    public int DimensionValueId { get; set; }
     public string Value { get; set; }
 
     public int DimensionId { get; set; }
