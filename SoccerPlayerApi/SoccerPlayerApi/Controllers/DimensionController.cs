@@ -46,9 +46,9 @@ public class DimensionController
     }
 
     [HttpPost("facts")]
-    public async Task<GetFactsResultDto> GetFacts(GetFactDto filter)
+    public async Task<GetFactsResultDto> GetFacts(GetFactFilterDto filter)
     {
-        IEnumerable<GetFactResultDto> articles = await _dimensionService.GetFacts(filter);
-        return new GetFactsResultDto { Facts = articles, IsSuccess = true };
+        IEnumerable<GetFactResultDto> facts = await _dimensionService.GetFacts(filter);
+        return new GetFactsResultDto { Facts = facts, IsSuccess = true };
     }
 }

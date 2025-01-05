@@ -8,12 +8,14 @@ import { PlayersComponent } from './players/players.component';
 import { CreatePlayerComponent } from './players/create-player/create-player.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { FactsComponent } from './facts/facts.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PlayersComponent,
-    CreatePlayerComponent
+    CreatePlayerComponent,
+    FactsComponent
   ],
   imports: [
     BrowserModule,

@@ -11,5 +11,5 @@ public interface IDimensionService
     Task<int> CreateDimensionValueAsync(DimensionValueCreateDto level);
     Task<FactCreateResultDto> CreateFactAsync(FactCreateDto level);
     Task<int> CreateLevelAsync(CreateLevelDto level);
-    Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactDto filter);
+    Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter);
 }

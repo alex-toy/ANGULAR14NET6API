@@ -1,6 +1,6 @@
 ﻿namespace SoccerPlayerApi.Dtos.Facts;
 
-public class GetFactDto
+public class GetFactFilterDto
 {
     public string Type { get; set; }
     public List<GetFactDimensionFilterDto> FactDimensionFilters { get; set; } = new List<GetFactDimensionFilterDto>();

@@ -26,7 +26,7 @@ public class DimensionService : IDimensionService
         _dimensionValueRepo = dimensionValueRepo;
     }
 
-    public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactDto filter)
+    public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
     {
         IQueryable<GetFactResultDto> facts = _context.Facts
             .Include(f => f.DimensionFacts).ThenInclude(df => df.DimensionValue).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
@@ -45,9 +45,11 @@ public class DimensionService : IDimensionService
                 }).ToList(),
             });
 
+        var temp = facts.ToList();
+
         if (!string.IsNullOrEmpty(filter.Type)) facts = facts.Where(fr => fr.Type == filter.Type);
 
-        if (filter.FactDimensionFilters is not null)
+        if (filter.FactDimensionFilters is not null && filter.FactDimensionFilters.Count > 0)
         {
             for (int index = 0; index < Math.Min(filter.FactDimensionFilters.Count(), _context.Dimensions.Count()); index++)
             {
@@ -56,7 +58,7 @@ public class DimensionService : IDimensionService
             }
         }
 
-        if (filter.DimensionValueIds is not null)
+        if (filter.DimensionValueIds is not null && filter.DimensionValueIds.Count > 0)
         {
             facts = facts.Where(DimensionValueFilter(filter.DimensionValueIds));
         }
@@ -137,7 +139,7 @@ public class DimensionService : IDimensionService
 
     private async Task<bool> GetFactExists(FactCreateDto fact)
     {
-        IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactDto { 
+        IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto { 
             Type = fact.Type,
             DimensionValueIds = fact.DimensionValueIds.ToList()
         });

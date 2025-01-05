@@ -1,0 +1,31 @@
+<div *ngIf="factsResult">
+  <h1>Facts</h1>
+
+  <div *ngIf="factsResult.isSuccess">
+    <p>{{ factsResult.message }}</p>
+
+    <div *ngFor="let fact of factsResult.facts" class="fact-container">
+      <h2>{{ fact.type }}</h2>
+      <p>Amount: {{ fact.amount | currency }}</p>
+
+      <!-- Display dimensions as rows inside each fact box -->
+      <div class="fact-dimensions">
+        <div *ngFor="let dimension of fact.dimensions" class="dimension-row">
+          <p><strong>{{ dimension.dimensionLabel }}:</strong> {{ dimension.value }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!factsResult.isSuccess">
+    <p>{{ factsResult.message }}</p>
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="error">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div>
+  <button (click)="applyFilter()">Apply Filter</button>
+</div>
