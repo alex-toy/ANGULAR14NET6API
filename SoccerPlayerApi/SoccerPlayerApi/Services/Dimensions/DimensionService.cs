@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Levels;
@@ -16,7 +17,6 @@ public class DimensionService : IDimensionService
     private readonly IGenericRepo<Dimension> _dimensionRepo;
     private readonly IGenericRepo<DimensionValue> _dimensionValueRepo;
     private readonly IGenericRepo<Fact> _factRepo;
-    private object factResult;
 
     public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<DimensionValue> dimensionValueRepo)
     {
@@ -24,6 +24,13 @@ public class DimensionService : IDimensionService
         _dimensionRepo = dimensionRepo;
         _factRepo = factRepo;
         _dimensionValueRepo = dimensionValueRepo;
+    }
+
+    public async Task<IEnumerable<DimensionDto>> GetDimensions()
+    {
+        return await _context.Dimensions
+            .Select(d => new DimensionDto { Id = d.Id, Value = d.Value })
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
@@ -103,17 +110,6 @@ public class DimensionService : IDimensionService
         int entityId = await _dimensionRepo.CreateAsync(dimension);
         await _context.SaveChangesAsync();
         return entityId;
-    }
-
-    public async Task<int> CreateLevelAsync(CreateLevelDto level)
-    {
-        EntityEntry<Level> entity = await _context.Levels.AddAsync(new Level { 
-            DimensionId = level.DimensionId,
-            Value = level.Value,
-            AncestorId = level.AncestorId,
-        });
-        await _context.SaveChangesAsync();
-        return entity.Entity.Id;
     }
 
     public async Task<int> CreateDimensionValueAsync(DimensionValueCreateDto level)

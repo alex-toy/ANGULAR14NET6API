@@ -9,7 +9,7 @@ import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
   providedIn: 'root'
 })
 export class FactService {
-  private url = `${environment.apiUrl}/dimension`;
+  private url = `${environment.apiUrl}/fact`;
 
   constructor(private httpClient: HttpClient) {}
 

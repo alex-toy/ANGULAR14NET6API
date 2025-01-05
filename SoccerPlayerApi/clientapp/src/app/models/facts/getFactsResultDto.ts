@@ -1,7 +1,6 @@
+import { ResultDto } from "../resultDto";
 import { GetFactResultDto } from "./getFactResultDto";
 
-export interface GetFactsResultDto {
-    isSuccess: boolean;
-    message: string;
+export interface GetFactsResultDto extends ResultDto{
     facts: GetFactResultDto[];
-}
+} 

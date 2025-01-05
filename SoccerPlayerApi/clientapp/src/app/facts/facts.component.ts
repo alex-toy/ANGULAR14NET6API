@@ -2,6 +2,12 @@ import { Component } from '@angular/core';
 import { FactService } from '../services/fact.service';
 import { GetFactsResultDto } from '../models/facts/getFactsResultDto';
 import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
+import { GetLevelDto } from '../models/levels/getLevelDto';
+import { LevelService } from '../services/level.service';
+import { GetLevelsResultDto } from '../models/levels/getLevelsResultDto';
+import { DimensionsService } from '../services/dimensions.service';
+import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
+import { DimensionDto } from '../models/dimensions/dimensionDto';
 
 @Component({
   selector: 'app-facts',
@@ -16,10 +22,16 @@ export class FactsComponent {
     factDimensionFilters: [],
     dimensionValueIds: []
   };
+  levels: GetLevelDto[] = [];
+  dimensionLevels: { [dimensionId: number]: GetLevelDto[] } = {};
+  dimensions: DimensionDto[] = [];
+  selectedLevel: number = 1;
 
-  constructor(private factService: FactService) {}
+  constructor(private factService: FactService, private levelService: LevelService, private dimensionService: DimensionsService) {}
 
   ngOnInit(): void {
+    this.fetchDimensions();
+    this.fetchLevels();
     this.fetchFacts();
   }
 
@@ -37,22 +49,40 @@ export class FactsComponent {
 
   applyFilter(): void {
     this.filter.type = 'sales';  
-
-    // this.filter.factDimensionFilters = [
-    //   {
-    //     dimensionId: 101,
-    //     levelId: 1,
-    //     dimensionValue: 'North America'
-    //   },
-    //   {
-    //     dimensionId: 102,
-    //     levelId: 2,
-    //     dimensionValue: '2025'
-    //   }
-    // ];
-
-    this.filter.dimensionValueIds = [4, 2, 3];  
-
+    this.filter.dimensionValueIds = [2, 3, 4];
     this.fetchFacts();
+  }
+
+  fetchLevels(): void {
+    const dimensionId = 1;
+    this.levelService.getLevels(dimensionId).subscribe({
+      next: (response: GetLevelsResultDto) => {
+        this.levels = response.levels;
+        if (this.levels.length > 0) this.selectedLevel = this.levels[0].id;
+
+        this.dimensionLevels[dimensionId] = response.levels;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load levels. Please try again later.';
+        console.error('Error fetching levels', err);
+      }
+    });
+  }
+
+  onLevelChange(): void {
+    console.log('Selected level:', this.selectedLevel);
+    this.fetchFacts();
+  }
+
+  fetchDimensions(): void {
+    this.dimensionService.getDimensions().subscribe({
+      next: (response: GetDimensionsResultDto) => {
+        this.dimensions = response.dimensions;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load dimensions. Please try again later.';
+        console.error('Error fetching levels', err);
+      }
+    });
   }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
-using SoccerPlayerApi.Dtos.Facts;
-using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
@@ -21,10 +20,11 @@ public class DimensionController
         _dimensionService = dimensionService;
     }
 
-    [HttpPost("createfact")]
-    public async Task<FactCreateResultDto> CreateFact(FactCreateDto fact)
+    [HttpGet("dimensions")]
+    public async Task<GetDimensionsResultDto> GetDimensions()
     {
-        return await _dimensionService.CreateFactAsync(fact);
+        IEnumerable<DimensionDto> dimensions = await _dimensionService.GetDimensions();
+        return new GetDimensionsResultDto { Dimensions = dimensions, IsSuccess = true };
     }
 
     [HttpPost("dimension")]
@@ -33,22 +33,9 @@ public class DimensionController
         return await _dimensionService.CreateDimensionAsync(dimension);
     }
 
-    [HttpPost("level")]
-    public async Task<int> CreateLevel(CreateLevelDto dimension)
-    {
-        return await _dimensionService.CreateLevelAsync(dimension);
-    }
-
     [HttpPost("dimensionvalue")]
     public async Task<int> CreateDimensionValue(DimensionValueCreateDto dimensionValue)
     {
         return await _dimensionService.CreateDimensionValueAsync(dimensionValue);
-    }
-
-    [HttpPost("facts")]
-    public async Task<GetFactsResultDto> GetFacts(GetFactFilterDto filter)
-    {
-        IEnumerable<GetFactResultDto> facts = await _dimensionService.GetFacts(filter);
-        return new GetFactsResultDto { Facts = facts, IsSuccess = true };
     }
 }
