@@ -23,6 +23,12 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(l => l.DimensionId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Dimension>()
+            .HasMany(l => l.Levels)
+            .WithOne(l => l.Dimension)
+            .HasForeignKey(l => l.DimensionId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
     public DbSet<Player> Players { get; set; }

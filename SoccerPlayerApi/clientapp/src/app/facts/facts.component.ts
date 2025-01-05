@@ -8,6 +8,7 @@ import { GetLevelsResultDto } from '../models/levels/getLevelsResultDto';
 import { DimensionsService } from '../services/dimensions.service';
 import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
+import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
 
 @Component({
   selector: 'app-facts',
@@ -23,19 +24,23 @@ export class FactsComponent {
     dimensionValueIds: []
   };
   levels: GetLevelDto[] = [];
-  dimensionLevels: { [dimensionId: number]: GetLevelDto[] } = {};
+  dimensionLevels: GetDimensionLevelDto[] = [];
   dimensions: DimensionDto[] = [];
-  selectedLevel: number = 1;
+  selectedLevels: { [dimensionId:number] : number} = {};
 
   constructor(private factService: FactService, private levelService: LevelService, private dimensionService: DimensionsService) {}
 
   ngOnInit(): void {
+    this.fetchDimensionLevels();
     this.fetchDimensions();
     this.fetchLevels();
     this.fetchFacts();
   }
 
   fetchFacts(): void {
+    if (Object.keys(this.selectedLevels).length > 0) {
+      this.filter.dimensionValueIds = Object.values(this.selectedLevels);
+    }
     this.factService.getFacts(this.filter).subscribe({
       next: (data: GetFactsResultDto) => {
         this.factsResult = data;
@@ -48,9 +53,7 @@ export class FactsComponent {
   }
 
   applyFilter(): void {
-    this.filter.type = 'sales';  
-    this.filter.dimensionValueIds = [2, 3, 4];
-    this.fetchFacts();
+    this.filter.type = 'sales';
   }
 
   fetchLevels(): void {
@@ -58,9 +61,6 @@ export class FactsComponent {
     this.levelService.getLevels(dimensionId).subscribe({
       next: (response: GetLevelsResultDto) => {
         this.levels = response.levels;
-        if (this.levels.length > 0) this.selectedLevel = this.levels[0].id;
-
-        this.dimensionLevels[dimensionId] = response.levels;
       },
       error: (err) => {
         this.errorMessage = 'Failed to load levels. Please try again later.';
@@ -69,9 +69,10 @@ export class FactsComponent {
     });
   }
 
-  onLevelChange(): void {
-    console.log('Selected level:', this.selectedLevel);
-    this.fetchFacts();
+  onLevelChange(dimensionId: number, event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedLevelId = +selectElement.value;
+    this.selectedLevels[dimensionId] = selectedLevelId;
   }
 
   fetchDimensions(): void {
@@ -82,6 +83,22 @@ export class FactsComponent {
       error: (err) => {
         this.errorMessage = 'Failed to load dimensions. Please try again later.';
         console.error('Error fetching levels', err);
+      }
+    });
+  }
+
+  fetchDimensionLevels(): void {
+    this.levelService.getDimensionLevels().subscribe({
+      next: dimensionLevelResult => {
+        this.dimensionLevels = dimensionLevelResult.dimensionLevels;
+        this.selectedLevels = this.dimensionLevels.reduce( (acc, curr) => { return { 
+          ...acc, [curr.dimensionId] : curr.levels[0].id }
+        }, {})
+        this.errorMessage = '';
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load dimension levels'; // Handle errors
+        console.error('Error fetching dimension levels', err);
       }
     });
   }

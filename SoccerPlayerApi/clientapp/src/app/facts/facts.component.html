@@ -1,11 +1,19 @@
 <div *ngIf="factsResult">
   <h1>Facts</h1>
 
-  <div *ngFor="let dimension of dimensions">
-    <label for="levelSelect">{{ dimension.value}}</label>
-    <select id="levelSelect" [(ngModel)]="selectedLevel" (change)="onLevelChange()">
-      <option *ngFor="let level of levels" [value]="level.id">{{ level.value }}</option>
-    </select>
+  <div>
+    <button (click)="applyFilter()">Apply Filter</button>
+  </div>
+
+  <div *ngIf="dimensionLevels">
+    <h2>Dimension Levels</h2>
+    <div *ngFor="let dimension of dimensionLevels">
+      <h3>{{ dimension.value }} (Dimension ID: {{ dimension.dimensionId }})</h3>
+      <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
+        <option value="">Select Level</option>
+        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+      </select>
+    </div>
   </div>
 
   <div *ngIf="factsResult.isSuccess">
@@ -30,8 +38,4 @@
 
 <div *ngIf="errorMessage" class="error">
   <p>{{ errorMessage }}</p>
-</div>
-
-<div>
-  <button (click)="applyFilter()">Apply Filter</button>
 </div>

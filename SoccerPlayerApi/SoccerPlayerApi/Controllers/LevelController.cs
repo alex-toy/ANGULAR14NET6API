@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Services.Levels;
 using SoccerPlayerApi.Services.Players;
@@ -25,11 +26,11 @@ public class LevelController
         return new GetLevelsResultDto { Levels = levels, IsSuccess = true };
     }
 
-    [HttpGet("levelstest/{dimensionId}")]
-    public async Task<GetLevelsResultDto> GetLevelsTest(int dimensionId)
+    [HttpGet("dimensionlevels")]
+    public async Task<GetDimensionLevelsResultDto> GetDimensionLevels()
     {
-        IEnumerable<GetLevelDto> levels = await _levelService.GetLevels(dimensionId);
-        return new GetLevelsResultDto { Levels = levels, IsSuccess = true };
+        IEnumerable<GetDimensionLevelDto> dimensionLevels = await _levelService.GetDimensionLevels();
+        return new GetDimensionLevelsResultDto { DimensionLevels = dimensionLevels, IsSuccess = true };
     }
 
     [HttpPost("level")]
