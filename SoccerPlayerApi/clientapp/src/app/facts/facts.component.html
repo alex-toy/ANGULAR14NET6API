@@ -8,7 +8,7 @@
   <h2>Dimension Levels</h2>
   <div *ngIf="dimensionLevels" class="dimension-container">
     <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
-      <h3>{{ dimension.value }} (Dimension ID: {{ dimension.dimensionId }})</h3>
+      <h3>{{ dimension.value }}</h3>
       <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
         <option value="">Select Level</option>
         <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
@@ -25,13 +25,10 @@
   </div>
 
   <div *ngIf="factsResult.isSuccess">
-    <p>{{ factsResult.message }}</p>
-
     <div *ngFor="let fact of factsResult.facts" class="fact-container">
-      <h2>{{ fact.type }}</h2>
-      <p>Amount: {{ fact.amount | currency }}</p>
-
       <div class="fact-dimensions">
+        <h2>{{ fact.type }}</h2>
+        <p>Amount: {{ fact.amount | currency }}</p>
         <div *ngFor="let dimension of fact.dimensions" class="dimension-row">
           <p><strong>{{ dimension.dimensionLabel }}:</strong> {{ dimension.value }}</p>
         </div>

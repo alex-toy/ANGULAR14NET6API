@@ -28,7 +28,7 @@
   /* Layout for displaying dimensions in a row */
   .fact-dimensions {
     display: flex;
-    flex-direction: column; /* Arrange dimensions vertically inside the fact box */
+    flex-direction: row; /* Arrange dimensions vertically inside the fact box */
     gap: 15px; /* Adds space between each dimension row */
   }
   

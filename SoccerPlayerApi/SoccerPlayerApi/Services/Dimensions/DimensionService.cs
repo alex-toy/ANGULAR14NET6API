@@ -32,78 +32,6 @@ public class DimensionService : IDimensionService
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
-    {
-        IQueryable<GetFactResultDto> facts = _context.Facts
-            .Include(f => f.DimensionFacts).ThenInclude(df => df.DimensionValue).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
-            .Select(f => new GetFactResultDto
-            {
-                Amount = f.Amount,
-                Type = f.Type,
-                Dimensions = f.DimensionFacts.Select(df => new DimensionResultDto
-                {
-                    DimensionValueId = df.DimensionValueId,
-                    Value = df.DimensionValue.Value,
-                    DimensionId = df.DimensionValue.Level.DimensionId,
-                    DimensionLabel = df.DimensionValue.Level.Dimension.Value,
-                    LevelId = df.DimensionValue.Level.Id,
-                    LevelLabel = df.DimensionValue.Level.Value,
-                }).ToList(),
-            });
-
-        var temp = facts.ToList();
-
-        if (!string.IsNullOrEmpty(filter.Type)) facts = facts.Where(fr => fr.Type == filter.Type);
-
-        if (filter.FactDimensionFilters is not null && filter.FactDimensionFilters.Count > 0)
-        {
-            for (int index = 0; index < Math.Min(filter.FactDimensionFilters.Count(), _context.Dimensions.Count()); index++)
-            {
-                GetFactDimensionFilterDto factDimensionFilter = filter.FactDimensionFilters.ElementAt(index);
-                facts = facts.Where(DimensionFilter(factDimensionFilter));
-            }
-        }
-
-        if (filter.DimensionValueIds is not null && filter.DimensionValueIds.Count > 0)
-        {
-            facts = facts.Where(DimensionValueFilter(filter.DimensionValueIds));
-        }
-
-        return await facts.ToListAsync();
-    }
-
-    public async Task<FactCreateResultDto> CreateFactAsync(FactCreateDto fact)
-    {
-        Fact factDb = new() { Amount = fact.Amount, Type = fact.Type };
-        int entityId = await _factRepo.CreateAsync(factDb);
-
-        int dimensionCount = _context.Dimensions.Count();
-        if (fact.DimensionValueIds.Count() != dimensionCount) return new FactCreateResultDto
-        {
-            IsSuccess = false,
-            Message = "dimension count doesn't match"
-        };
-
-        bool areDimensionsCovered = await GetAreDimensionsCovered(fact, dimensionCount);
-        if (!areDimensionsCovered) return new FactCreateResultDto
-        {
-            IsSuccess = false,
-            Message = "dimensions are not all covered"
-        };
-
-        bool isFactExists = await GetFactExists(fact);
-        if (isFactExists) return new FactCreateResultDto
-        {
-            IsSuccess = false,
-            Message = "fact already exists"
-        };
-
-        AddDimensionFacts(fact, factDb, entityId);
-
-        await _context.SaveChangesAsync();
-        return new FactCreateResultDto { IsSuccess = true, FactId = entityId };
-    }
-
     public async Task<int> CreateDimensionAsync(Dimension dimension)
     {
         int entityId = await _dimensionRepo.CreateAsync(dimension);
@@ -129,7 +57,7 @@ public class DimensionService : IDimensionService
             .ToListAsync();
     }
 
-    private async Task<bool> GetAreDimensionsCovered(FactCreateDto fact, int dimensionCount)
+    public async Task<bool> GetAreDimensionsCovered(FactCreateDto fact, int dimensionCount)
     {
         List<int> distinctDimensionValueIds = await _context.DimensionValues
             .Where(x => fact.DimensionValueIds.Contains(x.Id))
@@ -138,16 +66,6 @@ public class DimensionService : IDimensionService
             .Distinct()
             .ToListAsync();
         return distinctDimensionValueIds.Count() == dimensionCount;
-    }
-
-    private async Task<bool> GetFactExists(FactCreateDto fact)
-    {
-        IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto { 
-            Type = fact.Type,
-            DimensionValueIds = fact.DimensionValueIds.ToList()
-        });
-
-        return facts.Count() > 0;
     }
 
     private static void AddDimensionFacts(FactCreateDto fact, Fact factDb, int entityId)
@@ -167,7 +85,7 @@ public class DimensionService : IDimensionService
                              factDimensionFilter1.DimensionValue == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).Value;
     }
 
-    private static Expression<Func<GetFactResultDto, bool>> DimensionValueFilter(List<int> dimensionValueIds)
+    public Expression<Func<GetFactResultDto, bool>> DimensionValueFilter(List<int> dimensionValueIds)
     {
         return factResult => factResult.Dimensions
                                         .Select(x => x.DimensionValueId)
