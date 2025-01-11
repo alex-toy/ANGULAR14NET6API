@@ -12,6 +12,8 @@ import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValu
 import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateFactComponent } from './create-fact/create-fact.component';
+import { GetFactResultDto } from '../models/facts/getFactResultDto';
+import { FactUpdateDto } from '../models/facts/factUpdateDto';
 
 @Component({
   selector: 'app-facts',
@@ -20,6 +22,8 @@ import { CreateFactComponent } from './create-fact/create-fact.component';
 })
 export class FactsComponent {
   factsResult: GetFactsResultDto | null = null;
+  amount: number = 0;
+  type: string = "";
   filter: GetFactFilterDto = {
     type: '',
     factDimensionFilters: [],
@@ -55,6 +59,23 @@ export class FactsComponent {
     // Optionally, handle actions when the modal is closed
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+    });
+  }
+
+  updateFact(fact: GetFactResultDto){
+    this.factService.updateFact(new FactUpdateDto(fact.id, this.type, this.amount)).subscribe({
+      next: (isSuccess: boolean) => {
+        if (isSuccess){
+          console.log(isSuccess)
+          const oldFact = this.factsResult?.facts.find(f => f.id === fact.id);
+          if (oldFact !== undefined) oldFact.amount = fact.amount;
+          if (oldFact !== undefined) oldFact.type = fact.type;
+          this.fetchFacts();
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      }
     });
   }
 

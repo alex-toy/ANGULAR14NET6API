@@ -34,6 +34,12 @@ public class FactController
         return await _factService.CreateFactAsync(fact);
     }
 
+    [HttpPost("updatefact")]
+    public async Task<bool> UpdateFact(FactUpdateDto fact)
+    {
+        return await _factService.UpdateFactAsync(fact);
+    }
+
     [HttpGet("facttypes")]
     public async Task<GetFactTypesResultDto> GetFactTypes()
     {

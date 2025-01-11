@@ -31,6 +31,7 @@ public class FactService : IFactService
             .Include(f => f.DimensionFacts).ThenInclude(df => df.DimensionValue).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
             .Select(f => new GetFactResultDto
             {
+                Id = f.Id,
                 Amount = f.Amount,
                 Type = f.Type,
                 Dimensions = f.DimensionFacts.Select(df => new DimensionResultDto
@@ -126,5 +127,19 @@ public class FactService : IFactService
     public async Task<IEnumerable<string>> GetFactTypes()
     {
         return await _context.Facts.Select(f => f.Type).Distinct().ToListAsync();
+    }
+
+    public async Task<bool> UpdateFactAsync(FactUpdateDto fact)
+    {
+        Fact? factDb = await _factRepo.GetByIdAsync(fact.Id);
+
+        if (factDb is null) return false;
+
+        factDb.Amount = fact.Amount;
+        factDb.Type = fact.Type;
+
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

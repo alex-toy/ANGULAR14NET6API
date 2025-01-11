@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Repo.Generics;
 
 namespace SoccerPlayerApi.Services.Players;
 
@@ -18,6 +19,11 @@ public class PlayerService : IPlayerService
     {
         return await _context.Players.FirstOrDefaultAsync(p => p.Id == playerId);
     }
+
+    //Player? IGenericRepo<Player>.GetByIdAsync(int playerId)
+    //{
+    //    return _context.Players.FirstOrDefault(p => p.Id == playerId);
+    //}
 
     public async Task<IEnumerable<Player>> GetAllAsync(Func<Player, bool> predicate)
     {

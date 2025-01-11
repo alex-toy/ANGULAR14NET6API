@@ -7,6 +7,7 @@ import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
 import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
 import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
+import { FactUpdateDto } from '../models/facts/factUpdateDto';
 
 @Injectable({
   providedIn: 'root'
@@ -29,5 +30,10 @@ export class FactService {
   createFact(fact: FactCreateDto): Observable<FactCreateResultDto> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
     return this.httpClient.post<FactCreateResultDto>(`${this.url}/createfact`, fact, { headers : header })
+  }
+
+  updateFact(fact: FactUpdateDto): Observable<boolean> {
+    const header = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpClient.post<boolean>(`${this.url}/updatefact`, fact, { headers : header })
   }
 }

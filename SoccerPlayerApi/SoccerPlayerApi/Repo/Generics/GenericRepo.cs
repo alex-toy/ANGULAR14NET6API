@@ -27,14 +27,13 @@ public class GenericRepo<T> : IGenericRepo<T> where T : Entity
 
     public async Task<IEnumerable<T>> GetAllAsync(Func<T, bool> predicate)
     {
-        //List<T> entities = await _context.Set<T>().Where(x => predicate(x)).ToListAsync();
         List<T> entities = await _context.Set<T>().Where(x => true).ToListAsync();
         return entities;
     }
 
-    public Task<T?> GetByIdAsync(int playerId)
+    public async Task<T?> GetByIdAsync(int playerId)
     {
-        throw new NotImplementedException();
+        return await _context.Set<T>().FirstOrDefaultAsync(p => p.Id == playerId);
     }
 
     public Task<int> UpdateAsync(T player)

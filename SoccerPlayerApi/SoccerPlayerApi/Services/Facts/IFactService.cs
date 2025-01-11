@@ -7,5 +7,6 @@ namespace SoccerPlayerApi.Services.Facts
         Task<FactCreateResultDto> CreateFactAsync(FactCreateDto fact);
         Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter);
         Task<IEnumerable<string>> GetFactTypes();
+        Task<bool> UpdateFactAsync(FactUpdateDto fact);
     }
 }
