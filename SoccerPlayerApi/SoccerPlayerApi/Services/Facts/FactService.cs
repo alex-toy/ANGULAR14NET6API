@@ -123,8 +123,8 @@ public class FactService : IFactService
         factDb.DimensionFacts = dimensionFacts.ToList();
     }
 
-    public Task<IEnumerable<string>> GetFactTypes()
+    public async Task<IEnumerable<string>> GetFactTypes()
     {
-        throw new NotImplementedException();
+        return await _context.Facts.Select(f => f.Type).Distinct().ToListAsync();
     }
 }

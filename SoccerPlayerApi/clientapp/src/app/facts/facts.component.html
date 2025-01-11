@@ -5,8 +5,18 @@
     <button (click)="applyFilter()">Apply Filter</button>
   </div>
 
+  
   <h2>Dimension Levels</h2>
   <div *ngIf="dimensionLevels" class="dimension-container">
+    
+    <div class="dimension-item">
+      <h3>Fact Type</h3>
+      <select id="levelSelect" (change)="onfactTypeChange($event)">
+        <option value="">Select Type</option>
+        <option *ngFor="let type of factTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
     <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
       <h3>{{ dimension.value }}</h3>
       <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">

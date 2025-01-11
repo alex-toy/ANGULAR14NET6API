@@ -11,6 +11,7 @@ import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
 import { GetDimensionValuesResultDto } from '../models/dimensionValues/getDimensionValuesResultDto';
 import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValueDto';
+import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
 
 @Component({
   selector: 'app-facts',
@@ -19,6 +20,7 @@ import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValu
 })
 export class FactsComponent {
   factsResult: GetFactsResultDto | null = null;
+  factTypes : string[] = [];
   errorMessage: string = '';
   filter: GetFactFilterDto = {
     type: '',
@@ -35,6 +37,7 @@ export class FactsComponent {
   constructor(private factService: FactService, private levelService: LevelService, private dimensionService: DimensionsService) {}
 
   ngOnInit(): void {
+    this.fetchFactTypes();
     this.fetchDimensionLevels();
     this.fetchDimensions();
     this.fetchLevels();
@@ -53,9 +56,19 @@ export class FactsComponent {
     });
   }
 
+  fetchFactTypes(): void {
+    this.factService.getFactTypes().subscribe({
+      next: (data: GetFactTypesResultDto) => {
+        this.factTypes = data.types;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load facts';
+        console.error(err);
+      }
+    });
+  }
+  
   applyFilter(): void {
-    this.filter.type = 'sales';
-    this.filter.dimensionValueIds = Object.values(this.selectedDimensionValues);
     this.fetchFacts();
   }
 
@@ -83,6 +96,12 @@ export class FactsComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedDimensionValueId = +selectElement.value;
     this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
+    this.filter.dimensionValueIds = Object.values(this.selectedDimensionValues);
+  }
+
+  onfactTypeChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.filter.type = selectElement.value;
   }
 
   fetchDimensions(): void {
