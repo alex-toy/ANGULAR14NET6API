@@ -24,6 +24,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(l => l.DimensionId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Entity<Level>()
+            .HasMany(l => l.DimensionValues)
+            .WithOne(l => l.Level)
+            .HasForeignKey(l => l.LevelId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Entity<Dimension>()
             .HasMany(l => l.Levels)
             .WithOne(l => l.Dimension)

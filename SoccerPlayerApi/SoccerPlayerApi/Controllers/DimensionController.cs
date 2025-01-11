@@ -33,6 +33,13 @@ public class DimensionController
         return await _dimensionService.CreateDimensionAsync(dimension);
     }
 
+    [HttpGet("dimensionvalues/{levelId}")]
+    public async Task<GetDimensionValuesResultDto> GetDimensionValues(int levelId)
+    {
+        IEnumerable<GetDimensionValueDto> dimensionValues = await _dimensionService.GetDimensionValues(levelId);
+        return new GetDimensionValuesResultDto { DimensionValues = dimensionValues, IsSuccess = true };
+    }
+
     [HttpPost("dimensionvalue")]
     public async Task<int> CreateDimensionValue(DimensionValueCreateDto dimensionValue)
     {

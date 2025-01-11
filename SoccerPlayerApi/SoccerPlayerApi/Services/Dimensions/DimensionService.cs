@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
-using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
@@ -120,6 +119,14 @@ public class DimensionService : IDimensionService
         });
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
+    }
+
+    public async Task<IEnumerable<GetDimensionValueDto>> GetDimensionValues(int levelId)
+    {
+        return await _context.DimensionValues
+            .Where(dv => dv.LevelId == levelId)
+            .Select(dv => new GetDimensionValueDto { LevelId = dv.Id, Value = dv.Value })
+            .ToListAsync();
     }
 
     private async Task<bool> GetAreDimensionsCovered(FactCreateDto fact, int dimensionCount)

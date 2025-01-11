@@ -13,4 +13,5 @@ public class Level
     public Level? Ancestor { get; set; }
 
     public List<Level> Children { get; set; } = new List<Level>();
+    public List<DimensionValue> DimensionValues { get; set; } = new List<DimensionValue>();
 }

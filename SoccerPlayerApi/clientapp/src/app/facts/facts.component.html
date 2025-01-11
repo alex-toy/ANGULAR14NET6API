@@ -5,14 +5,22 @@
     <button (click)="applyFilter()">Apply Filter</button>
   </div>
 
-  <div *ngIf="dimensionLevels">
-    <h2>Dimension Levels</h2>
-    <div *ngFor="let dimension of dimensionLevels">
+  <h2>Dimension Levels</h2>
+  <div *ngIf="dimensionLevels" class="dimension-container">
+    <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
       <h3>{{ dimension.value }} (Dimension ID: {{ dimension.dimensionId }})</h3>
       <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
         <option value="">Select Level</option>
         <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
       </select>
+      <div *ngIf="fetchedDimensionValues[dimension.dimensionId] && fetchedDimensionValues[dimension.dimensionId].length > 0">
+        <select id="dimensionValueSelect" (change)="onDimensionValueChange(dimension.dimensionId, $event)">
+          <option value="">Select Dimension Value</option>
+          <option *ngFor="let dimensionValue of fetchedDimensionValues[dimension.dimensionId]" [value]="dimensionValue.levelId">
+            {{ dimensionValue.value }}
+          </option>
+        </select>
+      </div>
     </div>
   </div>
 

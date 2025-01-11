@@ -78,3 +78,15 @@
     outline: none;
   }
   
+  .dimension-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping if there are too many items to fit in one row */
+    gap: 20px; /* Adjust the spacing between the items */
+  }
+  
+  .dimension-item {
+    flex: 1 1 200px; /* Allow items to grow, shrink, and have a minimum width of 200px */
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  

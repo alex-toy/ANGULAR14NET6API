@@ -9,6 +9,8 @@ import { DimensionsService } from '../services/dimensions.service';
 import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
+import { GetDimensionValuesResultDto } from '../models/dimensionValues/getDimensionValuesResultDto';
+import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValueDto';
 
 @Component({
   selector: 'app-facts',
@@ -27,6 +29,8 @@ export class FactsComponent {
   dimensionLevels: GetDimensionLevelDto[] = [];
   dimensions: DimensionDto[] = [];
   selectedLevels: { [dimensionId:number] : number} = {};
+  fetchedDimensionValues: { [dimensionId:number] : GetDimensionValueDto[]} = {};
+  selectedDimensionValues: { [dimensionId:number] : number} = {};
 
   constructor(private factService: FactService, private levelService: LevelService, private dimensionService: DimensionsService) {}
 
@@ -38,9 +42,6 @@ export class FactsComponent {
   }
 
   fetchFacts(): void {
-    if (Object.keys(this.selectedLevels).length > 0) {
-      this.filter.dimensionValueIds = Object.values(this.selectedLevels);
-    }
     this.factService.getFacts(this.filter).subscribe({
       next: (data: GetFactsResultDto) => {
         this.factsResult = data;
@@ -54,6 +55,8 @@ export class FactsComponent {
 
   applyFilter(): void {
     this.filter.type = 'sales';
+    this.filter.dimensionValueIds = Object.values(this.selectedDimensionValues);
+    this.fetchFacts();
   }
 
   fetchLevels(): void {
@@ -73,12 +76,31 @@ export class FactsComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedLevelId = +selectElement.value;
     this.selectedLevels[dimensionId] = selectedLevelId;
+    this.fetchDimensionValues(selectedLevelId, dimensionId)
+  }
+
+  onDimensionValueChange(dimensionId: number, event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedDimensionValueId = +selectElement.value;
+    this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
   }
 
   fetchDimensions(): void {
     this.dimensionService.getDimensions().subscribe({
       next: (response: GetDimensionsResultDto) => {
         this.dimensions = response.dimensions;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load dimensions. Please try again later.';
+        console.error('Error fetching levels', err);
+      }
+    });
+  }
+
+  fetchDimensionValues(levelId: number, dimensionId: number): void {
+    this.dimensionService.getDimensionValues(levelId).subscribe({
+      next: (response: GetDimensionValuesResultDto) => {
+        this.fetchedDimensionValues[dimensionId] = response.dimensionValues;
       },
       error: (err) => {
         this.errorMessage = 'Failed to load dimensions. Please try again later.';
