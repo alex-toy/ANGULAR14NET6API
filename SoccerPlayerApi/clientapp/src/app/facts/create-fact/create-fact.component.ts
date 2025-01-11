@@ -1,74 +1,66 @@
 import { Component } from '@angular/core';
-import { FactService } from '../services/fact.service';
-import { GetFactsResultDto } from '../models/facts/getFactsResultDto';
-import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
-import { LevelService } from '../services/level.service';
-import { DimensionsService } from '../services/dimensions.service';
-import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
-import { DimensionDto } from '../models/dimensions/dimensionDto';
-import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
-import { GetDimensionValuesResultDto } from '../models/dimensionValues/getDimensionValuesResultDto';
-import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValueDto';
-import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateFactComponent } from './create-fact/create-fact.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { DimensionDto } from 'src/app/models/dimensions/dimensionDto';
+import { GetDimensionsResultDto } from 'src/app/models/dimensions/getDimensionsResultDto';
+import { GetDimensionValueDto } from 'src/app/models/dimensionValues/getDimensionValueDto';
+import { GetDimensionValuesResultDto } from 'src/app/models/dimensionValues/getDimensionValuesResultDto';
+import { FactCreateDto } from 'src/app/models/facts/factCreateDto';
+import { FactCreateResultDto } from 'src/app/models/facts/factCreateResultDto';
+import { GetFactTypesResultDto } from 'src/app/models/facts/getFactTypesResultDto';
+import { GetDimensionLevelDto } from 'src/app/models/levels/getDimensionLevelDto';
+import { DimensionsService } from 'src/app/services/dimensions.service';
+import { FactService } from 'src/app/services/fact.service';
+import { LevelService } from 'src/app/services/level.service';
 
 @Component({
-  selector: 'app-facts',
-  templateUrl: './facts.component.html',
-  styleUrls: ['./facts.component.css']
+  selector: 'app-create-fact',
+  templateUrl: './create-fact.component.html',
+  styleUrls: ['./create-fact.component.css']
 })
-export class FactsComponent {
-  factsResult: GetFactsResultDto | null = null;
-  filter: GetFactFilterDto = {
+export class CreateFactComponent {
+
+  newFact: FactCreateDto = {
     type: '',
-    factDimensionFilters: [],
+    amount: 0,
     dimensionValueIds: []
   };
-  
+
   factTypes : string[] = [];
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
   dimensionValues: { [dimensionId:number] : GetDimensionValueDto[]} = {};
 
+  selectedType: string = "";
   selectedLevels: { [dimensionId:number] : number} = {};
   selectedDimensionValues: { [dimensionId:number] : number} = {};
 
   constructor(
-    private factService: FactService, 
-    private levelService: LevelService, 
-    private dimensionService: DimensionsService, 
-    public dialog: MatDialog) {}
+      private factService: FactService, 
+      private levelService: LevelService, 
+      private dimensionService: DimensionsService, 
+      public dialogRef: MatDialogRef<CreateFactComponent>) {}
 
   ngOnInit(): void {
     this.fetchFactTypes();
     this.fetchDimensions();
     this.fetchDimensionLevels();
-    this.fetchFacts();
   }
 
-  openCreateFactModal(): void {
-    const dialogRef = this.dialog.open(CreateFactComponent, {
-      width: '800px',
-    });
-
-    // Optionally, handle actions when the modal is closed
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+  onNoClick(): void {
+    this.dialogRef.close();
   }
-
-  fetchFacts(): void {
-    this.factService.getFacts(this.filter).subscribe({
-      next: (data: GetFactsResultDto) => {
-        this.factsResult = data;
+  
+  createFact(): void {
+    this.factService.createFact(this.newFact).subscribe({
+      next: (data: FactCreateResultDto) => {
+        console.log(data)
       },
       error: (err) => {
         console.error(err);
       }
     });
   }
-
+  
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
       next: (data: GetFactTypesResultDto) => {
@@ -115,10 +107,6 @@ export class FactsComponent {
       }
     });
   }
-  
-  applyFilter(): void {
-    this.fetchFacts();
-  }
 
   onLevelChange(dimensionId: number, event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
@@ -131,11 +119,17 @@ export class FactsComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedDimensionValueId = +selectElement.value;
     this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
-    this.filter.dimensionValueIds = Object.values(this.selectedDimensionValues);
+    this.newFact.dimensionValueIds = Object.values(this.selectedDimensionValues);
   }
 
   onfactTypeChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    this.filter.type = selectElement.value;
+    this.newFact.type = selectElement.value;
+  }
+
+  onSave(): void {
+    this.newFact.dimensionValueIds = Object.values(this.selectedDimensionValues);
+    this.createFact();
+    this.dialogRef.close();
   }
 }

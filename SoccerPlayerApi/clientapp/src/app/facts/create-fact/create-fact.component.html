@@ -1,10 +1,5 @@
-<div *ngIf="factsResult">
-  <h1>Facts</h1>
-
-  <div class="button-container">
-    <button (click)="applyFilter()">Apply Filter</button>
-    <button (click)="openCreateFactModal()">Add Fact</button> <!-- New 'Add Fact' button -->
-  </div>
+<h2 mat-dialog-title>Create Fact</h2>
+<div mat-dialog-content>
   
   <h2>Dimension Levels</h2>
   <div *ngIf="dimensionLevels" class="dimension-container">
@@ -32,21 +27,14 @@
         </select>
       </div>
     </div>
-  </div>
-
-  <div *ngIf="factsResult.isSuccess">
-    <div *ngFor="let fact of factsResult.facts" class="fact-container">
-      <div class="fact-dimensions">
-        <h2>{{ fact.type }}</h2>
-        <p>Amount: {{ fact.amount | currency }}</p>
-        <div *ngFor="let dimension of fact.dimensions" class="dimension-row">
-          <p><strong>{{ dimension.dimensionLabel }}:</strong> {{ dimension.value }}</p>
-        </div>
-      </div>
+    <div class="dimension-item">
+      <h3>Input Field</h3>
+      <input matInput [(ngModel)]="newFact.amount" placeholder="Enter value" />
     </div>
   </div>
 
-  <div *ngIf="!factsResult.isSuccess">
-    <p>{{ factsResult.message }}</p>
-  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Close</button>
+  <button mat-button (click)="onSave()">Save</button>
 </div>

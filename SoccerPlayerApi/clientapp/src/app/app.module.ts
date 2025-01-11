@@ -9,24 +9,29 @@ import { CreatePlayerComponent } from './players/create-player/create-player.com
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FactsComponent } from './facts/facts.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { CreateFactComponent } from './facts/create-fact/create-fact.component'; // Your modal component
+
 
 @NgModule({
   declarations: [
     AppComponent,
     PlayersComponent,
     CreatePlayerComponent,
-    FactsComponent
+    FactsComponent,
+    CreateFactComponent 
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NoopAnimationsModule,
     HttpClientModule,
-    FormsModule  
+    FormsModule,
+    MatDialogModule 
   ],
   providers: [
   
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
