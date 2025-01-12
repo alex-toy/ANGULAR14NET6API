@@ -1,4 +1,5 @@
 ﻿using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Scopes;
 
 namespace SoccerPlayerApi.Services.Facts
 {

@@ -6,6 +6,7 @@ using SoccerPlayerApi.Dtos.Facts;
 using System.Linq.Expressions;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
+using SoccerPlayerApi.Dtos.Scopes;
 
 namespace SoccerPlayerApi.Services.Facts;
 

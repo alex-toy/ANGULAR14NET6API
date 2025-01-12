@@ -1,6 +1,4 @@
-﻿using SoccerPlayerApi.Dtos.DimensionValues;
-
-namespace SoccerPlayerApi.Dtos.Facts;
+﻿namespace SoccerPlayerApi.Dtos.Scopes;
 
 public class ScopeDto
 {

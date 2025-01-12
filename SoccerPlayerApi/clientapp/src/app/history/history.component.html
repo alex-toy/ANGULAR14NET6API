@@ -1,22 +1,28 @@
-<!-- history.component.html -->
-
 <div class="history-container">
+
   <div class="scopes-list">
-    <ul>
+    
+    <!-- sliders -->
+    <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
+      <p>{{ dimension.value }}</p>
+      <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
+        <option value="">Select Level</option>
+        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+      </select>
+    </div>
+
+    <!-- scopes -->
+    <div *ngIf="isLoading">Loading...</div>
+    <div *ngIf="!isLoading">
       <li *ngFor="let scope of scopes">
-        <strong>{{ scope.product }}</strong> - {{ scope.location }}
+        <strong>{{ scope.display }}</strong>
       </li>
-    </ul>
+    </div>
   </div>
 
   <div class="history-content">
     <h2>History Page</h2>
     <p>This is the History page content. You can display the history details here.</p>
   </div>
+
 </div>
-
-
-<!-- <app-scopes></app-scopes>
-<div class="other-content">
-  <app-facts></app-facts>
-</div> -->

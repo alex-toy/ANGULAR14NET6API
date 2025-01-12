@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Facts;
@@ -7,6 +7,8 @@ using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 public class HistoryController
 {
     private readonly IConfiguration _configuration;
