@@ -1,0 +1,48 @@
+/* Container for all scope rows */
+.scopes-container {
+  position: fixed; /* Fix it to the left side */
+  top: 0;
+  left: 0; /* Align to the left edge */
+  width: 250px; /* Set the width for the left column */
+  height: 100%; /* Full height */
+  padding: 20px;
+  padding-top: 60px;
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  background-color: #f9f9f9; /* Light gray background */
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow on the right side */
+}
+
+/* Style each row in the list */
+.scope-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light gray background */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  cursor: pointer; /* Make the rows look clickable */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Hover effect for the rows */
+.scope-row:hover {
+  background-color: #007bff; /* Blue background on hover */
+  color: white; /* White text on hover */
+  transform: translateX(5px); /* Slight movement to the right */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+}
+
+/* Uniform style for both product and location */
+.scope-row div {
+  margin-right: 15px; /* Space between items */
+  font-size: 1.1em; /* Slightly larger font size */
+  font-weight: bold; /* Make both fields bold */
+  color: #333; /* Dark color for text */
+}
+
+/* Optional: Add a transition effect for smooth hover change */
+.scope-row:hover div {
+  font-weight: bolder; /* Make text even bolder on hover */
+}

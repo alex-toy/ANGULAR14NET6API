@@ -1,12 +1,10 @@
 <div *ngIf="factsResult">
-  <h1>Facts</h1>
 
   <div class="button-container">
     <button (click)="applyFilter()">Apply Filter</button>
     <button (click)="openCreateFactModal()">Add Fact</button> <!-- New 'Add Fact' button -->
   </div>
   
-  <h2>Dimension Levels</h2>
   <div *ngIf="dimensionLevels" class="dimension-container">
     
     <div class="dimension-item">
@@ -38,11 +36,10 @@
     <div *ngFor="let fact of factsResult.facts" class="fact-container">
       <div class="fact-dimensions">
         <h2>{{ fact.type }}</h2>
-        <input matInput [(ngModel)]="type" placeholder="Enter value" />
         <div *ngFor="let dimension of fact.dimensions" class="dimension-row">
-          <p><strong>{{ dimension.dimensionLabel }}:</strong> {{ dimension.value }}</p>
+          <p>{{ dimension.value }}</p>
         </div>
-        <p>Amount: {{ fact.amount | currency }}</p>
+        <p>{{ fact.amount | currency }}</p>
         <input matInput [(ngModel)]="amount" placeholder="Enter value" />
         <button (click)="updateFact(fact)">Edit</button>
       </div>

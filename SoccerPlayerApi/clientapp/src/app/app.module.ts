@@ -10,7 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FactsComponent } from './facts/facts.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { CreateFactComponent } from './facts/create-fact/create-fact.component'; // Your modal component
+import { CreateFactComponent } from './facts/create-fact/create-fact.component';
+import { ScopesComponent } from './scopes/scopes.component'; // Your modal component
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { CreateFactComponent } from './facts/create-fact/create-fact.component';
     PlayersComponent,
     CreatePlayerComponent,
     FactsComponent,
-    CreateFactComponent 
+    CreateFactComponent,
+    ScopesComponent 
   ],
   imports: [
     BrowserModule,

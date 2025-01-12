@@ -1,5 +1,15 @@
+<div class="navbar">
+  <ul class="nav-list">
+    <li><a href="#">Data</a></li>
+    <li><a href="#">History</a></li>
+    <li><a href="#">Simulation</a></li>
+    <li><a href="#">Export</a></li>
+  </ul>
+</div>
+
 <div class="container">
-  <button [routerLink]="'/players'" class="btn btn-primary">Players</button>
-  <button [routerLink]="'/facts'" class="btn btn-primary">Facts</button>
-  <router-outlet></router-outlet>
+  <app-scopes></app-scopes>
+  <div class="other-content">
+    <app-facts></app-facts>
+  </div>
 </div>

@@ -32,15 +32,19 @@
     gap: 15px; /* Adds space between each dimension row */
   }
   
-  .dimension-row {
-    display: flex; /* Arrange the label and value horizontally in each row */
-    flex-direction: row;
-    align-items: center; /* Align vertically if the labels and values are of different heights */
-  }
-  
-  .dimension-row p {
-    margin: 0; /* Remove default margin from paragraphs */
-  }
+/* Ensure the dimension rows are displayed as a flex container and wrap if needed */
+.dimension-row {
+  display: flex; /* Flexbox layout */
+  flex-wrap: wrap; /* Allow items to wrap to the next line if necessary */
+  margin: 5px 0; /* Optional: Add some margin between rows for spacing */
+}
+
+/* Style for each dimension label and value */
+.dimension-row p {
+  margin-right: 20px; /* Space between label-value pairs */
+  white-space: nowrap; /* Prevent text from breaking in the middle */
+}
+
   
   .dimension-row p strong {
     margin-right: 10px; /* Add spacing between the label and value */
@@ -99,4 +103,14 @@
     outline: none;
   }
   
+  @media (max-width: 768px) {
+    .dimension-row {
+      flex-direction: column; /* Stack the labels and values vertically */
+    }
+  
+    .dimension-row p {
+      margin-right: 0; /* Remove horizontal space */
+      margin-bottom: 10px; /* Optional: Add some vertical space between label-value pairs */
+    }
+  }
   

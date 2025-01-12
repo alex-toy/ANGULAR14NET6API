@@ -71,6 +71,7 @@ export class FactsComponent {
           if (oldFact !== undefined) oldFact.amount = fact.amount;
           if (oldFact !== undefined) oldFact.type = fact.type;
           this.fetchFacts();
+          this.fetchFactTypes();
         }
       },
       error: (err) => {
