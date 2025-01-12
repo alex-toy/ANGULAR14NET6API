@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PlayersComponent } from './players/players.component';
-import { FactsComponent } from './facts/facts.component';
+import { HistoryComponent } from './history/history.component';
+import { ImportComponent } from './import/import.component';
+import { SimulationComponent } from './simulation/simulation.component';
+import { ExportComponent } from './export/export.component';
 
 const routes: Routes = [
-  { path: 'players', component: PlayersComponent },
-  { path: 'facts', component: FactsComponent },
-  // { path: '', redirectTo: '/home', pathMatch: 'full' },
-  // { path: '**', redirectTo: '/home' }
+  { path: 'import', component: ImportComponent },
+  { path: 'history', component: HistoryComponent },
+  { path: 'simulation', component: SimulationComponent },
+  { path: 'export', component: ExportComponent },
 ];
 
 @NgModule({

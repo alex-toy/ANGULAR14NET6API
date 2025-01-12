@@ -1,0 +1,48 @@
+/* Container for History Page */
+.history-container {
+    display: flex; /* Use flexbox for layout */
+    height: 100vh; /* Full height of the viewport */
+}
+
+/* Left section: Scopes list */
+.scopes-list {
+    width: 300px; /* Set the width of the scopes list */
+    overflow-y: scroll; /* Make the list scrollable */
+    padding: 10px;
+    background-color: #f4f4f4; /* Light background color */
+    border-right: 2px solid #ddd; /* Optional: Adds a border between the two sections */
+}
+
+.scopes-list ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.scopes-list li {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #fff; /* White background for each scope */
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+.scopes-list li:hover {
+    background-color: #e0e0e0; /* Darker background on hover */
+}
+
+/* Right section: Content area */
+.history-content {
+    flex-grow: 1; /* Make the content take the remaining space */
+    padding: 20px;
+    background-color: #fff;
+}
+
+/* Optional: Styling for History Page */
+.history-content h2 {
+    font-size: 24px;
+}
+
+.history-content p {
+    font-size: 18px;
+}

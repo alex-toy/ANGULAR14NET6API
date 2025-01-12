@@ -1,0 +1,22 @@
+<!-- history.component.html -->
+
+<div class="history-container">
+  <div class="scopes-list">
+    <ul>
+      <li *ngFor="let scope of scopes">
+        <strong>{{ scope.product }}</strong> - {{ scope.location }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="history-content">
+    <h2>History Page</h2>
+    <p>This is the History page content. You can display the history details here.</p>
+  </div>
+</div>
+
+
+<!-- <app-scopes></app-scopes>
+<div class="other-content">
+  <app-facts></app-facts>
+</div> -->

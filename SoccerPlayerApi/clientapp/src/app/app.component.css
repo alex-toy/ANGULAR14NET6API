@@ -3,79 +3,65 @@
   display: flex; /* Use flexbox to layout horizontally */
   width: 100%; /* Full width of the screen */
   height: 100vh; /* Full height */
-  padding: 20px;
-  margin-left: 250px; /* Offset by the width of the left panel (250px) */
-  padding-top: 60px;
-}
-
-/* Right side content (button, router-outlet, etc.) */
-.other-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 100%; /* Take up the rest of the width */
-  padding-left: 20px; /* Add some padding for spacing */
-}
-
-/* Optional: Style the button */
-.other-content .btn {
-  margin-top: 20px; /* Space above the button */
-  padding: 10px 20px; /* Button padding */
-  font-size: 1em; /* Font size for the button */
+  padding-top: 52px;
 }
 
 /* Style for the top navigation bar */
 .navbar {
-    position: fixed; /* Makes the navbar fixed at the top of the screen */
-    top: 0;
-    left: 0;
-    background-color: #333;
-    z-index: 1000; /* Ensure the navbar stays above other content */
-    width: 100vw;
-    padding: 10px 0; /* Vertical padding for navbar */
-    box-sizing: border-box; /* Prevent padding from affecting the width */
-    height: 50px; /* Define a fixed height for the navbar */
-  }
+  position: fixed; /* Makes the navbar fixed at the top of the screen */
+  top: 0;
+  left: 0;
+  background-color: #333;
+  z-index: 1000; /* Ensure the navbar stays above other content */
+  width: 100vw;
+  padding: 10px 0; /* Vertical padding for navbar */
+  box-sizing: border-box; /* Prevent padding from affecting the width */
+  height: 50px; /* Define a fixed height for the navbar */
+}
   
   /* Style for the navigation list */
-  .nav-list {
-    display: flex; /* Flexbox to align items horizontally */
-    justify-content: center; /* Center the items */
-    list-style-type: none; /* Remove default list styling */
-    margin: 0;
-    padding: 0;
-  }
+.nav-list {
+  display: flex; /* Flexbox to align items horizontally */
+  justify-content: center; /* Center the items */
+  list-style-type: none; /* Remove default list styling */
+  margin: 0;
+  padding: 0;
+}
   
   /* Style for each navigation item */
-  .nav-list li {
-    margin: 0 20px; /* Horizontal space between the items */
-  }
+.nav-list li {
+  margin: 0 20px; /* Horizontal space between the items */
+}
   
   /* Style for the links */
-  .nav-list a {
-    color: white; /* White text color */
-    text-decoration: none; /* Remove underline */
-    font-size: 16px; /* Set font size */
-    padding: 8px 16px; /* Add padding for clickable area */
-    transition: background-color 0.3s; /* Smooth transition for background color */
-  }
+.nav-list a {
+  color: white; /* White text color */
+  text-decoration: none; /* Remove underline */
+  font-size: 16px; /* Set font size */
+  padding: 8px 16px; /* Add padding for clickable area */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+}
   
   /* Hover effect on links */
-  .nav-list a:hover {
-    background-color: #575757; /* Darker background on hover */
-    border-radius: 4px; /* Rounded corners on hover */
-  }
-  
+.nav-list a:hover {
+  background-color: #575757; /* Darker background on hover */
+  border-radius: 4px; /* Rounded corners on hover */
+}
+
   /* Optional: Make the navbar responsive */
-  @media (max-width: 768px) {
-    .nav-list {
-      flex-direction: column; /* Stack the menu items vertically on small screens */
-      align-items: center; /* Center the items */
-    }
-  
-    .nav-list li {
-      margin: 10px 0; /* Vertical spacing between items */
-    }
+@media (max-width: 768px) {
+  .nav-list {
+    flex-direction: column; /* Stack the menu items vertically on small screens */
+    align-items: center; /* Center the items */
   }
-  
+
+  .nav-list li {
+    margin: 10px 0; /* Vertical spacing between items */
+  }
+}
+/* app.component.css */
+
+.active-link {
+  font-weight: bold;
+  color: #ff9800; /* Highlight active link with a different color */
+}

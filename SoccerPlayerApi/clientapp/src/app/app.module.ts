@@ -11,7 +11,11 @@ import { FormsModule } from '@angular/forms';
 import { FactsComponent } from './facts/facts.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CreateFactComponent } from './facts/create-fact/create-fact.component';
-import { ScopesComponent } from './scopes/scopes.component'; // Your modal component
+import { ScopesComponent } from './scopes/scopes.component';
+import { HistoryComponent } from './history/history.component';
+import { ImportComponent } from './import/import.component';
+import { SimulationComponent } from './simulation/simulation.component';
+import { ExportComponent } from './export/export.component'; // Your modal component
 
 
 @NgModule({
@@ -21,7 +25,11 @@ import { ScopesComponent } from './scopes/scopes.component'; // Your modal compo
     CreatePlayerComponent,
     FactsComponent,
     CreateFactComponent,
-    ScopesComponent 
+    ScopesComponent,
+    HistoryComponent,
+    ImportComponent,
+    SimulationComponent,
+    ExportComponent 
   ],
   imports: [
     BrowserModule,

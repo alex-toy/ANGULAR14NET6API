@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Dtos.Facts;
 using System.Linq.Expressions;
 using SoccerPlayerApi.Services.Dimensions;
+using SoccerPlayerApi.Dtos.DimensionValues;
 
 namespace SoccerPlayerApi.Services.Facts;
 
@@ -23,6 +24,30 @@ public class FactService : IFactService
         _factRepo = factRepo;
         _dimensionValueRepo = dimensionValueRepo;
         _dimensionService = dimensionService;
+    }
+
+    public async Task<IEnumerable<ScopeDto>> GetScopes()
+    {
+        IQueryable<ScopeDto> scopes = _context.Facts
+            .Include(f => f.DimensionFacts)
+                .ThenInclude(df => df.DimensionValue)
+                .ThenInclude(dv => dv.Level)
+                .ThenInclude(l => l.Dimension)
+            .Select(f => new ScopeDto
+            {
+                DimensionValues = f.DimensionFacts
+                    .Where(df => df.DimensionValue.Level.Dimension.Value.ToLower() != "time")
+                    .Select(df => new DimensionValueDto
+                    {
+                        Value = df.DimensionValue.Value,
+                        LevelId = df.DimensionValue.Level.Id,
+                        LevelLabel = df.DimensionValue.Level.Value,
+                        Dimension = df.DimensionValue.Level.Dimension.Value,
+                        DimensionId = df.DimensionValue.Level.Dimension.Id,
+                    }).ToList(),
+            });
+
+        return await scopes.ToListAsync();
     }
 
     public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)

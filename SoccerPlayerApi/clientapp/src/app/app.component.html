@@ -1,15 +1,12 @@
 <div class="navbar">
   <ul class="nav-list">
-    <li><a href="#">Data</a></li>
-    <li><a href="#">History</a></li>
-    <li><a href="#">Simulation</a></li>
-    <li><a href="#">Export</a></li>
+    <li><a routerLink="/import" routerLinkActive="active-link">Import</a></li>
+    <li><a routerLink="/history" routerLinkActive="active-link">History</a></li>
+    <li><a routerLink="/simulation" routerLinkActive="active-link">Simulation</a></li>
+    <li><a routerLink="/export" routerLinkActive="active-link">Export</a></li>
   </ul>
 </div>
 
 <div class="container">
-  <app-scopes></app-scopes>
-  <div class="other-content">
-    <app-facts></app-facts>
-  </div>
+  <router-outlet></router-outlet>
 </div>
