@@ -4,13 +4,11 @@ import { HistoryService } from '../services/history.service';
 import { ResponseDto } from '../models/responseDto';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
-import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValueDto';
-import { FactService } from '../services/fact.service';
 import { LevelService } from '../services/level.service';
 import { DimensionsService } from '../services/dimensions.service';
 import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
-import { GetDimensionValuesResultDto } from '../models/dimensionValues/getDimensionValuesResultDto';
-import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
+import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
+import { ScopeDimensionFilterDto } from '../models/scopes/scopeDimensionFilterDto';
 
 @Component({
   selector: 'app-history',
@@ -39,8 +37,20 @@ export class HistoryComponent {
     this.fetchDimensionLevels();
   }
   
+  applyFilter(): void {
+    console.log(this.selectedLevels)
+    let filter = {
+      scopeDimensionFilters : Object.entries(this.selectedLevels).map(x => new ScopeDimensionFilterDto(+x[0], x[1]))
+    } as ScopeFilterDto;
+
+    console.log(filter)
+  }
+  
   fetchScopes(): void {
-    this.historyService.getScopes().subscribe({
+    let filter = {
+      scopeDimensionFilters : Object.entries(this.selectedLevels).map(x => new ScopeDimensionFilterDto(+x[0], x[1]))
+    } as ScopeFilterDto;
+    this.historyService.getScopes(filter).subscribe({
       next: (response: ResponseDto<ScopeDto[]>) => {
         this.scopes = response.data.map(d => new ScopeDto(d));
         this.isLoading = false;

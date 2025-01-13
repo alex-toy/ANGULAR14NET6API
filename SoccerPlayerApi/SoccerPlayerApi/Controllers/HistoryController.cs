@@ -22,10 +22,10 @@ public class HistoryController
         _factService = factService;
     }
 
-    [HttpGet("scopes")]
-    public async Task<ResponseDto<IEnumerable<ScopeDto>>> GetScopes()
+    [HttpPost("scopes")]
+    public async Task<ResponseDto<IEnumerable<ScopeDto>>> GetScopes(ScopeFilterDto? filter)
     {
-        IEnumerable<ScopeDto> scopes = await _factService.GetScopes();
+        IEnumerable<ScopeDto> scopes = await _factService.GetScopes(filter);
         return new ResponseDto<IEnumerable<ScopeDto>> { Data = scopes, IsSuccess = true };
     }
 }

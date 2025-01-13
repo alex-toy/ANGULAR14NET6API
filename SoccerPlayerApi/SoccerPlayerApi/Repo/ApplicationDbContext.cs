@@ -12,6 +12,8 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<DimensionFact>().ToTable("DimensionFact");
+
         builder.Entity<Level>()
             .HasOne(l => l.Ancestor)
             .WithMany(l => l.Children)
@@ -40,6 +42,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Player> Players { get; set; }
     public DbSet<Fact> Facts { get; set; }
     public DbSet<Dimension> Dimensions { get; set; }
+    public DbSet<DimensionFact> DimensionFacts { get; set; }
     public DbSet<DimensionValue> DimensionValues { get; set; }
     public DbSet<Level> Levels { get; set; }
 }

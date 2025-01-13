@@ -1,6 +1,7 @@
 import { DimensionValueDto } from "./dimensionValueDto";
 
 export class ScopeDto {
+    levelIds: string = "";
     dimensionValues: DimensionValueDto[] = [];
     display: string = "";
 

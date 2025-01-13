@@ -10,12 +10,14 @@
         <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
       </select>
     </div>
+    <button (click)="applyFilter()">Apply Filter</button>
 
     <!-- scopes -->
     <div *ngIf="isLoading">Loading...</div>
     <div *ngIf="!isLoading">
       <li *ngFor="let scope of scopes">
         <strong>{{ scope.display }}</strong>
+        <strong>{{ scope.dimensionValues[0].value }}</strong>
       </li>
     </div>
   </div>
