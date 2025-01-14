@@ -1,14 +1,11 @@
-﻿using SoccerPlayerApi.Entities.Structure;
-using SoccerPlayerApi.Repo.Generics;
-using SoccerPlayerApi.Repo;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Dtos.Facts;
-using System.Linq.Expressions;
-using SoccerPlayerApi.Services.Dimensions;
-using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Scopes;
-using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
+using SoccerPlayerApi.Entities.Structure;
+using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Repo.Generics;
+using SoccerPlayerApi.Services.Dimensions;
+using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Facts;
 
@@ -29,82 +26,86 @@ public class FactService : IFactService
         _dimensionService = dimensionService;
     }
 
-    public async Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? filter)
+    public async Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? scopeFilter)
     {
-        var dim1 = from fa in _context.Facts
-                   join df in _context.DimensionFacts on fa.Id equals df.FactId
-                   join dv in _context.DimensionValues on df.DimensionValueId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join dim in _context.Dimensions on lv.DimensionId equals dim.Id
-                   where dim.Value == "Product"
-                   select new
-                   {
-                       fa.Id,
-                       Label = dv.Value,
-                       LevelId = lv.Id,
-                       DimensionId = lv.DimensionId,
-                       Dimension = lv.Dimension.Value,
-                   };
+        int dimensionCount = _context.Dimensions.Count();
+        List<int> visitedDimensions = new List<int>();
+        List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
+        for (var i = 0; i < dimensionCount; i++)
+        {
+            ScopeDimensionFilterDto? currentFilter = i < scopeFilter?.ScopeDimensionFilters.Count ? scopeFilter?.ScopeDimensionFilters.ElementAt(i) : null;
+            int? currentDimensionId = currentFilter?.DimensionId;
+            if (currentDimensionId is not null) visitedDimensions.Add(currentDimensionId.Value);
 
-        var dim2 = from fa in _context.Facts
-                   join df in _context.DimensionFacts on fa.Id equals df.FactId
-                   join dv in _context.DimensionValues on df.DimensionValueId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join dim in _context.Dimensions on lv.DimensionId equals dim.Id
-                   where dim.Value == "Location"
-                   select new
-                   {
-                       fa.Id,
-                       Label = dv.Value,
-                       LevelId = lv.Id,
-                       DimensionId = lv.DimensionId,
-                       Dimension = lv.Dimension.Value,
-                   };
+            var axis = from fa in _context.Facts
+                       join df in _context.DimensionFacts on fa.Id equals df.FactId
+                       join dv in _context.DimensionValues on df.DimensionValueId equals dv.Id
+                       join lv in _context.Levels on dv.LevelId equals lv.Id
+                       join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                       where (currentFilter != null) 
+                            ? (dim.Id == currentFilter.DimensionId && lv.Id == currentFilter.LevelId) 
+                            : !visitedDimensions.Contains(dim.Id) && dim.Id != 3
+                       select new AxisDto
+                       {
+                           FactId = fa.Id,
+                           LevelLabel = dv.Value,
+                           LevelId = lv.Id,
+                           DimensionId = lv.DimensionId,
+                           DimensionLabel = lv.Dimension.Value,
+                       };
 
-        IQueryable<ScopeDto> result = from d1 in dim1
-                     join d2 in dim2 on d1.Id equals d2.Id
-                     select new ScopeDto
-                     {
-                         DimensionValues = new List<DimensionValueDto>()
-                         {
-                             new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.Label, DimensionId = d1.DimensionId, Dimension = d1.Dimension },
-                             new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d2.Label, DimensionId = d2.DimensionId, Dimension = d2.Dimension },
-                         }
-                     };
+            axises.Add(axis);
+        }
+
+        IQueryable<ScopeDto> result = JoinAxes(axises, dimensionCount);
 
         List<ScopeDto> distinctResult = await result.Distinct().ToListAsync();
         return distinctResult ?? new List<ScopeDto>();
     }
 
-    //public async Task<IEnumerable<ScopeDto>> GetScopesOLD(ScopeFilterDto? filter)
-    //{
-    //    IQueryable<ScopeDto> scopes = _context.Facts
-    //        .Include(f => f.DimensionFacts)
-    //            .ThenInclude(df => df.DimensionValue)
-    //            .ThenInclude(dv => dv.Level)
-    //            .ThenInclude(l => l.Dimension)
-    //        .Select(f => new ScopeDto
-    //        {
-    //            LevelIds = string.Join(" ", f.DimensionFacts
-    //                .Where(df => df.DimensionValue.Level.Dimension.Value.ToLower() != "time")
-    //                .Select(df => df.DimensionValue.Level.Id.ToString()).ToArray()),
-    //            DimensionValues = f.DimensionFacts
-    //                .Where(df => df.DimensionValue.Level.Dimension.Value.ToLower() != "time")
-    //                .Select(df => new DimensionValueDto
-    //                {
-    //                    Value = df.DimensionValue.Value,
-    //                    LevelId = df.DimensionValue.Level.Id,
-    //                    LevelLabel = df.DimensionValue.Level.Value,
-    //                    Dimension = df.DimensionValue.Level.Dimension.Value,
-    //                    DimensionId = df.DimensionValue.Level.Dimension.Id,
-    //                }).ToList(),
-    //        })
-    //        .Where(x => x.DimensionValues.Any());
+    private static IQueryable<ScopeDto> JoinAxes(List<IQueryable<AxisDto>> axises, int dimensionCount)
+    {
+        if (dimensionCount == 2)
+        {
+            return from d1 in axises[0]
+                   join d2 in axises[1] on d1.FactId equals d2.FactId
+                   select new ScopeDto
+                   {
+                       DimensionValues = new List<DimensionValueDto>()
+                   {
+                       new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
+                       new DimensionValueDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
+                   }
+                   };
+        }
 
-    //    if (filter is null) return await scopes.ToListAsync();
+        if (dimensionCount == 3)
+        {
+            return from d1 in axises[0]
+                   join d2 in axises[1] on d1.FactId equals d2.FactId
+                   join d3 in axises[2] on d1.FactId equals d3.FactId
+                   select new ScopeDto
+                   {
+                       DimensionValues = new List<DimensionValueDto>()
+                   {
+                       new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
+                       new DimensionValueDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
+                       new DimensionValueDto() { LevelId = d3.LevelId, LevelLabel = d3.LevelLabel, DimensionId = d3.DimensionId, Dimension = d3.DimensionLabel },
+                   }
+                   };
+        }
 
-    //    return await scopes.ToListAsync();
-    //}
+        return from d1 in axises[0]
+               join d2 in axises[1] on d1.FactId equals d2.FactId
+               select new ScopeDto
+               {
+                   DimensionValues = new List<DimensionValueDto>()
+                   {
+                       new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
+                       new DimensionValueDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
+                   }
+               };
+    }
 
     public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
     {

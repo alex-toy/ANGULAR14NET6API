@@ -7,6 +7,6 @@ export class ScopeDto {
 
     constructor(scope : ScopeDto){
         this.dimensionValues = scope.dimensionValues;
-        this.display = scope.dimensionValues.map(dimensionValue => dimensionValue.value).join(' - ') ?? "";
+        this.display = scope.dimensionValues.map(dimensionValue => dimensionValue.levelLabel).join(' - ') ?? "";
     }
 }

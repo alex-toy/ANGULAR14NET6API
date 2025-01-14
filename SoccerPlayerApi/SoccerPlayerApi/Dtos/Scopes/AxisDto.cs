@@ -1,9 +1,10 @@
 ﻿namespace SoccerPlayerApi.Dtos.Scopes;
 
-public class DimensionValueDto
+public class AxisDto
 {
     public int LevelId { get; set; }
+    public int FactId { get; set; }
     public string LevelLabel { get; set; } = string.Empty;
-    public string Dimension { get; set; } = string.Empty;
+    public string DimensionLabel { get; set; } = string.Empty;
     public int DimensionId { get; set; }
 }
