@@ -8,5 +8,5 @@ public class DimensionFact
     public Fact Fact { get; set; }
 
     public int DimensionValueId { get; set; }
-    public DimensionValue DimensionValue { get; set; }
+    public Aggregation DimensionValue { get; set; }
 }

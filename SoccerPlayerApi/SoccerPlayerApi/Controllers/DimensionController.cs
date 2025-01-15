@@ -34,14 +34,14 @@ public class DimensionController
     }
 
     [HttpGet("dimensionvalues/{levelId}")]
-    public async Task<GetDimensionValuesResultDto> GetDimensionValues(int levelId)
+    public async Task<GetAggregationsResultDto> GetDimensionValues(int levelId)
     {
-        IEnumerable<GetDimensionValueDto> dimensionValues = await _dimensionService.GetDimensionValues(levelId);
-        return new GetDimensionValuesResultDto { DimensionValues = dimensionValues, IsSuccess = true };
+        IEnumerable<GetAggregationDto> dimensionValues = await _dimensionService.GetDimensionValues(levelId);
+        return new GetAggregationsResultDto { Aggregations = dimensionValues, IsSuccess = true };
     }
 
     [HttpPost("dimensionvalue")]
-    public async Task<int> CreateDimensionValue(DimensionValueCreateDto dimensionValue)
+    public async Task<int> CreateDimensionValue(AggregationCreateDto dimensionValue)
     {
         return await _dimensionService.CreateDimensionValueAsync(dimensionValue);
     }

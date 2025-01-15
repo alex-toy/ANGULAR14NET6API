@@ -18,10 +18,10 @@
         <option value="">Select Level</option>
         <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
       </select>
-      <div *ngIf="dimensionValues[dimension.dimensionId] && dimensionValues[dimension.dimensionId].length > 0">
+      <div *ngIf="aggregations[dimension.dimensionId] && aggregations[dimension.dimensionId].length > 0">
         <select id="dimensionValueSelect" (change)="onDimensionValueChange(dimension.dimensionId, $event)">
           <option value="">Select Dimension Value</option>
-          <option *ngFor="let dimensionValue of dimensionValues[dimension.dimensionId]" [value]="dimensionValue.levelId">
+          <option *ngFor="let dimensionValue of aggregations[dimension.dimensionId]" [value]="dimensionValue.levelId">
             {{ dimensionValue.value }}
           </option>
         </select>

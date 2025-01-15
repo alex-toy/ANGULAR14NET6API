@@ -13,11 +13,11 @@ public class FactService : IFactService
 {
     private readonly ApplicationDbContext _context;
     private readonly IGenericRepo<Dimension> _dimensionRepo;
-    private readonly IGenericRepo<DimensionValue> _dimensionValueRepo;
+    private readonly IGenericRepo<Aggregation> _dimensionValueRepo;
     private readonly IGenericRepo<Fact> _factRepo;
     private readonly IDimensionService _dimensionService;
 
-    public FactService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<DimensionValue> dimensionValueRepo, IDimensionService dimensionService)
+    public FactService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<Aggregation> dimensionValueRepo, IDimensionService dimensionService)
     {
         _context = context;
         _dimensionRepo = dimensionRepo;

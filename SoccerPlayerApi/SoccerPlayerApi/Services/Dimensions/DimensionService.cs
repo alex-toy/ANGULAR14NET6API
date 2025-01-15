@@ -14,10 +14,10 @@ public class DimensionService : IDimensionService
 {
     private readonly ApplicationDbContext _context;
     private readonly IGenericRepo<Dimension> _dimensionRepo;
-    private readonly IGenericRepo<DimensionValue> _dimensionValueRepo;
+    private readonly IGenericRepo<Aggregation> _dimensionValueRepo;
     private readonly IGenericRepo<Fact> _factRepo;
 
-    public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<DimensionValue> dimensionValueRepo)
+    public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<Aggregation> dimensionValueRepo)
     {
         _context = context;
         _dimensionRepo = dimensionRepo;
@@ -40,9 +40,9 @@ public class DimensionService : IDimensionService
         return entityId;
     }
 
-    public async Task<int> CreateDimensionValueAsync(DimensionValueCreateDto level)
+    public async Task<int> CreateDimensionValueAsync(AggregationCreateDto level)
     {
-        EntityEntry<DimensionValue> entity = await _context.DimensionValues.AddAsync(new DimensionValue { 
+        EntityEntry<Aggregation> entity = await _context.DimensionValues.AddAsync(new Aggregation { 
             LevelId = level.LevelId,
             Value = level.Value,
         });
@@ -50,11 +50,11 @@ public class DimensionService : IDimensionService
         return entity.Entity.Id;
     }
 
-    public async Task<IEnumerable<GetDimensionValueDto>> GetDimensionValues(int levelId)
+    public async Task<IEnumerable<GetAggregationDto>> GetDimensionValues(int levelId)
     {
         return await _context.DimensionValues
             .Where(dv => dv.LevelId == levelId)
-            .Select(dv => new GetDimensionValueDto { LevelId = dv.Id, Value = dv.Value })
+            .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
             .ToListAsync();
     }
 
@@ -90,7 +90,6 @@ public class DimensionService : IDimensionService
     {
         return factResult => factResult.Dimensions
                                         .Select(x => x.DimensionValueId)
-                                        .All(dimensionValueId => dimensionValueIds.Contains(dimensionValueId)) &&
-                             factResult.Dimensions.Count() == dimensionValueIds.Count;
+                                        .All(dimensionValueId => dimensionValueIds.Contains(dimensionValueId)) && factResult.Dimensions.Count() == dimensionValueIds.Count;
     }
 }

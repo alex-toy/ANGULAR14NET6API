@@ -7,13 +7,13 @@ import { DimensionsService } from '../services/dimensions.service';
 import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
-import { GetDimensionValuesResultDto } from '../models/dimensionValues/getDimensionValuesResultDto';
-import { GetDimensionValueDto } from '../models/dimensionValues/getDimensionValueDto';
+import { GetAggregationsResultDto } from '../models/dimensionValues/getAggregationsResultDto';
 import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateFactComponent } from './create-fact/create-fact.component';
 import { GetFactResultDto } from '../models/facts/getFactResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
+import { GetAggregationDto } from '../models/dimensionValues/getAggregationDto';
 
 @Component({
   selector: 'app-facts',
@@ -33,7 +33,7 @@ export class FactsComponent {
   factTypes : string[] = [];
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
-  dimensionValues: { [dimensionId:number] : GetDimensionValueDto[]} = {};
+  dimensionValues: { [dimensionId:number] : GetAggregationDto[]} = {};
 
   selectedLevels: { [dimensionId:number] : number} = {};
   selectedDimensionValues: { [dimensionId:number] : number} = {};
@@ -115,8 +115,8 @@ export class FactsComponent {
 
   fetchDimensionValues(levelId: number, dimensionId: number): void {
     this.dimensionService.getDimensionValues(levelId).subscribe({
-      next: (response: GetDimensionValuesResultDto) => {
-        this.dimensionValues[dimensionId] = response.dimensionValues;
+      next: (response: GetAggregationsResultDto) => {
+        this.dimensionValues[dimensionId] = response.aggregations;
       },
       error: (err) => {
         console.error('Error fetching levels', err);

@@ -1,6 +1,6 @@
 ﻿namespace SoccerPlayerApi.Entities.Structure;
 
-public class DimensionValue : Entity
+public class Aggregation : Entity
 {
     public int LevelId { get; set; }
     public Level Level { get; set; }

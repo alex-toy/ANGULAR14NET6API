@@ -23,7 +23,7 @@ namespace SoccerPlayerApi
 
             builder.Services.AddScoped<IGenericRepo<Dimension>, GenericRepo<Dimension>>();
             builder.Services.AddScoped<IGenericRepo<Fact>, GenericRepo<Fact>>();
-            builder.Services.AddScoped<IGenericRepo<DimensionValue>, GenericRepo<DimensionValue>>();
+            builder.Services.AddScoped<IGenericRepo<Aggregation>, GenericRepo<Aggregation>>();
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IDimensionService, DimensionService>();
             builder.Services.AddScoped<IFactService, FactService>();

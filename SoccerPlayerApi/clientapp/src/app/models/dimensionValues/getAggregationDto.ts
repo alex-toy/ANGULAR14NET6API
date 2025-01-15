@@ -1,4 +1,4 @@
-export interface GetDimensionValueDto {
+export interface GetAggregationDto {
     levelId: number;
     value: string;
 }
