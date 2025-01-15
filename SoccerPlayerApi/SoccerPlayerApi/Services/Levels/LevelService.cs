@@ -27,6 +27,7 @@ public class LevelService : ILevelService
     public async Task<IEnumerable<GetDimensionLevelDto>> GetDimensionLevels()
     {
         return await _context.Dimensions
+            .Where(d => d.Id != 3) // time
             .Include(d => d.Levels)
             .Select(d => new GetDimensionLevelDto() { 
                 DimensionId = d.Id, 

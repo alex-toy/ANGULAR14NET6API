@@ -38,12 +38,7 @@ export class HistoryComponent {
   }
   
   applyFilter(): void {
-    console.log(this.selectedLevels)
-    let filter = {
-      scopeDimensionFilters : Object.entries(this.selectedLevels).map(x => new ScopeDimensionFilterDto(+x[0], x[1]))
-    } as ScopeFilterDto;
-
-    console.log(filter)
+    this.fetchScopes();
   }
   
   fetchScopes(): void {

@@ -28,23 +28,21 @@ public class FactService : IFactService
 
     public async Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? scopeFilter)
     {
-        int dimensionCount = _context.Dimensions.Count();
-        List<int> visitedDimensions = new List<int>();
+        List<int> dimensionIds = _context.Dimensions.Select(d => d.Id).ToList();
+        int dimensionCount = dimensionIds.Count() - 1;
         List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
-        for (var i = 0; i < dimensionCount; i++)
+        foreach (var currentDimensionId in dimensionIds)
         {
-            ScopeDimensionFilterDto? currentFilter = i < scopeFilter?.ScopeDimensionFilters.Count ? scopeFilter?.ScopeDimensionFilters.ElementAt(i) : null;
-            int? currentDimensionId = currentFilter?.DimensionId;
-            if (currentDimensionId is not null) visitedDimensions.Add(currentDimensionId.Value);
+            ScopeDimensionFilterDto? correspondingFilter = scopeFilter?.ScopeDimensionFilters.FirstOrDefault(f => f.DimensionId == currentDimensionId);
 
             var axis = from fa in _context.Facts
                        join df in _context.DimensionFacts on fa.Id equals df.FactId
                        join dv in _context.DimensionValues on df.DimensionValueId equals dv.Id
                        join lv in _context.Levels on dv.LevelId equals lv.Id
                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
-                       where (currentFilter != null) 
-                            ? (dim.Id == currentFilter.DimensionId && lv.Id == currentFilter.LevelId) 
-                            : !visitedDimensions.Contains(dim.Id) && dim.Id != 3
+                       where (correspondingFilter != null) 
+                            ? (dim.Id == currentDimensionId && lv.Id == correspondingFilter.LevelId) 
+                            : (dim.Id == currentDimensionId)
                        select new AxisDto
                        {
                            FactId = fa.Id,

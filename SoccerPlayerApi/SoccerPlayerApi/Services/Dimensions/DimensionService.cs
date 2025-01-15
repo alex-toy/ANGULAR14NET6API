@@ -28,6 +28,7 @@ public class DimensionService : IDimensionService
     public async Task<IEnumerable<DimensionDto>> GetDimensions()
     {
         return await _context.Dimensions
+            .Where(d => d.Id != 3) // time
             .Select(d => new DimensionDto { Id = d.Id, Value = d.Value })
             .ToListAsync();
     }
