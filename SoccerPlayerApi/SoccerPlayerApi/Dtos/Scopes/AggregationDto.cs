@@ -1,6 +1,6 @@
 ﻿namespace SoccerPlayerApi.Dtos.Scopes;
 
-public class DimensionValueDto
+public class AggregationDto
 {
     public int LevelId { get; set; }
     public string LevelLabel { get; set; } = string.Empty;

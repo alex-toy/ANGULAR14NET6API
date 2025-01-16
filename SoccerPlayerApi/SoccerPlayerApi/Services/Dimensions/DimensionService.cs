@@ -42,7 +42,7 @@ public class DimensionService : IDimensionService
 
     public async Task<int> CreateDimensionValueAsync(AggregationCreateDto level)
     {
-        EntityEntry<Aggregation> entity = await _context.DimensionValues.AddAsync(new Aggregation { 
+        EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation { 
             LevelId = level.LevelId,
             Value = level.Value,
         });
@@ -52,7 +52,7 @@ public class DimensionService : IDimensionService
 
     public async Task<IEnumerable<GetAggregationDto>> GetDimensionValues(int levelId)
     {
-        return await _context.DimensionValues
+        return await _context.Aggregations
             .Where(dv => dv.LevelId == levelId)
             .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
             .ToListAsync();
@@ -60,7 +60,7 @@ public class DimensionService : IDimensionService
 
     public async Task<bool> GetAreDimensionsCovered(FactCreateDto fact, int dimensionCount)
     {
-        List<int> distinctDimensionValueIds = await _context.DimensionValues
+        List<int> distinctDimensionValueIds = await _context.Aggregations
             .Where(x => fact.DimensionValueIds.Contains(x.Id))
             .Include(x => x.Level).ThenInclude(x => x.Dimension)
             .Select(x => x.Level.Dimension.Id)

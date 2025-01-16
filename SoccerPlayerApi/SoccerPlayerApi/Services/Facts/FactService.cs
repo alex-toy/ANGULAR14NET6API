@@ -37,7 +37,7 @@ public class FactService : IFactService
 
             var axis = from fa in _context.Facts
                        join df in _context.DimensionFacts on fa.Id equals df.FactId
-                       join dv in _context.DimensionValues on df.DimensionValueId equals dv.Id
+                       join dv in _context.Aggregations on df.DimensionValueId equals dv.Id
                        join lv in _context.Levels on dv.LevelId equals lv.Id
                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
                        where (correspondingFilter != null) 
@@ -69,10 +69,10 @@ public class FactService : IFactService
                    join d2 in axises[1] on d1.FactId equals d2.FactId
                    select new ScopeDto
                    {
-                       DimensionValues = new List<DimensionValueDto>()
+                       Aggregations = new List<AggregationDto>()
                    {
-                       new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
-                       new DimensionValueDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
+                       new AggregationDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
+                       new AggregationDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
                    }
                    };
         }
@@ -84,11 +84,11 @@ public class FactService : IFactService
                    join d3 in axises[2] on d1.FactId equals d3.FactId
                    select new ScopeDto
                    {
-                       DimensionValues = new List<DimensionValueDto>()
+                       Aggregations = new List<AggregationDto>()
                    {
-                       new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
-                       new DimensionValueDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
-                       new DimensionValueDto() { LevelId = d3.LevelId, LevelLabel = d3.LevelLabel, DimensionId = d3.DimensionId, Dimension = d3.DimensionLabel },
+                       new AggregationDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
+                       new AggregationDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
+                       new AggregationDto() { LevelId = d3.LevelId, LevelLabel = d3.LevelLabel, DimensionId = d3.DimensionId, Dimension = d3.DimensionLabel },
                    }
                    };
         }
@@ -97,12 +97,28 @@ public class FactService : IFactService
                join d2 in axises[1] on d1.FactId equals d2.FactId
                select new ScopeDto
                {
-                   DimensionValues = new List<DimensionValueDto>()
+                   Aggregations = new List<AggregationDto>()
                    {
-                       new DimensionValueDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
-                       new DimensionValueDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
+                       new AggregationDto() { LevelId = d1.LevelId, LevelLabel = d1.LevelLabel, DimensionId = d1.DimensionId, Dimension = d1.DimensionLabel },
+                       new AggregationDto() { LevelId = d2.LevelId, LevelLabel = d2.LevelLabel, DimensionId = d2.DimensionId, Dimension = d2.DimensionLabel },
                    }
                };
+    }
+
+    public async Task<IEnumerable<GetScopeDataDto>> GetScopeData(ScopeDto scope)
+    {
+        int dimensionCount = _context.Dimensions.Count();
+        IQueryable<GetScopeDataDto> resultQuery;
+        if (dimensionCount == 3)
+        {
+            resultQuery = GetScopeDataFor_3_Dimensions(scope);
+        }
+        else
+        {
+            resultQuery = GetScopeDataFor_3_Dimensions(scope);
+        }
+
+        return await resultQuery.ToListAsync();
     }
 
     public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
@@ -176,6 +192,25 @@ public class FactService : IFactService
         return new FactCreateResultDto { IsSuccess = true, FactId = entityId };
     }
 
+    public async Task<IEnumerable<string>> GetFactTypes()
+    {
+        return await _context.Facts.Select(f => f.Type).Distinct().ToListAsync();
+    }
+
+    public async Task<bool> UpdateFactAsync(FactUpdateDto fact)
+    {
+        Fact? factDb = await _factRepo.GetByIdAsync(fact.Id);
+
+        if (factDb is null) return false;
+
+        factDb.Amount = fact.Amount;
+        factDb.Type = fact.Type;
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
     private static Expression<Func<GetFactResultDto, bool>> DimensionFilter(GetFactDimensionFilterDto factDimensionFilter1)
     {
         return factResult => factDimensionFilter1.LevelId == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).LevelId &&
@@ -204,22 +239,78 @@ public class FactService : IFactService
         factDb.DimensionFacts = dimensionFacts.ToList();
     }
 
-    public async Task<IEnumerable<string>> GetFactTypes()
+    private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(ScopeDto scope)
     {
-        return await _context.Facts.Select(f => f.Type).Distinct().ToListAsync();
-    }
+        var dim1 = from fa in _context.Facts
+                   join df in _context.DimensionFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.DimensionValueId equals dv.Id
+                   join lv in _context.Levels on dv.LevelId equals lv.Id
+                   join prod in _context.Dimensions on lv.DimensionId equals prod.Id
+                   where prod.Id == scope.Aggregations[0].DimensionId
+                   select new
+                   {
+                       FactId = fa.Id,
+                       Type = fa.Type,
+                       Amount = fa.Amount,
+                       LevelId = lv.Id,
+                       Value = lv.Value,
+                       DimensionId = prod.Id,
+                       AggregationValue = dv.Value
+                   };
 
-    public async Task<bool> UpdateFactAsync(FactUpdateDto fact)
-    {
-        Fact? factDb = await _factRepo.GetByIdAsync(fact.Id);
+        var dim2 = from fa in _context.Facts
+                   join df in _context.DimensionFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.DimensionValueId equals dv.Id
+                   join lv in _context.Levels on dv.LevelId equals lv.Id
+                   join loc in _context.Dimensions on lv.DimensionId equals loc.Id
+                   where loc.Id == scope.Aggregations[1].DimensionId
+                   select new
+                   {
+                       FactId = fa.Id,
+                       Type = fa.Type,
+                       Amount = fa.Amount,
+                       LevelId = lv.Id,
+                       Value = lv.Value,
+                       DimensionId = loc.Id,
+                       AggregationValue = dv.Value
+                   };
 
-        if (factDb is null) return false;
+        var timeDimension = from fa in _context.Facts
+                            join df in _context.DimensionFacts on fa.Id equals df.FactId
+                            join dv in _context.Aggregations on df.DimensionValueId equals dv.Id //DimensionValueId -> AggregationId
+                            join lv in _context.Levels on dv.LevelId equals lv.Id
+                            join tim in _context.Dimensions on lv.DimensionId equals tim.Id
+                            where tim.Id == 3
+                            select new
+                            {
+                                FactId = fa.Id,
+                                Type = fa.Type,
+                                Amount = fa.Amount,
+                                LevelId = lv.Id,
+                                Value = lv.Value,
+                                DimensionId = tim.Id,
+                                AggregationValue = dv.Value
+                            };
 
-        factDb.Amount = fact.Amount;
-        factDb.Type = fact.Type;
+        var resultQuery = from d1 in dim1
+                          join d2 in dim2 on d1.FactId equals d2.FactId
+                          join tim in timeDimension on d1.FactId equals tim.FactId
+                          where 
+                            d1.LevelId == scope.Aggregations[0].LevelId && 
+                            d2.LevelId == scope.Aggregations[1].LevelId
+                          select new GetScopeDataDto
+                          {
+                              FactId = d1.FactId,
+                              Type = d1.Type,
+                              Amount = d1.Amount,
+                              TimeDimension = new TimeDimensionDto
+                              {
+                                  TimeLevelId = tim.LevelId,
+                                  TimeAggregationLabel = tim.Value,
+                                  TimeAggregationValue = tim.AggregationValue
+                              }
+                          };
 
-        await _context.SaveChangesAsync();
-
-        return true;
+        return resultQuery;
     }
 }

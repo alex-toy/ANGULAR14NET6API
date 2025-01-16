@@ -16,7 +16,7 @@
     <div *ngIf="isLoading">Loading...</div>
     <div *ngIf="!isLoading">
       <li *ngFor="let scope of scopes">
-        <strong>{{ scope.display }}</strong>
+        <strong (click)="onSelectScope(scope)">{{ scope.display }}</strong>
       </li>
     </div>
   </div>

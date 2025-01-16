@@ -1,4 +1,4 @@
-export class DimensionValueDto {
+export class AggregationDto {
     levelId : number = 0;
     levelLabel: string = "";
     value: string = "";

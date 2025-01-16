@@ -1,12 +1,12 @@
-import { DimensionValueDto } from "./dimensionValueDto";
+import { AggregationDto } from "../aggregations/aggregationDto";
 
 export class ScopeDto {
     levelIds: string = "";
-    dimensionValues: DimensionValueDto[] = [];
+    aggregations: AggregationDto[] = [];
     display: string = "";
 
     constructor(scope : ScopeDto){
-        this.dimensionValues = scope.dimensionValues;
-        this.display = scope.dimensionValues.map(dimensionValue => dimensionValue.levelLabel).join(' - ') ?? "";
+        this.aggregations = scope.aggregations;
+        this.display = scope.aggregations.map(dimensionValue => dimensionValue.levelLabel).join(' - ') ?? "";
     }
 }

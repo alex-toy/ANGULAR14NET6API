@@ -4,25 +4,18 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ScopeDto } from '../models/scopes/scopeDto';
 import { ResponseDto } from '../models/responseDto';
-import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
 import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HistoryService {
+export class ScopeService {
+  private url = `${environment.apiUrl}/scope`;
 
-  private url = `${environment.apiUrl}/history`;
-
-  constructor(private http: HttpClient) {}
-
-  getScopes(filter: ScopeFilterDto): Observable<ResponseDto<ScopeDto[]>> {
-      const header = new HttpHeaders().set('Content-type', 'application/json');
-      return this.http.post<ResponseDto<ScopeDto[]>>(`${this.url}/scopes`, filter, { headers : header });
-  }
-    
+  constructor(private httpClient: HttpClient) {}
+  
   getScopeData(scope: ScopeDto): Observable<ResponseDto<GetScopeDataDto[]>> {
       const header = new HttpHeaders().set('Content-type', 'application/json');
-      return this.http.post<ResponseDto<GetScopeDataDto[]>>(`${this.url}/data`, scope, { headers : header });
+      return this.httpClient.post<ResponseDto<GetScopeDataDto[]>>(`${this.url}/scopes`, scope, { headers : header });
   }
 }

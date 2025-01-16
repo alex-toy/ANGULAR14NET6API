@@ -7,13 +7,13 @@ import { DimensionsService } from '../services/dimensions.service';
 import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
-import { GetAggregationsResultDto } from '../models/dimensionValues/getAggregationsResultDto';
+import { GetAggregationsResultDto } from '../models/aggregations/getAggregationsResultDto';
 import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateFactComponent } from './create-fact/create-fact.component';
 import { GetFactResultDto } from '../models/facts/getFactResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
-import { GetAggregationDto } from '../models/dimensionValues/getAggregationDto';
+import { GetAggregationDto } from '../models/aggregations/getAggregationDto';
 
 @Component({
   selector: 'app-facts',

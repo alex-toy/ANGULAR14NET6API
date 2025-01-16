@@ -9,6 +9,7 @@ import { DimensionsService } from '../services/dimensions.service';
 import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
 import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
 import { ScopeDimensionFilterDto } from '../models/scopes/scopeDimensionFilterDto';
+import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
 
 @Component({
   selector: 'app-history',
@@ -17,6 +18,7 @@ import { ScopeDimensionFilterDto } from '../models/scopes/scopeDimensionFilterDt
 })
 export class HistoryComponent {
   scopes: ScopeDto[] = [];
+  scopeData: GetScopeDataDto[] = [];
   isLoading: boolean = true;
   
   dimensions: DimensionDto[] = [];
@@ -83,6 +85,18 @@ export class HistoryComponent {
       },
       error: (err) => {
         console.error('Error fetching dimension levels', err);
+      }
+    });
+  }
+
+  onSelectScope(scope : ScopeDto){
+    this.historyService.getScopeData(scope).subscribe({
+      next: (response: ResponseDto<GetScopeDataDto[]>) => {
+        this.scopeData = response.data;
+        console.log(this.scopeData)
+      },
+      error: (err) => {
+        console.error('Error fetching levels', err);
       }
     });
   }

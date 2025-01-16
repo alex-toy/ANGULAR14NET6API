@@ -43,6 +43,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Fact> Facts { get; set; }
     public DbSet<Dimension> Dimensions { get; set; }
     public DbSet<DimensionFact> DimensionFacts { get; set; }
-    public DbSet<Aggregation> DimensionValues { get; set; }
+    public DbSet<Aggregation> Aggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
 }

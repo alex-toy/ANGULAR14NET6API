@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Dimensions;
@@ -27,5 +28,12 @@ public class HistoryController
     {
         IEnumerable<ScopeDto> scopes = await _factService.GetScopes(filter);
         return new ResponseDto<IEnumerable<ScopeDto>> { Data = scopes, IsSuccess = true };
+    }
+
+    [HttpPost("data")]
+    public async Task<ResponseDto<IEnumerable<GetScopeDataDto>>> GetScopeData(ScopeDto scope)
+    {
+        IEnumerable<GetScopeDataDto> facts = await _factService.GetScopeData(scope);
+        return new ResponseDto<IEnumerable<GetScopeDataDto>> { Data = facts, IsSuccess = true };
     }
 }
