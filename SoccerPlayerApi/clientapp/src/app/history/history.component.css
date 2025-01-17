@@ -162,3 +162,28 @@
     }
   }
   
+  .history-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .history-content th, .history-content td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .history-content th {
+    background-color: #f4f4f4;
+  }
+  
+  .history-content tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .history-content tr:hover {
+    background-color: #e9e9e9;
+  }
+  
+  

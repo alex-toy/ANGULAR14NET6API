@@ -40,7 +40,7 @@ public class DimensionController
         return new GetAggregationsResultDto { Aggregations = dimensionValues, IsSuccess = true };
     }
 
-    [HttpPost("dimensionvalue")]
+    [HttpPost("aggregation")]
     public async Task<int> CreateDimensionValue(AggregationCreateDto dimensionValue)
     {
         return await _dimensionService.CreateDimensionValueAsync(dimensionValue);

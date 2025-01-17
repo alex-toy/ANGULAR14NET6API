@@ -1,5 +1,5 @@
 export interface TimeDimensionDto {
-    TimeLevelId: number;
-    TimeAggregationLabel: string;
-    TimeAggregationValue: string;
+    timeLevelId: number;
+    timeAggregationLabel: string;
+    timeAggregationValue: string;
 }

@@ -2,7 +2,7 @@
 
 public class AxisDto
 {
-    public int LevelId { get; set; }
+    public int AggregationId { get; set; }
     public int FactId { get; set; }
     public string LevelLabel { get; set; } = string.Empty;
     public string DimensionLabel { get; set; } = string.Empty;

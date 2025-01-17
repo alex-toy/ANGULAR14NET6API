@@ -15,7 +15,8 @@ import { ScopesComponent } from './scopes/scopes.component';
 import { HistoryComponent } from './history/history.component';
 import { ImportComponent } from './import/import.component';
 import { SimulationComponent } from './simulation/simulation.component';
-import { ExportComponent } from './export/export.component'; // Your modal component
+import { ExportComponent } from './export/export.component';
+import { FilterByTimeLabelPipe } from './pipes/filter-by-time-label.pipe'; // Your modal component
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { ExportComponent } from './export/export.component'; // Your modal compo
     HistoryComponent,
     ImportComponent,
     SimulationComponent,
-    ExportComponent 
+    ExportComponent,
+    FilterByTimeLabelPipe 
   ],
   imports: [
     BrowserModule,

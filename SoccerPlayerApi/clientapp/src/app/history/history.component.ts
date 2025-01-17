@@ -20,6 +20,7 @@ export class HistoryComponent {
   scopes: ScopeDto[] = [];
   scopeData: GetScopeDataDto[] = [];
   isLoading: boolean = true;
+  selectedTimeLabel = 'YEAR';
   
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
@@ -50,6 +51,7 @@ export class HistoryComponent {
     this.historyService.getScopes(filter).subscribe({
       next: (response: ResponseDto<ScopeDto[]>) => {
         this.scopes = response.data.map(d => new ScopeDto(d));
+        console.log(this.scopes)
         this.isLoading = false;
       },
       error: (err) => {
@@ -99,5 +101,26 @@ export class HistoryComponent {
         console.error('Error fetching levels', err);
       }
     });
+  }
+
+  get uniqueYears() {
+    const years = this.scopeData
+      .filter(item => item.timeDimension.timeAggregationLabel === 'YEAR')
+      .map(item => item.timeDimension.timeAggregationValue);
+    return [...new Set(years)];
+  }
+
+  get uniqueTypes() {
+    const types = this.scopeData
+      .filter(item => item.timeDimension.timeAggregationLabel === 'YEAR')
+      .map(item => item.type);
+    return [...new Set(types)]; // Remove duplicates
+  }
+
+  getAmountForTypeAndYear(type: string, year: string): number | null {
+    const item = this.scopeData.find(
+      (data) => data.type === type && data.timeDimension.timeAggregationValue === year
+    );
+    return item ? item.amount : null;
   }
 }

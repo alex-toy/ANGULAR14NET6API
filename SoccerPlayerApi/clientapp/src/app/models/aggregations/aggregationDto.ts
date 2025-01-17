@@ -1,5 +1,5 @@
 export class AggregationDto {
-    levelId : number = 0;
+    aggregationId : number = 0;
     levelLabel: string = "";
     value: string = "";
     dimension: string = "";

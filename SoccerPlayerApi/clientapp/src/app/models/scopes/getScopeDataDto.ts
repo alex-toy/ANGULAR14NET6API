@@ -1,4 +1,3 @@
-import { DimensionResultDto } from "../facts/dimensionResultDto";
 import { TimeDimensionDto } from "./timeDimensionDto";
 
 export interface GetScopeDataDto {
