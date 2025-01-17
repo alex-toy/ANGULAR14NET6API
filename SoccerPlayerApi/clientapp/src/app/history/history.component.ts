@@ -21,6 +21,7 @@ export class HistoryComponent {
   scopeData: GetScopeDataDto[] = [];
   isLoading: boolean = true;
   selectedTimeLabel = 'YEAR';
+  selectedTimeAggregationLabel: string = 'YEAR';
   
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
@@ -51,7 +52,6 @@ export class HistoryComponent {
     this.historyService.getScopes(filter).subscribe({
       next: (response: ResponseDto<ScopeDto[]>) => {
         this.scopes = response.data.map(d => new ScopeDto(d));
-        console.log(this.scopes)
         this.isLoading = false;
       },
       error: (err) => {
@@ -105,16 +105,29 @@ export class HistoryComponent {
 
   get uniqueYears() {
     const years = this.scopeData
-      .filter(item => item.timeDimension.timeAggregationLabel === 'YEAR')
+      .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
       .map(item => item.timeDimension.timeAggregationValue);
     return [...new Set(years)];
   }
 
+  get sortedYears() {
+    const years = this.scopeData
+      .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
+      .map(item => item.timeDimension.timeAggregationValue);
+    return [...new Set(years)].sort((a, b) => parseInt(a) - parseInt(b));
+  }
+
   get uniqueTypes() {
     const types = this.scopeData
-      .filter(item => item.timeDimension.timeAggregationLabel === 'YEAR')
+      .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
       .map(item => item.type);
-    return [...new Set(types)]; // Remove duplicates
+    return [...new Set(types)];
+  }
+
+  get uniqueTimeAggregationLabels() {
+    const labels = this.scopeData
+      .map(item => item.timeDimension.timeAggregationLabel);
+    return [...new Set(labels)];
   }
 
   getAmountForTypeAndYear(type: string, year: string): number | null {
@@ -122,5 +135,10 @@ export class HistoryComponent {
       (data) => data.type === type && data.timeDimension.timeAggregationValue === year
     );
     return item ? item.amount : null;
+  }
+
+  onTimeAggregationLabelChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedTimeAggregationLabel = selectElement.value;
   }
 }

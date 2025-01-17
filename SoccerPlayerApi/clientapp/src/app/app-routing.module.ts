@@ -4,8 +4,10 @@ import { HistoryComponent } from './history/history.component';
 import { ImportComponent } from './import/import.component';
 import { SimulationComponent } from './simulation/simulation.component';
 import { ExportComponent } from './export/export.component';
+import { EnvironmentsComponent } from './environments/environments.component';
 
 const routes: Routes = [
+  { path: 'environments', component: EnvironmentsComponent },
   { path: 'import', component: ImportComponent },
   { path: 'history', component: HistoryComponent },
   { path: 'simulation', component: SimulationComponent },

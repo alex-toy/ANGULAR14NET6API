@@ -45,4 +45,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<DimensionFact> DimensionFacts { get; set; }
     public DbSet<Aggregation> Aggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
+    public DbSet<Entities.Environment> Environments { get; set; }
 }

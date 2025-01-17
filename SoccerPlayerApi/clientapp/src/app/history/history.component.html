@@ -22,30 +22,35 @@
   </div>
 
 
-  <div class="history-content">
-    <!-- Display filtered scope data where timeAggregationLabel is "YEAR" -->
-    <div *ngIf="scopeData && scopeData.length > 0">
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <!-- Dynamically create a column for each unique year -->
-            <th *ngFor="let year of uniqueYears">{{ year }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Iterate through each unique Type -->
-          <tr *ngFor="let type of uniqueTypes">
-            <td>{{ type }}</td>
-            <!-- Display the amount for each year in the corresponding column -->
-            <td *ngFor="let year of uniqueYears">
-              <span *ngIf="getAmountForTypeAndYear(type, year)">{{ getAmountForTypeAndYear(type, year) }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="history-container">
+
+    <div class="filter">
+      <label for="timeAggregationLabel">Aggregation</label>
+      <select id="timeAggregationLabel" (change)="onTimeAggregationLabelChange($event)">
+        <option *ngFor="let label of uniqueTimeAggregationLabels" [value]="label">{{ label }}</option>
+      </select>
+    </div>
+
+    <div class="history-content">
+      <div *ngIf="scopeData && scopeData.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th *ngFor="let year of sortedYears">{{ year }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let type of uniqueTypes">
+              <td>{{ type }}</td>
+              <td *ngFor="let year of uniqueYears">
+                <span *ngIf="getAmountForTypeAndYear(type, year)">{{ getAmountForTypeAndYear(type, year) }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-  
 
 </div>
