@@ -17,7 +17,8 @@ import { ImportComponent } from './import/import.component';
 import { SimulationComponent } from './simulation/simulation.component';
 import { ExportComponent } from './export/export.component';
 import { FilterByTimeLabelPipe } from './pipes/filter-by-time-label.pipe';
-import { EnvironmentsComponent } from './environments/environments.component'; // Your modal component
+import { EnvironmentsComponent } from './environments/environments.component';
+import { EnvironmentDetailsComponent } from './environments/environment-details/environment-details.component'; // Your modal component
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { EnvironmentsComponent } from './environments/environments.component'; /
     SimulationComponent,
     ExportComponent,
     FilterByTimeLabelPipe,
-    EnvironmentsComponent 
+    EnvironmentsComponent,
+    EnvironmentDetailsComponent 
   ],
   imports: [
     BrowserModule,

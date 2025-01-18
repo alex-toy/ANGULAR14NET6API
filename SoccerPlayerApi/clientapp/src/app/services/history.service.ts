@@ -20,6 +20,10 @@ export class HistoryService {
       const header = new HttpHeaders().set('Content-type', 'application/json');
       return this.http.post<ResponseDto<ScopeDto[]>>(`${this.url}/scopes`, filter, { headers : header });
   }
+
+  getScopesByEnvironment(environmentId: number): Observable<ResponseDto<ScopeDto[]>> {
+      return this.http.get<ResponseDto<ScopeDto[]>>(`${this.url}/scopesbyenvironmentid/${environmentId}`)
+  }
     
   getScopeData(scope: ScopeDto): Observable<ResponseDto<GetScopeDataDto[]>> {
       const header = new HttpHeaders().set('Content-type', 'application/json');

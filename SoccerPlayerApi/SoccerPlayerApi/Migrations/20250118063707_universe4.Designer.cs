@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoccerPlayerApi.Repo;
 
@@ -11,9 +12,10 @@ using SoccerPlayerApi.Repo;
 namespace SoccerPlayerApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250118063707_universe4")]
+    partial class universe4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +35,21 @@ namespace SoccerPlayerApi.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DimensionIdFilter1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DimensionIdFilter2")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DimensionIdFilter3")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DimensionIdFilter4")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DimensionIdFilter5")
+                        .HasColumnType("int");
 
                     b.Property<int>("LevelIdFilter1")
                         .HasColumnType("int");

@@ -10,6 +10,7 @@ namespace SoccerPlayerApi.Services.Facts
         Task<IEnumerable<string>> GetFactTypes();
         Task<IEnumerable<GetScopeDataDto>> GetScopeData(ScopeDto scope);
         Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? filter);
+        Task<IEnumerable<ScopeDto>> GetScopesByEnvironmentId(int universeId);
         Task<bool> UpdateFactAsync(FactUpdateDto fact);
     }
 }

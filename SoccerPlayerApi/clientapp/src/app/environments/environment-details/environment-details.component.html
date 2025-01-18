@@ -1,0 +1,17 @@
+<div *ngIf="isLoading" class="loading">Loading...</div>
+
+<div *ngIf="!isLoading && environment" class="environment-details">
+  <h2>{{ environment.name }} Details</h2>
+  <p><strong>Description:</strong> {{ environment.description }}</p>
+
+  <h4>Levels:</h4>
+  <ul>
+    <li><strong>Level 1:</strong> {{ environment.levelLabel1 }} (ID: {{ environment.levelIdFilter1 }})</li>
+    <li><strong>Level 2:</strong> {{ environment.levelLabel2 }} (ID: {{ environment.levelIdFilter2 }})</li>
+    <li><strong>Level 3:</strong> {{ environment.levelLabel3 }} (ID: {{ environment.levelIdFilter3 }})</li>
+    <li><strong>Level 4:</strong> {{ environment.levelLabel4 || 'N/A' }}</li>
+    <li><strong>Level 5:</strong> {{ environment.levelLabel5 || 'N/A' }}</li>
+  </ul>
+
+  <a [routerLink]="['/environments']" class="back-btn">Back to Environments</a>
+</div>

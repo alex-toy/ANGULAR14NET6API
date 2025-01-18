@@ -4,15 +4,41 @@
     height: 100vh; /* Full height of the viewport */
 }
 
-/* Left section: Scopes list */
-.scopes-list {
-    width: 300px; /* Set the width of the scopes list */
-    overflow-y: scroll; /* Make the list scrollable */
-    padding: 10px;
+/* Left section: Contains the filters, sliders, environment section, and scopes list */
+.left-section {
+    width: 300px; /* Fixed width for the left section */
     background-color: #f4f4f4; /* Light background color */
-    border-right: 2px solid #ddd; /* Optional: Adds a border between the two sections */
+    border-right: 2px solid #ddd; /* Border between left and right sections */
+    display: flex;
+    flex-direction: column; /* Stack the filter mode toggle, sliders, and scopes vertically */
+    justify-content: flex-start; /* Align everything to the top */
+    padding: 20px;
+    height: 100vh; /* Make it fill the height of the screen */
+    overflow-y: auto; /* Allow scrolling if the content overflows */
 }
 
+/* Filter mode toggle section */
+.filter-mode-toggle {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.filter-mode-toggle label {
+    margin-right: 8px;
+}
+
+/* Sliders Section (Dimensions Filter) */
+.scopes-list {
+    margin-bottom: 20px;
+}
+
+/* Environment Section */
+.environment-filter {
+    margin-bottom: 20px;
+}
+
+/* Scopes list styling */
 .scopes-list ul {
     list-style-type: none;
     margin: 0;
@@ -31,14 +57,63 @@
     background-color: #e0e0e0; /* Darker background on hover */
 }
 
-/* Right section: Content area */
-.history-content {
-    flex-grow: 1; /* Make the content take the remaining space */
+/* Right section: Content area (history-content) */
+.right-section {
+    flex-grow: 1; /* Take the remaining space */
     padding: 20px;
     background-color: #fff;
+    display: flex;
+    flex-direction: column; /* Stack filter and history-content vertically */
 }
 
-/* Optional: Styling for History Page */
+/* Filter section inside the right-section */
+.filter {
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* Label style for the filter section */
+.filter label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Style for the dropdown (select element) */
+#timeAggregationLabel {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    width: 200px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+/* Hover effect for the dropdown */
+#timeAggregationLabel:hover {
+    border-color: #888;
+}
+
+/* Focus effect for the dropdown */
+#timeAggregationLabel:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* Option style inside the dropdown */
+#timeAggregationLabel option {
+    padding: 10px;
+    font-size: 14px;
+}
+
+/* History Content */
+.history-content {
+    flex-grow: 1;
+    margin-top: 20px;
+}
+
 .history-content h2 {
     font-size: 24px;
 }
@@ -46,6 +121,31 @@
 .history-content p {
     font-size: 18px;
 }
+
+.history-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.history-content th, .history-content td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.history-content th {
+    background-color: #f4f4f4;
+}
+
+.history-content tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.history-content tr:hover {
+    background-color: #e9e9e9;
+}
+
 /* Fact container styling */
 .fact-container {
     border: 2px solid black;
@@ -54,81 +154,46 @@
     border-radius: 5px;  
     background-color: #f9f9f9;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional subtle shadow for depth */
-  }
-  
-  .fact-container h2 {
+}
+
+.fact-container h2 {
     font-size: 18px;
     margin-bottom: 10px;
     color: #333;
-  }
-  
-  .fact-container p {
+}
+
+.fact-container p {
     font-size: 16px;
     color: #555;
     margin: 8px 0;
-  }
-  
-  .fact-container p strong {
+}
+
+.fact-container p strong {
     font-weight: bold;
     color: #333;
-  }
-  
-  /* Layout for displaying dimensions in a row */
-  .fact-dimensions {
-    display: flex;
-    flex-direction: row; /* Arrange dimensions vertically inside the fact box */
-    gap: 15px; /* Adds space between each dimension row */
-  }
-  
-/* Ensure the dimension rows are displayed as a flex container and wrap if needed */
-.dimension-row {
-  display: flex; /* Flexbox layout */
-  flex-wrap: wrap; /* Allow items to wrap to the next line if necessary */
-  margin: 5px 0; /* Optional: Add some margin between rows for spacing */
 }
 
-/* Style for each dimension label and value */
-.dimension-row p {
-  margin-right: 20px; /* Space between label-value pairs */
-  white-space: nowrap; /* Prevent text from breaking in the middle */
-}
-
-  
-  .dimension-row p strong {
-    margin-right: 10px; /* Add spacing between the label and value */
-    color: #333; /* Ensure dimension labels are bold and stand out */
-  }
-  
-  /* Error message styling */
-  .error {
-    color: red;
-    font-weight: bold;
-    background-color: #f8d7da;
-    padding: 15px;
-    border-radius: 5px;
-    margin-top: 20px;
-    border: 1px solid #f5c6cb;
-  }
-  
-  .dimension-container {
+/* Dimension container for filtering */
+.dimension-container {
     display: flex;
     flex-wrap: wrap; /* Allow wrapping if there are too many items to fit in one row */
     gap: 20px; /* Adjust the spacing between the items */
-  }
-  
-  .dimension-item {
+}
+
+.dimension-item {
     flex: 1 1 200px;
     padding: 10px;
     border: 1px solid #ccc;
-  }
+}
 
-  .button-container {
+/* Button container */
+.button-container {
     display: flex;
     justify-content: space-between; /* Space out the buttons */
     gap: 10px; /* Optional: space between buttons */
-  }
-  
-  button {
+}
+
+button {
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
@@ -137,94 +202,32 @@
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
+}
+
+button:hover {
     background-color: #0056b3;
-  }
-  
-  .button-container button:nth-child(2) {
+}
+
+.button-container button:nth-child(2) {
     margin-left: auto;
-  }
-  
-  button:focus {
+}
+
+button:focus {
     outline: none;
-  }
-  
-  @media (max-width: 768px) {
-    .dimension-row {
-      flex-direction: column; /* Stack the labels and values vertically */
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .left-section {
+        width: 100%; /* Take full width on smaller screens */
+        height: auto; /* Adjust height for smaller screens */
     }
-  
-    .dimension-row p {
-      margin-right: 0; /* Remove horizontal space */
-      margin-bottom: 10px; /* Optional: Add some vertical space between label-value pairs */
+
+    .right-section {
+        margin-top: 20px; /* Adjust space for smaller screens */
     }
-  }
 
-  .history-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .history-content th, .history-content td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  .history-content th {
-    background-color: #f4f4f4;
-  }
-  
-  .history-content tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  .history-content tr:hover {
-    background-color: #e9e9e9;
-  }
-  Style for the dropdown container */
-.filter {
-  margin: 20px 0;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
+    .history-content {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
 }
-
-/* Label style */
-.filter label {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-/* Style for the dropdown (select element) */
-#timeAggregationLabel {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-  width: 200px;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
-
-/* Hover effect for the dropdown */
-#timeAggregationLabel:hover {
-  border-color: #888;
-}
-
-/* Focus effect for the dropdown */
-#timeAggregationLabel:focus {
-  outline: none;
-  border-color: #4CAF50;
-}
-
-/* Option style inside the dropdown */
-#timeAggregationLabel option {
-  padding: 10px;
-  font-size: 14px;
-}
-  
-  

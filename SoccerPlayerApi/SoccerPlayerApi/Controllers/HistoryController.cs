@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Facts;
-using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi.Controllers;
 
@@ -16,7 +14,7 @@ public class HistoryController
     private readonly IDimensionService _dimensionService;
     private readonly IFactService _factService;
 
-    public HistoryController(IConfiguration configuration, IPlayerService playerService, IDimensionService dimensionService, IFactService factService)
+    public HistoryController(IConfiguration configuration, IDimensionService dimensionService, IFactService factService)
     {
         _configuration = configuration;
         _dimensionService = dimensionService;
@@ -27,6 +25,13 @@ public class HistoryController
     public async Task<ResponseDto<IEnumerable<ScopeDto>>> GetScopes(ScopeFilterDto? filter)
     {
         IEnumerable<ScopeDto> scopes = await _factService.GetScopes(filter);
+        return new ResponseDto<IEnumerable<ScopeDto>> { Data = scopes, IsSuccess = true };
+    }
+
+    [HttpGet("scopesbyenvironmentid/{environmentId}")]
+    public async Task<ResponseDto<IEnumerable<ScopeDto>>> GetScopesByEnvironmentId(int environmentId)
+    {
+        IEnumerable<ScopeDto> scopes = await _factService.GetScopesByEnvironmentId(environmentId);
         return new ResponseDto<IEnumerable<ScopeDto>> { Data = scopes, IsSuccess = true };
     }
 

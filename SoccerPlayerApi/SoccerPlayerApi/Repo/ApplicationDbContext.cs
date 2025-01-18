@@ -37,6 +37,36 @@ public class ApplicationDbContext : DbContext
             .WithOne(l => l.Dimension)
             .HasForeignKey(l => l.DimensionId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter1)
+            .WithMany(l => l.Environment1s)
+            .HasForeignKey(e => e.LevelIdFilter1)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter2)
+            .WithMany(l => l.Environment2s)
+            .HasForeignKey(e => e.LevelIdFilter2)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter3)
+            .WithMany(l => l.Environment3s)
+            .HasForeignKey(e => e.LevelIdFilter3)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter4)
+            .WithMany(l => l.Environment4s)
+            .HasForeignKey(e => e.LevelIdFilter4)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter5)
+            .WithMany(l => l.Environment5s)
+            .HasForeignKey(e => e.LevelIdFilter5)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
     public DbSet<Player> Players { get; set; }

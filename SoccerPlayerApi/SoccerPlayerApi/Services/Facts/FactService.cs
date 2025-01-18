@@ -41,8 +41,8 @@ public class FactService : IFactService
                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
                        join lv in _context.Levels on agg.LevelId equals lv.Id
                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
-                       where (correspondingFilter != null) 
-                            ? (dim.Id == currentDimensionId && lv.Id == correspondingFilter.AggregationId) 
+                       where (correspondingFilter != null)
+                            ? (dim.Id == currentDimensionId && lv.Id == correspondingFilter.LevelId)
                             : (dim.Id == currentDimensionId)
                        select new AxisDto
                        {
@@ -54,6 +54,90 @@ public class FactService : IFactService
                        };
 
             axises.Add(axis);
+        }
+
+        IQueryable<ScopeDto> result = JoinAxes(axises, dimensionCount);
+
+        List<ScopeDto> distinctResult = await result.Distinct().ToListAsync();
+        return distinctResult ?? new List<ScopeDto>();
+    }
+
+    public async Task<IEnumerable<ScopeDto>> GetScopesByEnvironmentId(int environmentId)
+    {
+        Entities.Environment? environment = _context.Environments
+            .Include(e => e.LevelFilter1)
+            .Include(e => e.LevelFilter2)
+            .Include(e => e.LevelFilter3)
+            .Include(e => e.LevelFilter4)
+            .Include(e => e.LevelFilter5)
+            .FirstOrDefault(d => d.Id == environmentId);
+
+        if (environment is null) throw new Exception("environment doesn't exist");
+
+        int dimensionCount = 0;
+        List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
+
+        if (environment.LevelFilter1?.DimensionId is not null)
+        {
+            dimensionCount += 1;
+            var axis1 = from fa in _context.Facts
+                        join df in _context.DimensionFacts on fa.Id equals df.FactId
+                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                        join lv in _context.Levels on agg.LevelId equals lv.Id
+                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                        where dim.Id == environment.LevelFilter1.DimensionId && lv.Id == environment.LevelIdFilter1
+                        select new AxisDto
+                        {
+                            FactId = fa.Id,
+                            LevelLabel = agg.Value,
+                            AggregationId = agg.Id,
+                            DimensionId = lv.DimensionId,
+                            DimensionLabel = lv.Dimension.Value,
+                        };
+
+            axises.Add(axis1);
+        }
+
+        if (environment.LevelFilter2?.DimensionId is not null)
+        {
+            dimensionCount += 1;
+            var axis1 = from fa in _context.Facts
+                        join df in _context.DimensionFacts on fa.Id equals df.FactId
+                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                        join lv in _context.Levels on agg.LevelId equals lv.Id
+                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                        where dim.Id == environment.LevelFilter2.DimensionId && lv.Id == environment.LevelIdFilter2
+                        select new AxisDto
+                        {
+                            FactId = fa.Id,
+                            LevelLabel = agg.Value,
+                            AggregationId = agg.Id,
+                            DimensionId = lv.DimensionId,
+                            DimensionLabel = lv.Dimension.Value,
+                        };
+
+            axises.Add(axis1);
+        }
+
+        if (environment.LevelFilter3?.DimensionId is not null)
+        {
+            dimensionCount += 1;
+            var axis1 = from fa in _context.Facts
+                        join df in _context.DimensionFacts on fa.Id equals df.FactId
+                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                        join lv in _context.Levels on agg.LevelId equals lv.Id
+                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                        where dim.Id == environment.LevelFilter3.DimensionId && lv.Id == environment.LevelIdFilter3
+                        select new AxisDto
+                        {
+                            FactId = fa.Id,
+                            LevelLabel = agg.Value,
+                            AggregationId = agg.Id,
+                            DimensionId = lv.DimensionId,
+                            DimensionLabel = lv.Dimension.Value,
+                        };
+
+            axises.Add(axis1);
         }
 
         IQueryable<ScopeDto> result = JoinAxes(axises, dimensionCount);

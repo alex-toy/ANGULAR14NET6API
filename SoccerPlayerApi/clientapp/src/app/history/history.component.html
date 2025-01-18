@@ -1,29 +1,53 @@
 <div class="history-container">
-
-  <div class="scopes-list">
+  <!-- Left Section: Contains Filters, Environment Selection, and Scopes List -->
+  <div class="left-section">
     
-    <!-- sliders -->
-    <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
-      <p>{{ dimension.value }}</p>
-      <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
-        <option value="">Select Level</option>
-        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
-      </select>
+    <!-- Filter Mode Toggle -->
+    <div class="filter-mode-toggle">
+      <input type="radio" id="filterByDimensions" name="filterMode" [(ngModel)]="filterMode" value="dimensions">
+      <label for="filterByDimensions">Levels</label>
+      
+      <input type="radio" id="filterByEnvironment" name="filterMode" [(ngModel)]="filterMode" value="environment">
+      <label for="filterByEnvironment">Environment</label>
     </div>
-    <button (click)="applyFilter()">Apply Filter</button>
+    
+    <!-- Sliders Section (Dimensions Filter) -->
+    <div *ngIf="filterMode === 'dimensions'" class="scopes-list">
+      <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
+        <label for="levelSelect-{{dimension.dimensionId}}">{{ dimension.value }}</label>
+        <select id="levelSelect-{{dimension.dimensionId}}" (change)="onLevelChange(dimension.dimensionId, $event)">
+          <option value="">Select Level</option>
+          <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+        </select>
+      </div>
+      <button (click)="applyLevelFilter()" class="apply-filter-btn">Apply Filter</button>
+    </div>
 
-    <!-- scopes -->
+    <!-- Environment Filter Section -->
+    <div *ngIf="filterMode === 'environment'" class="environment-filter">
+      <label for="environmentSelect">Select Environment:</label>
+      <select id="environmentSelect" (change)="onEnvironmentChange($event)">
+        <option value="">Select Environment</option>
+        <option *ngFor="let environment of environments" [value]="environment.id">{{ environment.name }}</option>
+      </select>
+      <button (click)="applyEnvironmentFilter()" class="apply-filter-btn">Apply Environment Filter</button>
+    </div>
+
+    <!-- Scopes List -->
     <div *ngIf="isLoading">Loading...</div>
     <div *ngIf="!isLoading">
-      <li *ngFor="let scope of scopes">
-        <strong (click)="onSelectScope(scope)">{{ scope.display }}</strong>
-      </li>
+      <ul>
+        <li *ngFor="let scope of scopes">
+          <strong (click)="onSelectScope(scope)">{{ scope.display }}</strong>
+        </li>
+      </ul>
     </div>
   </div>
 
-
-  <div class="history-container">
-
+  <!-- Right Section: Contains Filter and History Content -->
+  <div class="right-section">
+    
+    <!-- Filter Section -->
     <div class="filter">
       <label for="timeAggregationLabel">Aggregation</label>
       <select id="timeAggregationLabel" (change)="onTimeAggregationLabelChange($event)">
@@ -31,6 +55,7 @@
       </select>
     </div>
 
+    <!-- History Content -->
     <div class="history-content">
       <div *ngIf="scopeData && scopeData.length > 0">
         <table>
@@ -52,5 +77,4 @@
       </div>
     </div>
   </div>
-
 </div>

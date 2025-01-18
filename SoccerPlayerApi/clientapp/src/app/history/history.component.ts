@@ -10,6 +10,8 @@ import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResult
 import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
 import { ScopeDimensionFilterDto } from '../models/scopes/scopeDimensionFilterDto';
 import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
+import { EnvironmentDto } from '../models/environments/environmentDto';
+import { EnvironmentService } from '../services/environment.service';
 
 @Component({
   selector: 'app-history',
@@ -19,6 +21,7 @@ import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
 export class HistoryComponent {
   scopes: ScopeDto[] = [];
   scopeData: GetScopeDataDto[] = [];
+  filterMode: string = 'dimensions';
   isLoading: boolean = true;
   selectedTimeLabel = 'YEAR';
   selectedTimeAggregationLabel: string = 'YEAR';
@@ -29,20 +32,29 @@ export class HistoryComponent {
   selectedLevels: { [dimensionId:number] : number} = {};
   selectedDimensionValues: { [dimensionId:number] : number} = {};
   
+  environments: EnvironmentDto[] = [];
+  selectedEnvironmentId : number = 0;
+  
   constructor(
     private historyService: HistoryService,
     private levelService: LevelService, 
-    private dimensionService: DimensionsService, 
+    private dimensionService: DimensionsService,
+    private environmentService: EnvironmentService,
   ) {}
 
   ngOnInit(): void {
     this.fetchScopes();
     this.fetchDimensions();
     this.fetchDimensionLevels();
+    this.fetchEnvironments();
   }
   
-  applyFilter(): void {
+  applyLevelFilter(): void {
     this.fetchScopes();
+  }
+
+  applyEnvironmentFilter() {
+    this.fetchScopesByEnvironment();
   }
   
   fetchScopes(): void {
@@ -59,11 +71,29 @@ export class HistoryComponent {
       }
     });
   }
-
-  onLevelChange(dimensionId: number, event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedLevelId = +selectElement.value;
-    this.selectedLevels[dimensionId] = selectedLevelId;
+  
+  fetchScopesByEnvironment(): void {
+    this.historyService.getScopesByEnvironment(this.selectedEnvironmentId).subscribe({
+      next: (response: ResponseDto<ScopeDto[]>) => {
+        this.scopes = response.data.map(d => new ScopeDto(d));
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+  
+  fetchEnvironments(): void {
+    this.environmentService.getEnvironments().subscribe({
+      next: (response: ResponseDto<EnvironmentDto[]>) => {
+        this.environments = response.data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
   
   fetchDimensions(): void {
@@ -91,11 +121,21 @@ export class HistoryComponent {
     });
   }
 
+  onLevelChange(dimensionId: number, event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedLevelId = +selectElement.value;
+    this.selectedLevels[dimensionId] = selectedLevelId;
+  }
+
+  onEnvironmentChange(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedEnvironmentId = +selectElement.value;
+  }
+
   onSelectScope(scope : ScopeDto){
     this.historyService.getScopeData(scope).subscribe({
       next: (response: ResponseDto<GetScopeDataDto[]>) => {
         this.scopeData = response.data;
-        console.log(this.scopeData)
       },
       error: (err) => {
         console.error('Error fetching levels', err);

@@ -3,6 +3,7 @@ using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
+using SoccerPlayerApi.Services.Environments;
 using SoccerPlayerApi.Services.Facts;
 using SoccerPlayerApi.Services.Levels;
 using SoccerPlayerApi.Services.Players;
@@ -28,6 +29,7 @@ namespace SoccerPlayerApi
             builder.Services.AddScoped<IDimensionService, DimensionService>();
             builder.Services.AddScoped<IFactService, FactService>();
             builder.Services.AddScoped<ILevelService, LevelService>();
+            builder.Services.AddScoped<IEnvironmentService, EnvironmentService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
