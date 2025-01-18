@@ -20,6 +20,7 @@ import { EnvironmentService } from '../services/environment.service';
 })
 export class HistoryComponent {
   scopes: ScopeDto[] = [];
+  selectedScope: ScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
   filterMode: string = 'dimensions';
   isLoading: boolean = true;
@@ -98,8 +99,8 @@ export class HistoryComponent {
   
   fetchDimensions(): void {
     this.dimensionService.getDimensions().subscribe({
-      next: (response: GetDimensionsResultDto) => {
-        this.dimensions = response.dimensions;
+      next: (response: ResponseDto<DimensionDto[]>) => {
+        this.dimensions = response.data;
       },
       error: (err) => {
         console.error('Error fetching levels', err);
@@ -133,6 +134,7 @@ export class HistoryComponent {
   }
 
   onSelectScope(scope : ScopeDto){
+    this.selectedScope = scope;
     this.historyService.getScopeData(scope).subscribe({
       next: (response: ResponseDto<GetScopeDataDto[]>) => {
         this.scopeData = response.data;

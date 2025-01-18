@@ -10,19 +10,19 @@ public class Environment : Entity
     public string Description { get; set; } = string.Empty;
 
     public int LevelIdFilter1 { get; set; }
-    public Level? LevelFilter1 { get; set; } = new Level();
+    public Level? LevelFilter1 { get; set; }
 
     public int? LevelIdFilter2 { get; set; }
-    public Level? LevelFilter2 { get; set; } = new Level();
+    public Level? LevelFilter2 { get; set; }
 
     public int? LevelIdFilter3 { get; set; }
-    public Level? LevelFilter3 { get; set; } = new Level();
+    public Level? LevelFilter3 { get; set; }
 
     public int? LevelIdFilter4 { get; set; }
-    public Level? LevelFilter4 { get; set; } = new Level();
+    public Level? LevelFilter4 { get; set; }
 
     public int? LevelIdFilter5 { get; set; }
-    public Level? LevelFilter5 { get; set; } = new Level();
+    public Level? LevelFilter5 { get; set; }
 
     public EnvironmentDto ToDto()
     {

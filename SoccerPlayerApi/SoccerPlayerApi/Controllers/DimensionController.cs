@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
+using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Players;
@@ -21,10 +22,17 @@ public class DimensionController
     }
 
     [HttpGet("dimensions")]
-    public async Task<GetDimensionsResultDto> GetDimensions()
+    public async Task<ResponseDto<IEnumerable<DimensionDto>>> GetDimensions()
     {
         IEnumerable<DimensionDto> dimensions = await _dimensionService.GetDimensions();
-        return new GetDimensionsResultDto { Dimensions = dimensions, IsSuccess = true };
+        return new ResponseDto<IEnumerable<DimensionDto>> { Data = dimensions, IsSuccess = true };
+    }
+
+    [HttpGet("dimensioncount")]
+    public async Task<ResponseDto<int>> GetDimensionCount()
+    {
+        int dimensionCount = await _dimensionService.GetDimensionCount();
+        return new ResponseDto<int> { Data = dimensionCount, IsSuccess = true };
     }
 
     [HttpPost("dimension")]

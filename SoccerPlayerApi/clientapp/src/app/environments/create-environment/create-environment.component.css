@@ -1,0 +1,14 @@
+/* Add custom styles for the create environment form */
+.container {
+    max-width: 600px;
+    margin-top: 50px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  button {
+    margin-top: 20px;
+  }
+  

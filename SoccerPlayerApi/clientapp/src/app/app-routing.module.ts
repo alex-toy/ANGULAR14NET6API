@@ -6,10 +6,12 @@ import { SimulationComponent } from './simulation/simulation.component';
 import { ExportComponent } from './export/export.component';
 import { EnvironmentsComponent } from './environments/environments.component';
 import { EnvironmentDetailsComponent } from './environments/environment-details/environment-details.component';
+import { CreateEnvironmentComponent } from './environments/create-environment/create-environment.component';
 
 const routes: Routes = [
   { path: 'environments', component: EnvironmentsComponent },
   { path: 'environment-details/:id', component: EnvironmentDetailsComponent },
+  { path: 'create-environment', component: CreateEnvironmentComponent },
 
   { path: 'import', component: ImportComponent },
   { path: 'history', component: HistoryComponent },

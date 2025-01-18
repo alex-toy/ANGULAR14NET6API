@@ -11,6 +11,7 @@ import { GetDimensionLevelDto } from 'src/app/models/levels/getDimensionLevelDto
 import { DimensionsService } from 'src/app/services/dimensions.service';
 import { FactService } from 'src/app/services/fact.service';
 import { LevelService } from 'src/app/services/level.service';
+import { ResponseDto } from 'src/app/models/responseDto';
 
 @Component({
   selector: 'app-create-fact',
@@ -71,17 +72,17 @@ export class CreateFactComponent {
       }
     });
   }
-
-  fetchDimensions(): void {
-    this.dimensionService.getDimensions().subscribe({
-      next: (response: GetDimensionsResultDto) => {
-        this.dimensions = response.dimensions;
-      },
-      error: (err) => {
-        console.error('Error fetching levels', err);
-      }
-    });
-  }
+    
+    fetchDimensions(): void {
+      this.dimensionService.getDimensions().subscribe({
+        next: (response: ResponseDto<DimensionDto[]>) => {
+          this.dimensions = response.data;
+        },
+        error: (err) => {
+          console.error('Error fetching levels', err);
+        }
+      });
+    }
 
   fetchDimensionValues(levelId: number, dimensionId: number): void {
     this.dimensionService.getDimensionValues(levelId).subscribe({

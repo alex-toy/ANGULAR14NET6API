@@ -1,7 +1,6 @@
 <div class="history-container">
-  <!-- Left Section: Contains Filters, Environment Selection, and Scopes List -->
+  <!-- Left Section: Filters and Scopes -->
   <div class="left-section">
-    
     <!-- Filter Mode Toggle -->
     <div class="filter-mode-toggle">
       <input type="radio" id="filterByDimensions" name="filterMode" [(ngModel)]="filterMode" value="dimensions">
@@ -36,18 +35,18 @@
     <!-- Scopes List -->
     <div *ngIf="isLoading">Loading...</div>
     <div *ngIf="!isLoading">
-      <ul>
-        <li *ngFor="let scope of scopes">
-          <strong (click)="onSelectScope(scope)">{{ scope.display }}</strong>
+      <ul class="scopes-list">
+        <li *ngFor="let scope of scopes" 
+          [class.selected]="scope === selectedScope" 
+          (click)="onSelectScope(scope)">
+          {{ scope.display }}
         </li>
       </ul>
     </div>
   </div>
 
-  <!-- Right Section: Contains Filter and History Content -->
+  <!-- Right Section: Content and Table -->
   <div class="right-section">
-    
-    <!-- Filter Section -->
     <div class="filter">
       <label for="timeAggregationLabel">Aggregation</label>
       <select id="timeAggregationLabel" (change)="onTimeAggregationLabelChange($event)">
@@ -55,7 +54,6 @@
       </select>
     </div>
 
-    <!-- History Content -->
     <div class="history-content">
       <div *ngIf="scopeData && scopeData.length > 0">
         <table>

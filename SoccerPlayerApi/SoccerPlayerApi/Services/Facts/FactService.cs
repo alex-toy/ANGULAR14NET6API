@@ -5,7 +5,6 @@ using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
-using System;
 using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Facts;

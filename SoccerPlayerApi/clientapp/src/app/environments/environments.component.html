@@ -1,16 +1,14 @@
 <div *ngIf="isLoading">Loading...</div>
 
+<button class="btn btn-primary mb-3" routerLink="/create-environment">Create Environment</button>
+
 <div *ngIf="!isLoading">
   <!-- Table displaying the environment data -->
   <table class="table">
     <thead>
       <tr>
         <th>Name</th>
-        <th>Level 1</th>
-        <th>Level 2</th>
-        <th>Level 3</th>
-        <th>Level 4</th>
-        <th>Level 5</th>
+        <th *ngFor="let dimension of dimensions">{{ dimension.value }}</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -19,10 +17,10 @@
       <tr *ngFor="let environment of environments">
         <td>{{ environment.name }}</td>
         <td>{{ environment.levelLabel1 }}</td>
-        <td>{{ environment.levelLabel2 }}</td>
-        <td>{{ environment.levelLabel3 }}</td>
-        <td>{{ environment.levelLabel4 || 'N/A' }}</td>  <!-- 'N/A' if null or empty -->
-        <td>{{ environment.levelLabel5 || 'N/A' }}</td>  <!-- 'N/A' if null or empty -->
+        <td *ngIf="dimensions.length >= 2">{{ environment.levelLabel2 }}</td>
+        <td *ngIf="dimensions.length >= 3">{{ environment.levelLabel3 }}</td>
+        <td *ngIf="dimensions.length >= 4">{{ environment.levelLabel4 }}</td>
+        <td *ngIf="dimensions.length >= 5">{{ environment.levelLabel5 }}</td>
         <td>
           <a [routerLink]="['/environment-details', environment.id]" class="btn btn-info">Details</a>
         </td>

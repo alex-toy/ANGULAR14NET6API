@@ -1,0 +1,30 @@
+<div class="container">
+    <h2>Create New Environment</h2>
+  
+    <form (ngSubmit)="onSubmit()" #environmentForm="ngForm">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" class="form-control" required [(ngModel)]="environment.name" name="name">
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <input type="text" id="description" class="form-control" [(ngModel)]="environment.description" name="description">
+      </div>
+  
+      <div class="form-group" *ngFor="let dimensionLevel of dimensionLevels; let i = index">
+        <label for="level1">{{ dimensionLevel.value }}</label>
+
+        <select id="levelSelect-{{dimensionLevel.dimensionId}}" (change)="onLevelChange(dimensionLevel.dimensionId, $event)">
+          <option value="">Select Level</option>
+          <option *ngFor="let level of dimensionLevel.levels" [value]="level.id">{{ level.value }}</option>
+        </select>
+      </div>
+  
+      <button type="submit" class="btn btn-primary" 
+        [disabled]="!environmentForm.form.valid"
+        (clic)="onSubmit()"
+      >Create</button>
+    </form>
+  </div>
+  

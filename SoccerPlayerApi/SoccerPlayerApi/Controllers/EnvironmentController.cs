@@ -25,6 +25,20 @@ public class EnvironmentController
         return new ResponseDto<IEnumerable<EnvironmentDto>> { Data = environments, IsSuccess = true, Count = environments.Count() };
     }
 
+    [HttpPost("create")]
+    public async Task<ResponseDto<int>> CreateEnvironment(EnvironmentCreateDto environment)
+    {
+        try
+        {
+            int id = await _environmentService.CreateEnvironment(environment);
+            return new ResponseDto<int> { Data = id, IsSuccess = true, Count = 1 };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<int> { IsSuccess = false, Count = 0, Message = ex.Message };
+        }
+    }
+
     [HttpGet("environment/{id}")]
     public async Task<ResponseDto<EnvironmentDto?>> GetEnvironmentById(int id)
     {

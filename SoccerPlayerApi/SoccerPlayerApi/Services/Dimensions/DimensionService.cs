@@ -33,6 +33,11 @@ public class DimensionService : IDimensionService
             .ToListAsync();
     }
 
+    public async Task<int> GetDimensionCount()
+    {
+        return await _context.Dimensions.CountAsync();
+    }
+
     public async Task<int> CreateDimensionAsync(Dimension dimension)
     {
         int entityId = await _dimensionRepo.CreateAsync(dimension);
