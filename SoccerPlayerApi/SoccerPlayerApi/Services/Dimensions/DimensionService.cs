@@ -66,7 +66,7 @@ public class DimensionService : IDimensionService
     public async Task<bool> GetAreDimensionsCovered(FactCreateDto fact, int dimensionCount)
     {
         List<int> distinctDimensionValueIds = await _context.Aggregations
-            .Where(x => fact.DimensionValueIds.Contains(x.Id))
+            .Where(x => fact.AggregationIds.Contains(x.Id))
             .Include(x => x.Level).ThenInclude(x => x.Dimension)
             .Select(x => x.Level.Dimension.Id)
             .Distinct()
@@ -76,9 +76,9 @@ public class DimensionService : IDimensionService
 
     private static void AddDimensionFacts(FactCreateDto fact, Fact factDb, int entityId)
     {
-        IEnumerable<DimensionFact> dimensionFacts = fact.DimensionValueIds.Select(id => new DimensionFact
+        IEnumerable<AggregationFact> dimensionFacts = fact.AggregationIds.Select(id => new AggregationFact
         {
-            DimensionValueId = id,
+            AggregationId = id,
             FactId = entityId,
         });
 

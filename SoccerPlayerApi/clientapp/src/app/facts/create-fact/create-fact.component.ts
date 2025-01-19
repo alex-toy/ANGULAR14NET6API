@@ -23,7 +23,7 @@ export class CreateFactComponent {
   newFact: FactCreateDto = {
     type: '',
     amount: 0,
-    dimensionValueIds: []
+    aggregationIds: []
   };
 
   factTypes : string[] = [];
@@ -120,7 +120,7 @@ export class CreateFactComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedDimensionValueId = +selectElement.value;
     this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
-    this.newFact.dimensionValueIds = Object.values(this.selectedDimensionValues);
+    this.newFact.aggregationIds = Object.values(this.selectedDimensionValues);
   }
 
   onfactTypeChange(event: Event): void {
@@ -129,7 +129,7 @@ export class CreateFactComponent {
   }
 
   onSave(): void {
-    this.newFact.dimensionValueIds = Object.values(this.selectedDimensionValues);
+    this.newFact.aggregationIds = Object.values(this.selectedDimensionValues);
     this.createFact();
     this.dialogRef.close();
   }

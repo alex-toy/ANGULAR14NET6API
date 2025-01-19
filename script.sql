@@ -6,8 +6,8 @@ with
 			LV.id as LevelId1, LV.Value as Level1, 
 			DIM.Value as dimension1, DIM.Id as dimId1
 		FROM Facts FA
-		join DimensionFact DF on DF.FactId = FA.Id
-		join DimensionValues DV on DV.Id = DF.DimensionValueId
+		join AggregationFact DF on DF.FactId = FA.Id
+		join Aggregations DV on DV.Id = DF.AggregationId
 		join Levels LV on DV.LevelId = LV.Id
 		join Dimensions DIM on DIM.Id = LV.DimensionId
 		where DIM.Value = 'Product'
@@ -18,8 +18,8 @@ with
 			LV.id as LevelId2, LV.Value as Level2, 
 			DIM.Value as dimension2, DIM.Id as dimId2
 		FROM Facts FA
-		join DimensionFact DF on DF.FactId = FA.Id
-		join DimensionValues DV on DV.Id = DF.DimensionValueId
+		join AggregationFact DF on DF.FactId = FA.Id
+		join Aggregations DV on DV.Id = DF.AggregationId
 		join Levels LV on DV.LevelId = LV.Id
 		join Dimensions DIM on DIM.Id = LV.DimensionId
 		where DIM.Value = 'Location'
@@ -30,8 +30,8 @@ with
 			LV.id as LevelId3, LV.Value as Level3, 
 			DIM.Value as dimension3, DIM.Id as dimId3
 		FROM Facts FA
-		join DimensionFact DF on DF.FactId = FA.Id
-		join DimensionValues DV on DV.Id = DF.DimensionValueId
+		join AggregationFact DF on DF.FactId = FA.Id
+		join Aggregations DV on DV.Id = DF.AggregationId
 		join Levels LV on DV.LevelId = LV.Id
 		join Dimensions DIM on DIM.Id = LV.DimensionId
 		where DIM.Value = 'Time'

@@ -7,6 +7,7 @@ using SoccerPlayerApi.Services.Environments;
 using SoccerPlayerApi.Services.Facts;
 using SoccerPlayerApi.Services.Levels;
 using SoccerPlayerApi.Services.Players;
+using SoccerPlayerApi.Services.Settings;
 
 namespace SoccerPlayerApi
 {
@@ -30,6 +31,7 @@ namespace SoccerPlayerApi
             builder.Services.AddScoped<IFactService, FactService>();
             builder.Services.AddScoped<ILevelService, LevelService>();
             builder.Services.AddScoped<IEnvironmentService, EnvironmentService>();
+            builder.Services.AddScoped<ISettingsService, SettingsService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

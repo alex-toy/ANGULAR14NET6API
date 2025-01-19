@@ -1,0 +1,21 @@
+<div class="settings-container">
+    <h2>Settings</h2>
+  
+    <table>
+      <tr>
+        <th>Key</th><th>Value</th><th>Action</th>
+      </tr>
+      <tr *ngFor="let setting of editableSettings">
+        <td>
+          <input [(ngModel)]="setting.key" />
+        </td>
+        <td>
+          <input [(ngModel)]="setting.value" />
+        </td>
+        <td>
+          <button (click)="updateSetting(setting)">Save</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+  

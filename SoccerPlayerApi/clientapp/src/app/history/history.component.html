@@ -60,13 +60,13 @@
           <thead>
             <tr>
               <th>Type</th>
-              <th *ngFor="let year of sortedYears">{{ year }}</th>
+              <th *ngFor="let year of timeAggregationLabel">{{ year }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let type of uniqueTypes">
               <td>{{ type }}</td>
-              <td *ngFor="let year of uniqueYears">
+              <td *ngFor="let year of timeAggregationLabel">
                 <span *ngIf="getAmountForTypeAndYear(type, year)">{{ getAmountForTypeAndYear(type, year) }}</span>
               </td>
             </tr>

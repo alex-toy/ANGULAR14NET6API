@@ -36,8 +36,8 @@ public class FactService : IFactService
             ScopeDimensionFilterDto? correspondingFilter = scopeFilter?.ScopeDimensionFilters.FirstOrDefault(f => f.DimensionId == currentDimensionId);
 
             var axis = from fa in _context.Facts
-                       join df in _context.DimensionFacts on fa.Id equals df.FactId
-                       join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                       join df in _context.AggregationFacts on fa.Id equals df.FactId
+                       join agg in _context.Aggregations on df.AggregationId equals agg.Id
                        join lv in _context.Levels on agg.LevelId equals lv.Id
                        join dim in _context.Dimensions on lv.DimensionId equals dim.Id
                        where (correspondingFilter != null)
@@ -80,8 +80,8 @@ public class FactService : IFactService
         {
             dimensionCount += 1;
             var axis1 = from fa in _context.Facts
-                        join df in _context.DimensionFacts on fa.Id equals df.FactId
-                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                        join df in _context.AggregationFacts on fa.Id equals df.FactId
+                        join agg in _context.Aggregations on df.AggregationId equals agg.Id
                         join lv in _context.Levels on agg.LevelId equals lv.Id
                         join dim in _context.Dimensions on lv.DimensionId equals dim.Id
                         where dim.Id == environment.LevelFilter1.DimensionId && lv.Id == environment.LevelIdFilter1
@@ -101,8 +101,8 @@ public class FactService : IFactService
         {
             dimensionCount += 1;
             var axis1 = from fa in _context.Facts
-                        join df in _context.DimensionFacts on fa.Id equals df.FactId
-                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                        join df in _context.AggregationFacts on fa.Id equals df.FactId
+                        join agg in _context.Aggregations on df.AggregationId equals agg.Id
                         join lv in _context.Levels on agg.LevelId equals lv.Id
                         join dim in _context.Dimensions on lv.DimensionId equals dim.Id
                         where dim.Id == environment.LevelFilter2.DimensionId && lv.Id == environment.LevelIdFilter2
@@ -122,8 +122,8 @@ public class FactService : IFactService
         {
             dimensionCount += 1;
             var axis1 = from fa in _context.Facts
-                        join df in _context.DimensionFacts on fa.Id equals df.FactId
-                        join agg in _context.Aggregations on df.DimensionValueId equals agg.Id
+                        join df in _context.AggregationFacts on fa.Id equals df.FactId
+                        join agg in _context.Aggregations on df.AggregationId equals agg.Id
                         join lv in _context.Levels on agg.LevelId equals lv.Id
                         join dim in _context.Dimensions on lv.DimensionId equals dim.Id
                         where dim.Id == environment.LevelFilter3.DimensionId && lv.Id == environment.LevelIdFilter3
@@ -208,7 +208,7 @@ public class FactService : IFactService
     public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
     {
         IQueryable<GetFactResultDto> facts = _context.Facts
-            .Include(f => f.DimensionFacts).ThenInclude(df => df.DimensionValue).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
+            .Include(f => f.DimensionFacts).ThenInclude(df => df.Aggregation).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
             .Select(f => new GetFactResultDto
             {
                 Id = f.Id,
@@ -216,12 +216,12 @@ public class FactService : IFactService
                 Type = f.Type,
                 Dimensions = f.DimensionFacts.Select(df => new DimensionResultDto
                 {
-                    DimensionValueId = df.DimensionValueId,
-                    Value = df.DimensionValue.Value,
-                    DimensionId = df.DimensionValue.Level.DimensionId,
-                    DimensionLabel = df.DimensionValue.Level.Dimension.Value,
-                    LevelId = df.DimensionValue.Level.Id,
-                    LevelLabel = df.DimensionValue.Level.Value,
+                    DimensionValueId = df.AggregationId,
+                    Value = df.Aggregation.Value,
+                    DimensionId = df.Aggregation.Level.DimensionId,
+                    DimensionLabel = df.Aggregation.Level.Dimension.Value,
+                    LevelId = df.Aggregation.Level.Id,
+                    LevelLabel = df.Aggregation.Level.Value,
                 }).ToList(),
             });
 
@@ -250,7 +250,7 @@ public class FactService : IFactService
         int entityId = await _factRepo.CreateAsync(factDb);
 
         int dimensionCount = _context.Dimensions.Count();
-        if (fact.DimensionValueIds.Count() != dimensionCount) return new FactCreateResultDto
+        if (fact.AggregationIds.Count() != dimensionCount) return new FactCreateResultDto
         {
             IsSuccess = false,
             Message = "dimension count doesn't match"
@@ -306,7 +306,7 @@ public class FactService : IFactService
         IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto
         {
             Type = fact.Type,
-            DimensionValueIds = fact.DimensionValueIds.ToList()
+            DimensionValueIds = fact.AggregationIds.ToList()
         });
 
         return facts.Count() > 0;
@@ -314,9 +314,9 @@ public class FactService : IFactService
 
     private static void AddDimensionFacts(FactCreateDto fact, Fact factDb, int entityId)
     {
-        IEnumerable<DimensionFact> dimensionFacts = fact.DimensionValueIds.Select(id => new DimensionFact
+        IEnumerable<AggregationFact> dimensionFacts = fact.AggregationIds.Select(id => new AggregationFact
         {
-            DimensionValueId = id,
+            AggregationId = id,
             FactId = entityId,
         });
 
@@ -326,8 +326,8 @@ public class FactService : IFactService
     private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(ScopeDto scope)
     {
         var dim1 = from fa in _context.Facts
-                   join df in _context.DimensionFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.DimensionValueId equals dv.Id
+                   join df in _context.AggregationFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
                    join lv in _context.Levels on dv.LevelId equals lv.Id
                    join prod in _context.Dimensions on lv.DimensionId equals prod.Id
                    where prod.Id == scope.Aggregations[0].DimensionId
@@ -344,8 +344,8 @@ public class FactService : IFactService
                    };
 
         var dim2 = from fa in _context.Facts
-                   join df in _context.DimensionFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.DimensionValueId equals dv.Id
+                   join df in _context.AggregationFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
                    join lv in _context.Levels on dv.LevelId equals lv.Id
                    join loc in _context.Dimensions on lv.DimensionId equals loc.Id
                    where loc.Id == scope.Aggregations[1].DimensionId
@@ -362,8 +362,8 @@ public class FactService : IFactService
                    };
 
         var timeDimension = from fa in _context.Facts
-                            join df in _context.DimensionFacts on fa.Id equals df.FactId
-                            join dv in _context.Aggregations on df.DimensionValueId equals dv.Id //DimensionValueId -> AggregationId
+                            join df in _context.AggregationFacts on fa.Id equals df.FactId
+                            join dv in _context.Aggregations on df.AggregationId equals dv.Id //DimensionValueId -> AggregationId
                             join lv in _context.Levels on dv.LevelId equals lv.Id
                             join tim in _context.Dimensions on lv.DimensionId equals tim.Id
                             where tim.Id == 3

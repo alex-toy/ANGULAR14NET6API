@@ -6,5 +6,5 @@ public class FactCreateDto
 
     public decimal Amount { get; set; }
 
-    public List<int> DimensionValueIds { get; set; } = new List<int>();
+    public List<int> AggregationIds { get; set; } = new List<int>();
 }

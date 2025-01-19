@@ -12,7 +12,7 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<DimensionFact>().ToTable("DimensionFact");
+        builder.Entity<AggregationFact>().ToTable("DimensionFact");
 
         builder.Entity<Level>()
             .HasOne(l => l.Ancestor)
@@ -67,13 +67,24 @@ public class ApplicationDbContext : DbContext
             .WithMany(l => l.Environment5s)
             .HasForeignKey(e => e.LevelIdFilter5)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Setting>()
+               .HasIndex(s => s.Key)
+               .IsUnique();
+
+        builder.Entity<Setting>().HasData(
+            new Setting { Id = 1, Key = "PresentDate", Value = "2024-12-01" },
+            new Setting { Id = 2, Key = "PastSpan", Value = "24" },
+            new Setting { Id = 3, Key = "FutureSpan", Value = "12" }
+        );
     }
 
     public DbSet<Player> Players { get; set; }
     public DbSet<Fact> Facts { get; set; }
     public DbSet<Dimension> Dimensions { get; set; }
-    public DbSet<DimensionFact> DimensionFacts { get; set; }
+    public DbSet<AggregationFact> AggregationFacts { get; set; }
     public DbSet<Aggregation> Aggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
     public DbSet<Entities.Environment> Environments { get; set; }
+    public DbSet<Setting> Settings { get; set; }
 }

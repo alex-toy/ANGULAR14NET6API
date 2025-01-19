@@ -17,23 +17,25 @@
   padding: 10px 0; /* Vertical padding for navbar */
   box-sizing: border-box; /* Prevent padding from affecting the width */
   height: 50px; /* Define a fixed height for the navbar */
+  display: flex; /* Flexbox for aligning items */
+  justify-content: space-between; /* Space between the left and right menu items */
+  align-items: center; /* Vertically align the items in the center */
 }
-  
-  /* Style for the navigation list */
+
+/* Style for the navigation list */
 .nav-list {
   display: flex; /* Flexbox to align items horizontally */
-  justify-content: center; /* Center the items */
   list-style-type: none; /* Remove default list styling */
   margin: 0;
   padding: 0;
 }
-  
-  /* Style for each navigation item */
+
+/* Style for each navigation item */
 .nav-list li {
   margin: 0 20px; /* Horizontal space between the items */
 }
-  
-  /* Style for the links */
+
+/* Style for the links */
 .nav-list a {
   color: white; /* White text color */
   text-decoration: none; /* Remove underline */
@@ -41,14 +43,19 @@
   padding: 8px 16px; /* Add padding for clickable area */
   transition: background-color 0.3s; /* Smooth transition for background color */
 }
-  
-  /* Hover effect on links */
+
+/* Hover effect on links */
 .nav-list a:hover {
   background-color: #575757; /* Darker background on hover */
   border-radius: 4px; /* Rounded corners on hover */
 }
 
-  /* Optional: Make the navbar responsive */
+/* Right-aligned menu (Settings link) */
+.nav-list.right {
+  margin-left: auto; /* Pushes the settings link to the right */
+}
+
+/* Optional: Make the navbar responsive */
 @media (max-width: 768px) {
   .nav-list {
     flex-direction: column; /* Stack the menu items vertically on small screens */
@@ -58,9 +65,14 @@
   .nav-list li {
     margin: 10px 0; /* Vertical spacing between items */
   }
-}
-/* app.component.css */
 
+  .nav-list.right {
+    margin-left: 0; /* Reset right menu for small screens */
+    margin-top: 20px; /* Add space above the right-aligned menu */
+  }
+}
+
+/* app.component.css */
 .active-link {
   font-weight: bold;
   color: #ff9800; /* Highlight active link with a different color */

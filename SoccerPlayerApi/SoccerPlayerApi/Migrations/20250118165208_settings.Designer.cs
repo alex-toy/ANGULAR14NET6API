@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoccerPlayerApi.Repo;
 
@@ -11,9 +12,10 @@ using SoccerPlayerApi.Repo;
 namespace SoccerPlayerApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250118165208_settings")]
+    partial class settings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,29 +157,6 @@ namespace SoccerPlayerApi.Migrations
                     b.ToTable("Aggregations");
                 });
 
-            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.AggregationFact", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AggregationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FactId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AggregationId");
-
-                    b.HasIndex("FactId");
-
-                    b.ToTable("DimensionFact", (string)null);
-                });
-
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Dimension", b =>
                 {
                     b.Property<int>("Id")
@@ -193,6 +172,29 @@ namespace SoccerPlayerApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Dimensions");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DimensionFact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("DimensionValueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FactId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DimensionValueId");
+
+                    b.HasIndex("FactId");
+
+                    b.ToTable("DimensionFact", (string)null);
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
@@ -293,11 +295,11 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("Level");
                 });
 
-            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.AggregationFact", b =>
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DimensionFact", b =>
                 {
-                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "Aggregation")
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "DimensionValue")
                         .WithMany()
-                        .HasForeignKey("AggregationId")
+                        .HasForeignKey("DimensionValueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -307,7 +309,7 @@ namespace SoccerPlayerApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Aggregation");
+                    b.Navigation("DimensionValue");
 
                     b.Navigation("Fact");
                 });
