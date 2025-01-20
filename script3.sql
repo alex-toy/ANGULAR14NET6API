@@ -6,11 +6,11 @@
 			LV.Id AS LevelId, LV.Value,
 			PROD.Id AS DimensionId,
 			DV.Value AS AggregationValue, DV.Id AS AggId
-		FROM [VisionDb].[dbo].Facts FA
-		JOIN [VisionDb].[dbo].DimensionFact DF ON DF.FactId = FA.Id
-		JOIN [VisionDb].[dbo].Aggregations DV ON DV.Id = DF.DimensionValueId
-		JOIN [VisionDb].[dbo].Levels LV ON LV.Id = DV.LevelId
-		JOIN [VisionDb].[dbo].Dimensions PROD ON PROD.Id = LV.DimensionId
+		FROM [dbo].Facts FA
+		JOIN [dbo].AggregationFact DF ON DF.FactId = FA.Id
+		JOIN [dbo].Aggregations DV ON DV.Id = DF.AggregationId
+		JOIN [dbo].Levels LV ON LV.Id = DV.LevelId
+		JOIN [dbo].Dimensions PROD ON PROD.Id = LV.DimensionId
 		WHERE PROD.Id = 1
 	),
 	DIM_LOC AS (
@@ -19,11 +19,11 @@
 			LV.Id AS LevelId, LV.Value,
 			LOC.Id AS DimensionId,
 			DV.Value AS AggregationValue, DV.Id AS AggId
-		FROM [VisionDb].[dbo].Facts FA
-		JOIN [VisionDb].[dbo].DimensionFact DF ON DF.FactId = FA.Id
-		JOIN [VisionDb].[dbo].Aggregations DV ON DV.Id = DF.DimensionValueId
-		JOIN [VisionDb].[dbo].Levels LV ON LV.Id = DV.LevelId
-		JOIN [VisionDb].[dbo].Dimensions LOC ON LOC.Id = LV.DimensionId
+		FROM [dbo].Facts FA
+		JOIN [dbo].AggregationFact DF ON DF.FactId = FA.Id
+		JOIN [dbo].Aggregations DV ON DV.Id = DF.AggregationId
+		JOIN [dbo].Levels LV ON LV.Id = DV.LevelId
+		JOIN [dbo].Dimensions LOC ON LOC.Id = LV.DimensionId
 		WHERE LOC.Id = 2
 	),
 	TIM_LOC AS (
@@ -32,11 +32,11 @@
 			LV.Id AS LevelId, LV.Value,
 			TIM.Id AS DimensionId,
 			DV.Value AS AggregationValue, DV.Id AS AggId
-		FROM [VisionDb].[dbo].Facts FA
-		JOIN [VisionDb].[dbo].DimensionFact DF ON DF.FactId = FA.Id
-		JOIN [VisionDb].[dbo].Aggregations DV ON DV.Id = DF.DimensionValueId
-		JOIN [VisionDb].[dbo].Levels LV ON LV.Id = DV.LevelId
-		JOIN [VisionDb].[dbo].Dimensions TIM ON TIM.Id = LV.DimensionId
+		FROM [dbo].Facts FA
+		JOIN [dbo].AggregationFact DF ON DF.FactId = FA.Id
+		JOIN [dbo].Aggregations DV ON DV.Id = DF.AggregationId
+		JOIN [dbo].Levels LV ON LV.Id = DV.LevelId
+		JOIN [dbo].Dimensions TIM ON TIM.Id = LV.DimensionId
 		WHERE TIM.Id = 3
 	)
 SELECT 

@@ -67,7 +67,14 @@
             <tr *ngFor="let type of uniqueTypes">
               <td>{{ type }}</td>
               <td *ngFor="let year of timeAggregationLabel">
-                <span *ngIf="getAmountForTypeAndYear(type, year)">{{ getAmountForTypeAndYear(type, year) }}</span>
+                <span *ngIf="!isEditing[type + '-' + year]" (click)="editAmount(type, year)">
+                  {{ getAmountForTypeAndYear(type, year) || 0 }}
+                </span>
+                <input *ngIf="isEditing[type + '-' + year]" 
+                       [value]="getAmountForTypeAndYear(type, year)" 
+                       (blur)="saveAmount(type, year, $event)" 
+                       (keydown.enter)="saveAmount(type, year, $event)"
+                       (keydown.escape)="cancelEdit(type, year)" />
               </td>
             </tr>
           </tbody>

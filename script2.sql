@@ -6,8 +6,8 @@ with
 			DV.Value as value1, 
 			LV.id as LevelId1
 		FROM Facts FA
-		join DimensionFact DF on DF.FactId = FA.Id
-		join Aggregations DV on DV.Id = DF.DimensionValueId
+		join AggregationFact DF on DF.FactId = FA.Id
+		join Aggregations DV on DV.Id = DF.AggregationId
 		join Levels LV on DV.LevelId = LV.Id
 		join Dimensions DIM on DIM.Id = LV.DimensionId
 		where DIM.Value = 'Product'
@@ -18,8 +18,8 @@ with
 			DV.Value as value2, 
 			LV.id as LevelId2
 		FROM Facts FA
-		join DimensionFact DF on DF.FactId = FA.Id
-		join Aggregations DV on DV.Id = DF.DimensionValueId
+		join AggregationFact DF on DF.FactId = FA.Id
+		join Aggregations DV on DV.Id = DF.AggregationId
 		join Levels LV on DV.LevelId = LV.Id
 		join Dimensions DIM on DIM.Id = LV.DimensionId
 		where DIM.Value = 'Location'

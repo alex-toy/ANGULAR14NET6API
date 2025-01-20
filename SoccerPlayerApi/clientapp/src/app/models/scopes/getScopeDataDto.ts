@@ -5,4 +5,5 @@ export interface GetScopeDataDto {
     type: string;
     amount: number;
     timeDimension: TimeDimensionDto ;
+    aggregationIds : number[];
 }

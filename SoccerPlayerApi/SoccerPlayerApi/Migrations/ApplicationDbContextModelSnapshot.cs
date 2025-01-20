@@ -175,7 +175,7 @@ namespace SoccerPlayerApi.Migrations
 
                     b.HasIndex("FactId");
 
-                    b.ToTable("DimensionFact", (string)null);
+                    b.ToTable("AggregationFact", (string)null);
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Dimension", b =>

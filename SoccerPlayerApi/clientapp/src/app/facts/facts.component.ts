@@ -28,7 +28,7 @@ export class FactsComponent {
   filter: GetFactFilterDto = {
     type: '',
     factDimensionFilters: [],
-    dimensionValueIds: []
+    aggregationIds: []
   };
   
   factTypes : string[] = [];
@@ -154,7 +154,7 @@ export class FactsComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedDimensionValueId = +selectElement.value;
     this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
-    this.filter.dimensionValueIds = Object.values(this.selectedDimensionValues);
+    this.filter.aggregationIds = Object.values(this.selectedDimensionValues);
   }
 
   onfactTypeChange(event: Event): void {

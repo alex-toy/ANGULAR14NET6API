@@ -23,7 +23,8 @@ export class CreateFactComponent {
   newFact: FactCreateDto = {
     type: '',
     amount: 0,
-    aggregationIds: []
+    aggregationIds: [],
+    timeAggregationLabel: ""
   };
 
   factTypes : string[] = [];

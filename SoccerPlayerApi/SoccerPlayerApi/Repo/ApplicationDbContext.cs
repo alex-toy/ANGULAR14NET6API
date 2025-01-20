@@ -12,7 +12,7 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<AggregationFact>().ToTable("DimensionFact");
+        builder.Entity<AggregationFact>().ToTable("AggregationFact");
 
         builder.Entity<Level>()
             .HasOne(l => l.Ancestor)

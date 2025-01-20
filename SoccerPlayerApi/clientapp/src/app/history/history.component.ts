@@ -13,6 +13,10 @@ import { EnvironmentDto } from '../models/environments/environmentDto';
 import { EnvironmentService } from '../services/environment.service';
 import { SettingsService } from '../services/settings.service';
 import { SettingsDto } from '../models/settings/settingsDto';
+import { FactService } from '../services/fact.service';
+import { FactCreateDto } from '../models/facts/factCreateDto';
+import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
+import { FactUpdateDto } from '../models/facts/factUpdateDto';
 
 @Component({
   selector: 'app-history',
@@ -21,9 +25,12 @@ import { SettingsDto } from '../models/settings/settingsDto';
 })
 export class HistoryComponent {
   settings: SettingsDto[] = [];
+  isEditing: { [key: string]: boolean } = {};
+
   scopes: ScopeDto[] = [];
   selectedScope: ScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
+
   filterMode: string = 'dimensions';
   isLoading: boolean = true;
   selectedTimeLabel = 'YEAR';
@@ -44,6 +51,7 @@ export class HistoryComponent {
     private dimensionService: DimensionsService,
     private environmentService: EnvironmentService,
     private settingsService: SettingsService,
+    private factService: FactService,
   ) {}
 
   ngOnInit(): void {
@@ -150,7 +158,11 @@ export class HistoryComponent {
 
   onSelectScope(scope : ScopeDto){
     this.selectedScope = scope;
-    this.historyService.getScopeData(scope).subscribe({
+    this.fetchScopeData();
+  }
+
+  fetchScopeData(): void {
+    this.historyService.getScopeData(this.selectedScope!).subscribe({
       next: (response: ResponseDto<GetScopeDataDto[]>) => {
         this.scopeData = response.data;
       },
@@ -222,24 +234,45 @@ export class HistoryComponent {
     this.selectedTimeAggregationLabel = selectElement.value;
   }
 
-  getMonthsBetweenDates(): string[] {
-    const presentDate = this.settings.find(x => x.key == "PresentDate")?.value!;
-    const pastSpan : number = +this.settings.find(x => x.key == "PastSpan")?.value!;
-    let date = new Date(presentDate);
-    date.setMonth(date.getMonth() - pastSpan);
-    const startDate = date.toISOString().split('T')[0];
+  editAmount(type: string, year: string): void {
+    this.isEditing[`${type}-${year}`] = true;
+  }
 
-    let start = new Date(startDate);
-    let end = new Date(presentDate);
-    
-    let months: string[] = [];
-    
-    while (start <= end) {
-        months.push(start.toISOString().split('T')[0]);
-        start.setMonth(start.getMonth() + 1);
+  saveAmount(type: string, timeLabel: string, event: any): void {
+    const newAmount = +event.target.value; // Parse the new value as a number
+    if (newAmount !== this.getAmountForTypeAndYear(type, timeLabel)) {
+      let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationValue == timeLabel && s.type == type) || null;
+      if (scope == null) {
+        // ATTENTION, l'info du timeAggregationId peut très bien ne pas être dans scopeData !!!!!!
+        // si aucun fait n'y est rattaché.
+        // Donc il faut aller chercher le timeAggregationId directement dans la base grâce à timeLabel, puis poursuivre
+        // const timeAggregationId = this.scopeData.find(d => d.timeDimension.timeAggregationLabel == timeLabel)!.timeDimension.timeAggregationId;
+        const timeAggregationId = 23;
+        this.factService.createFact(new FactCreateDto(type, newAmount, this.scopeData[0].aggregationIds, timeLabel)).subscribe({
+          next: (response: FactCreateResultDto) => {
+            console.log(response)
+            this.fetchScopeData();
+          },
+          error: (err) => {
+            console.error('Error fetching levels', err);
+          }
+        });
+      } else {
+        this.factService.updateFact(new FactUpdateDto(scope.factId, type, newAmount)).subscribe({
+          next: (response: boolean) => {
+            if (response) scope!.amount = newAmount;
+          },
+          error: (err) => {
+            console.error('Error fetching levels', err);
+          }
+        });
+      }
     }
-    
-    // return months;
-    return ["2022", "2023", "2024", "2025"];
+    this.isEditing[`${type}-${timeLabel}`] = false; // End editing mode
+  }
+
+  // Method to cancel the edit
+  cancelEdit(type: string, year: string): void {
+    this.isEditing[`${type}-${year}`] = false;
   }
 }
