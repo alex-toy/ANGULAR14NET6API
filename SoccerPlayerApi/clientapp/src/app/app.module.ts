@@ -7,7 +7,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PlayersComponent } from './players/players.component';
 import { CreatePlayerComponent } from './players/create-player/create-player.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactsComponent } from './facts/facts.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CreateFactComponent } from './facts/create-fact/create-fact.component';
@@ -47,7 +47,8 @@ import { SettingsComponent } from './settings/settings.component'; // Your modal
     NoopAnimationsModule,
     HttpClientModule,
     FormsModule,
-    MatDialogModule 
+    MatDialogModule,
+    ReactiveFormsModule
   ],
   providers: [
   

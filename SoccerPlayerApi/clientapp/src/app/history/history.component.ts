@@ -243,14 +243,8 @@ export class HistoryComponent {
     if (newAmount !== this.getAmountForTypeAndYear(type, timeLabel)) {
       let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationValue == timeLabel && s.type == type) || null;
       if (scope == null) {
-        // ATTENTION, l'info du timeAggregationId peut très bien ne pas être dans scopeData !!!!!!
-        // si aucun fait n'y est rattaché.
-        // Donc il faut aller chercher le timeAggregationId directement dans la base grâce à timeLabel, puis poursuivre
-        // const timeAggregationId = this.scopeData.find(d => d.timeDimension.timeAggregationLabel == timeLabel)!.timeDimension.timeAggregationId;
-        const timeAggregationId = 23;
         this.factService.createFact(new FactCreateDto(type, newAmount, this.scopeData[0].aggregationIds, timeLabel)).subscribe({
           next: (response: FactCreateResultDto) => {
-            console.log(response)
             this.fetchScopeData();
           },
           error: (err) => {

@@ -24,6 +24,17 @@ public class Environment : Entity
     public int? LevelIdFilter5 { get; set; }
     public Level? LevelFilter5 { get; set; }
 
+    public void Map(EnvironmentUpdateDto environment)
+    {
+       Name = environment.Name;
+       Description = environment.Description;
+       LevelIdFilter1 = environment.LevelIdFilter1;
+       LevelIdFilter2 = environment.LevelIdFilter2;
+       LevelIdFilter3 = environment.LevelIdFilter3;
+       LevelIdFilter4 = environment.LevelIdFilter4;
+       LevelIdFilter5 = environment.LevelIdFilter5;
+    }
+
     public EnvironmentDto ToDto()
     {
         return new EnvironmentDto

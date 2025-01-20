@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Environment;
-using SoccerPlayerApi.Entities.Structure;
+using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Repo;
 
 namespace SoccerPlayerApi.Services.Environments;
@@ -92,5 +92,26 @@ public class EnvironmentService : IEnvironmentService
                                           .Count();
 
         if (levelCount > dimensionIds) throw new Exception("dimensions are overlapping");
+    }
+
+    public async Task<bool> DeleteById(int id)
+    {
+        Entities.Environment? entity = await _context.Environments.FirstOrDefaultAsync(x => x.Id == id);
+        if (entity is not null) _context.Environments.Remove(entity);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<int> UpdateAsync(EnvironmentUpdateDto environment)
+    {
+        Entities.Environment? environmentDb = await _context.Environments.FirstOrDefaultAsync(x => x.Id == environment.Id);
+
+        if (environmentDb is null) return -1;
+
+        environmentDb.Map(environment);
+        EntityEntry<Entities.Environment> entity = _context.Environments.Update(environmentDb);
+
+        await _context.SaveChangesAsync();
+        return entity.Entity.Id;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Dtos.Environment;
 using SoccerPlayerApi.Dtos.Structure;
+using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Services.Environments;
 
 namespace SoccerPlayerApi.Controllers;
@@ -39,6 +40,13 @@ public class EnvironmentController
         }
     }
 
+    [HttpPut("update")]
+    public async Task<int> Update(EnvironmentUpdateDto environment)
+    {
+        int playerId = await _environmentService.UpdateAsync(environment);
+        return playerId;
+    }
+
     [HttpGet("environment/{id}")]
     public async Task<ResponseDto<EnvironmentDto?>> GetEnvironmentById(int id)
     {
@@ -49,5 +57,12 @@ public class EnvironmentController
             IsSuccess = environment is not null, 
             Count = environment is not null ? 1 : 0
         };
+    }
+
+    [HttpDelete("delete/{id}")]
+    public async Task<ResponseDto<bool>> DeleteEnvironment(int id)
+    {
+        bool result = await _environmentService.DeleteById(id);
+        return new ResponseDto<bool> { IsSuccess = result };
     }
 }
