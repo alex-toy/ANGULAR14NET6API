@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Settings;
 using SoccerPlayerApi.Entities;
+using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 
 namespace SoccerPlayerApi.Services.Settings;
@@ -19,6 +21,13 @@ public class SettingsService : ISettingsService
         return await _context.Settings
             .Select(l => new SettingsDto { Id = l.Id, Value = l.Value, Key = l.Key })
             .ToListAsync();
+    }
+
+    public async Task<int> CreateAsync(SettingCreateDto setting)
+    {
+        EntityEntry<Setting> entity = await _context.Settings.AddAsync(setting.ToDb());
+        await _context.SaveChangesAsync();
+        return entity.Entity.Id;
     }
 
     public async Task<bool> UpdateSettings(SettingsDto settingsDto)

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Dtos.Settings;
 using SoccerPlayerApi.Dtos.Structure;
+using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Settings;
 
 namespace SoccerPlayerApi.Controllers;
@@ -24,6 +25,13 @@ public class SettingsController
     {
         IEnumerable<SettingsDto> settings = await _settingsService.GetSettings();
         return new ResponseDto<IEnumerable<SettingsDto>> { Data = settings, IsSuccess = true };
+    }
+
+    [HttpPost("create")]
+    public async Task<ResponseDto<int>> CreateSetting(SettingCreateDto setting)
+    {
+        int id = await _settingsService.CreateAsync(setting);
+        return new ResponseDto<int> { Data = id, IsSuccess = true };
     }
 
     [HttpPut("update")]

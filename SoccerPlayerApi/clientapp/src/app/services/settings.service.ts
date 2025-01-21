@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ResponseDto } from '../models/responseDto';
 import { SettingsDto } from '../models/settings/settingsDto';
+import { SettingCreateDto } from '../models/settings/settingCreateDto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,10 @@ export class SettingsService {
 
   updateSetting(setting: SettingsDto): Observable<boolean> {
     return this.http.put<boolean>(`${this.apiUrl}/update`, setting);
+  }
+
+  addSetting(newSetting: SettingCreateDto): Observable<ResponseDto<number>> {
+    return this.http.post<ResponseDto<number>>(`${this.apiUrl}/create`, newSetting);
   }
 
   getHistoryDatesMonth(presentDate : string, pastSpan : number): string[] {

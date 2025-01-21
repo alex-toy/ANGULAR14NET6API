@@ -1,21 +1,36 @@
 <div class="settings-container">
-    <h2>Settings</h2>
+  <h2>Settings</h2>
   
-    <table>
-      <tr>
-        <th>Key</th><th>Value</th><th>Action</th>
-      </tr>
-      <tr *ngFor="let setting of editableSettings">
-        <td>
-          <input [(ngModel)]="setting.key" />
-        </td>
-        <td>
-          <input [(ngModel)]="setting.value" />
-        </td>
-        <td>
-          <button (click)="updateSetting(setting)">Save</button>
-        </td>
-      </tr>
-    </table>
+  <table>
+    <tr>
+      <th>Key</th><th>Value</th><th>Action</th>
+    </tr>
+    <tr *ngFor="let setting of editableSettings">
+      <td>
+        <input [(ngModel)]="setting.key" />
+      </td>
+      <td>
+        <input [(ngModel)]="setting.value" />
+      </td>
+      <td>
+        <button (click)="updateSetting(setting)">Save</button>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Form to Add New Setting -->
+  <div class="add-setting-form">
+    <h3>Add New Setting</h3>
+    <form (ngSubmit)="addSetting()">
+      <div>
+        <label for="newKey">Key:</label>
+        <input id="newKey" [(ngModel)]="newSetting.key" name="key" required />
+      </div>
+      <div>
+        <label for="newValue">Value:</label>
+        <input id="newValue" [(ngModel)]="newSetting.value" name="value" required />
+      </div>
+      <button type="submit" [disabled]="!newSetting.key || !newSetting.value">Add Setting</button>
+    </form>
   </div>
-  
+</div>

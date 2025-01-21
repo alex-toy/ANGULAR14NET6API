@@ -1,7 +1,7 @@
-// settings.component.ts
 import { Component, OnInit } from '@angular/core';
-import { SettingsService } from '../services/settings.service'; 
-import { SettingsDto } from '../models/settings/settingsDto'; 
+import { SettingsService } from '../services/settings.service';
+import { SettingsDto } from '../models/settings/settingsDto';
+import { SettingCreateDto } from '../models/settings/settingCreateDto';
 
 @Component({
   selector: 'app-settings',
@@ -11,6 +11,7 @@ import { SettingsDto } from '../models/settings/settingsDto';
 export class SettingsComponent implements OnInit {
   settings: SettingsDto[] = []; // Array to hold the settings data
   editableSettings: SettingsDto[] = []; // Array for storing editable settings
+  newSetting: SettingCreateDto = { key: '', value: '' }; // Object for the new setting
 
   constructor(private settingsService: SettingsService) { }
 
@@ -40,6 +41,21 @@ export class SettingsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error updating setting:', err);
+      }
+    });
+  }
+
+  addSetting(): void {
+    if (!this.newSetting.key || !this.newSetting.value) return;
+
+    this.settingsService.addSetting(this.newSetting).subscribe({
+      next: (response) => {
+        this.settings.push(this.newSetting as SettingsDto);
+        this.editableSettings.push(this.newSetting as SettingsDto);
+        this.newSetting = { key: '', value: '' };
+      },
+      error: (err) => {
+        console.error('Error adding new setting:', err);
       }
     });
   }
