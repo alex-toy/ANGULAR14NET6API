@@ -64,7 +64,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let type of uniqueTypes">
+            <tr *ngFor="let type of types">
               <td>{{ type }}</td>
               <td *ngFor="let year of timeAggregationLabel">
                 <span *ngIf="!isEditing[type + '-' + year]" (click)="editAmount(type, year)">

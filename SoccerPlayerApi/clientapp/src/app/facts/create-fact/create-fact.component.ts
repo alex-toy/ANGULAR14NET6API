@@ -65,8 +65,8 @@ export class CreateFactComponent {
   
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
-      next: (data: GetFactTypesResultDto) => {
-        this.factTypes = data.types;
+      next: (response: ResponseDto<string[]>) => {
+        this.factTypes = response.data;
       },
       error: (err) => {
         console.error(err);

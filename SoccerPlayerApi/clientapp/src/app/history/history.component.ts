@@ -30,6 +30,7 @@ export class HistoryComponent {
   scopes: ScopeDto[] = [];
   selectedScope: ScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
+  types: string[] = [];
 
   filterMode: string = 'dimensions';
   isLoading: boolean = true;
@@ -60,6 +61,7 @@ export class HistoryComponent {
     this.fetchDimensions();
     this.fetchDimensionLevels();
     this.fetchEnvironments();
+    this.fetchFactTypes();
   }
   
   applyLevelFilter(): void {
@@ -78,6 +80,17 @@ export class HistoryComponent {
       next: (response: ResponseDto<ScopeDto[]>) => {
         this.scopes = response.data.map(d => new ScopeDto(d));
         this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching scopes', err);
+      }
+    });
+  }
+  
+  fetchFactTypes(): void {
+    this.factService.getFactTypes().subscribe({
+      next: (response: ResponseDto<string[]>) => {
+        this.types = response.data;
       },
       error: (err) => {
         console.error('Error fetching scopes', err);
@@ -206,13 +219,6 @@ export class HistoryComponent {
       .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
       .map(item => item.timeDimension.timeAggregationValue);
     return [...new Set(years)].sort((a, b) => parseInt(a) - parseInt(b));
-  }
-
-  get uniqueTypes() {
-    const types = this.scopeData
-      .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
-      .map(item => item.type);
-    return [...new Set(types)];
   }
 
   get uniqueTimeAggregationLabels() {

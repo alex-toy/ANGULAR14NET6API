@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Facts;
 using SoccerPlayerApi.Services.Players;
@@ -41,9 +42,9 @@ public class FactController
     }
 
     [HttpGet("facttypes")]
-    public async Task<GetFactTypesResultDto> GetFactTypes()
+    public async Task<ResponseDto<IEnumerable<string>>> GetFactTypes()
     {
         IEnumerable<string> levels = await _factService.GetFactTypes();
-        return new GetFactTypesResultDto { Types = levels, IsSuccess = true };
+        return new ResponseDto<IEnumerable<string>> { Data = levels, IsSuccess = true };
     }
 }
