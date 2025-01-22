@@ -213,7 +213,7 @@ public class FactService : IFactService
             {
                 Id = f.Id,
                 Amount = f.Amount,
-                Type = f.Type,
+                DataType = f.DataTypeId,
                 Dimensions = f.DimensionFacts.Select(df => new DimensionResultDto
                 {
                     DimensionValueId = df.AggregationId,
@@ -225,7 +225,7 @@ public class FactService : IFactService
                 }).ToList(),
             });
 
-        if (!string.IsNullOrEmpty(filter.Type)) facts = facts.Where(fr => fr.Type == filter.Type);
+        if (filter.DataTypeId is not null) facts = facts.Where(fr => fr.DataType == filter.DataTypeId);
 
         if (filter.FactDimensionFilters is not null && filter.FactDimensionFilters.Count > 0)
         {
@@ -267,7 +267,7 @@ public class FactService : IFactService
             Message = "fact already exists"
         };
 
-        Fact factDb = new() { Amount = fact.Amount, Type = fact.Type };
+        Fact factDb = new() { Amount = fact.Amount, DataTypeId = fact.DataTypeId };
         int entityId = await _factRepo.CreateAsync(factDb);
 
         AddDimensionFacts(fact, factDb, entityId);
@@ -278,7 +278,7 @@ public class FactService : IFactService
 
     public async Task<IEnumerable<string>> GetFactTypes()
     {
-        return await _context.Facts.Select(f => f.Type).Distinct().ToListAsync();
+        return await _context.Facts.Include(f => f.DataType).Select(f => f.DataType.Label).Distinct().ToListAsync();
     }
 
     public async Task<bool> UpdateFactAsync(FactUpdateDto fact)
@@ -287,8 +287,8 @@ public class FactService : IFactService
 
         if (factDb is null) return false;
 
-        factDb.Amount = fact.Amount;
-        factDb.Type = fact.Type;
+        factDb.Amount = fact.Amount ?? factDb.Amount;
+        factDb.DataTypeId = fact.DataTypeId ?? factDb.DataTypeId;
 
         await _context.SaveChangesAsync();
 
@@ -308,7 +308,7 @@ public class FactService : IFactService
 
         IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto
         {
-            Type = fact.Type,
+            DataTypeId = fact.DataTypeId,
             AggregationIds = fact.AggregationIds.ToList()
         });
 
@@ -333,6 +333,7 @@ public class FactService : IFactService
     private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(ScopeDto scope)
     {
         var dim1 = from fa in _context.Facts
+                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
                    join df in _context.AggregationFacts on fa.Id equals df.FactId
                    join dv in _context.Aggregations on df.AggregationId equals dv.Id
                    join lv in _context.Levels on dv.LevelId equals lv.Id
@@ -341,7 +342,7 @@ public class FactService : IFactService
                    select new
                    {
                        FactId = fa.Id,
-                       Type = fa.Type,
+                       Type = dt.Label,
                        Amount = fa.Amount,
                        LevelId = lv.Id,
                        Value = lv.Value,
@@ -351,6 +352,7 @@ public class FactService : IFactService
                    };
 
         var dim2 = from fa in _context.Facts
+                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
                    join df in _context.AggregationFacts on fa.Id equals df.FactId
                    join dv in _context.Aggregations on df.AggregationId equals dv.Id
                    join lv in _context.Levels on dv.LevelId equals lv.Id
@@ -359,7 +361,7 @@ public class FactService : IFactService
                    select new
                    {
                        FactId = fa.Id,
-                       Type = fa.Type,
+                       Type = dt.Label,
                        Amount = fa.Amount,
                        LevelId = lv.Id,
                        Value = lv.Value,
@@ -369,15 +371,16 @@ public class FactService : IFactService
                    };
 
         var timeDimension = from fa in _context.Facts
+                            join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
                             join df in _context.AggregationFacts on fa.Id equals df.FactId
-                            join dv in _context.Aggregations on df.AggregationId equals dv.Id //DimensionValueId -> AggregationId
+                            join dv in _context.Aggregations on df.AggregationId equals dv.Id
                             join lv in _context.Levels on dv.LevelId equals lv.Id
                             join tim in _context.Dimensions on lv.DimensionId equals tim.Id
                             where tim.Id == 3
                             select new
                             {
                                 FactId = fa.Id,
-                                Type = fa.Type,
+                                Type = dt.Label,
                                 Amount = fa.Amount,
                                 LevelId = lv.Id,
                                 Value = lv.Value,

@@ -81,6 +81,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Player> Players { get; set; }
     public DbSet<Fact> Facts { get; set; }
+    public DbSet<DataType> DataTypes { get; set; }
     public DbSet<Dimension> Dimensions { get; set; }
     public DbSet<AggregationFact> AggregationFacts { get; set; }
     public DbSet<Aggregation> Aggregations { get; set; }

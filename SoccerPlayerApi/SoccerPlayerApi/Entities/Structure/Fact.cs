@@ -4,7 +4,8 @@ namespace SoccerPlayerApi.Entities.Structure;
 
 public class Fact : Entity
 {
-    public string Type { get; set; }
+    public int DataTypeId { get; set; }
+    public DataType DataType { get; set; }
 
     [Precision(18, 2)]
     public decimal Amount { get; set; }

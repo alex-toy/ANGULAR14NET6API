@@ -178,6 +178,23 @@ namespace SoccerPlayerApi.Migrations
                     b.ToTable("AggregationFact", (string)null);
                 });
 
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DataType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DataTypes");
+                });
+
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Dimension", b =>
                 {
                     b.Property<int>("Id")
@@ -207,11 +224,12 @@ namespace SoccerPlayerApi.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DataTypeId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DataTypeId");
 
                     b.ToTable("Facts");
                 });
@@ -310,6 +328,17 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("Aggregation");
 
                     b.Navigation("Fact");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.DataType", "DataType")
+                        .WithMany()
+                        .HasForeignKey("DataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DataType");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Level", b =>
