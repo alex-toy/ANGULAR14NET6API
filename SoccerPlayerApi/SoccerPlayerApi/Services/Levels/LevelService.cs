@@ -4,6 +4,7 @@ using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Utils;
 
 namespace SoccerPlayerApi.Services.Levels;
 
@@ -27,7 +28,7 @@ public class LevelService : ILevelService
     public async Task<IEnumerable<GetDimensionLevelDto>> GetDimensionLevels()
     {
         return await _context.Dimensions
-            .Where(d => d.Id != 3) // time
+            .Where(d => d.Id != GlobalVar.TIME_DIMENSION)
             .Include(d => d.Levels)
             .Select(d => new GetDimensionLevelDto() { 
                 DimensionId = d.Id, 

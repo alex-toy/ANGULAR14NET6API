@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.VisualBasic;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
+using SoccerPlayerApi.Utils;
 using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Dimensions;
@@ -28,7 +30,7 @@ public class DimensionService : IDimensionService
     public async Task<IEnumerable<DimensionDto>> GetDimensions()
     {
         return await _context.Dimensions
-            .Where(d => d.Id != 3) // time
+            .Where(d => d.Id != GlobalVar.TIME_DIMENSION) // time
             .Select(d => new DimensionDto { Id = d.Id, Value = d.Value })
             .ToListAsync();
     }

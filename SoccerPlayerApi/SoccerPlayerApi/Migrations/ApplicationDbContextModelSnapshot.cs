@@ -210,6 +210,13 @@ namespace SoccerPlayerApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Dimensions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Value = "Time"
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
@@ -259,6 +266,38 @@ namespace SoccerPlayerApi.Migrations
                     b.HasIndex("DimensionId");
 
                     b.ToTable("Levels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DimensionId = 1,
+                            Value = "YEAR"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DimensionId = 1,
+                            Value = "QUARTER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DimensionId = 1,
+                            Value = "TRIMESTER"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DimensionId = 1,
+                            Value = "MONTH"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DimensionId = 1,
+                            Value = "WEEK"
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Environment", b =>
@@ -333,9 +372,9 @@ namespace SoccerPlayerApi.Migrations
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
                 {
                     b.HasOne("SoccerPlayerApi.Entities.Structure.DataType", "DataType")
-                        .WithMany()
+                        .WithMany("Facts")
                         .HasForeignKey("DataTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("DataType");
@@ -357,6 +396,11 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("Ancestor");
 
                     b.Navigation("Dimension");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DataType", b =>
+                {
+                    b.Navigation("Facts");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Dimension", b =>

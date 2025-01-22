@@ -14,6 +14,12 @@ public class ApplicationDbContext : DbContext
 
         builder.Entity<AggregationFact>().ToTable("AggregationFact");
 
+        builder.Entity<Fact>()
+            .HasOne(e => e.DataType)
+            .WithMany(l => l.Facts)
+            .HasForeignKey(e => e.DataTypeId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Entity<Level>()
             .HasOne(l => l.Ancestor)
             .WithMany(l => l.Children)
@@ -76,6 +82,18 @@ public class ApplicationDbContext : DbContext
             new Setting { Id = 1, Key = "PresentDate", Value = "2024-12-01" },
             new Setting { Id = 2, Key = "PastSpan", Value = "24" },
             new Setting { Id = 3, Key = "FutureSpan", Value = "12" }
+        );
+
+        builder.Entity<Dimension>().HasData(
+            new Dimension { Id = 1, Value = "Time" }
+        );
+
+        builder.Entity<Level>().HasData(
+            new Level { Id = 1, DimensionId = 1, Value = "YEAR" },
+            new Level { Id = 2, DimensionId = 1, Value = "QUARTER" },
+            new Level { Id = 3, DimensionId = 1, Value = "TRIMESTER" },
+            new Level { Id = 4, DimensionId = 1, Value = "MONTH" },
+            new Level { Id = 5, DimensionId = 1, Value = "WEEK" }
         );
     }
 

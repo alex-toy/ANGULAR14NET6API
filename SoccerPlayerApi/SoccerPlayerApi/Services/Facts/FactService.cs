@@ -5,6 +5,7 @@ using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
+using SoccerPlayerApi.Utils;
 using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Facts;
@@ -376,7 +377,7 @@ public class FactService : IFactService
                             join dv in _context.Aggregations on df.AggregationId equals dv.Id
                             join lv in _context.Levels on dv.LevelId equals lv.Id
                             join tim in _context.Dimensions on lv.DimensionId equals tim.Id
-                            where tim.Id == 3
+                            where tim.Id == GlobalVar.TIME_DIMENSION
                             select new
                             {
                                 FactId = fa.Id,
