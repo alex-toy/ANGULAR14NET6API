@@ -20,7 +20,8 @@ import { FilterByTimeLabelPipe } from './pipes/filter-by-time-label.pipe';
 import { EnvironmentsComponent } from './environments/environments.component';
 import { EnvironmentDetailsComponent } from './environments/environment-details/environment-details.component';
 import { CreateEnvironmentComponent } from './environments/create-environment/create-environment.component';
-import { SettingsComponent } from './settings/settings.component'; // Your modal component
+import { SettingsComponent } from './settings/settings.component';
+import { LevelModalComponent } from './settings/add-level-modal/add-level-modal.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { SettingsComponent } from './settings/settings.component'; // Your modal
     EnvironmentsComponent,
     EnvironmentDetailsComponent,
     CreateEnvironmentComponent,
-    SettingsComponent 
+    SettingsComponent,
+    LevelModalComponent 
   ],
   imports: [
     BrowserModule,

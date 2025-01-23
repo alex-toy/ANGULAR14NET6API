@@ -1,6 +1,4 @@
-﻿using SoccerPlayerApi.Entities.Structure;
-
-namespace SoccerPlayerApi.Dtos.Levels;
+﻿namespace SoccerPlayerApi.Dtos.Levels;
 
 public class CreateLevelDto
 {

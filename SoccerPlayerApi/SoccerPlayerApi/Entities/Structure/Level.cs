@@ -1,4 +1,6 @@
-﻿namespace SoccerPlayerApi.Entities.Structure;
+﻿using SoccerPlayerApi.Dtos.Levels;
+
+namespace SoccerPlayerApi.Entities.Structure;
 
 public class Level
 {
@@ -20,4 +22,15 @@ public class Level
     public ICollection<Environment> Environment3s { get; set; }
     public ICollection<Environment> Environment4s { get; set; }
     public ICollection<Environment> Environment5s { get; set; }
+
+    public GetLevelDto ToDto()
+    {
+        return new GetLevelDto
+        {
+            Id = Id,
+            Value = Value,
+            DimensionId = DimensionId,
+            AncestorId = AncestorId,
+        };
+    }
 }

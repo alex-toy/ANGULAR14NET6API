@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.Levels;
+using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Levels;
 using SoccerPlayerApi.Services.Players;
 
@@ -20,22 +21,23 @@ public class LevelController
     }
 
     [HttpGet("levels/{dimensionId}")]
-    public async Task<GetLevelsResultDto> GetLevels(int dimensionId)
+    public async Task<ResponseDto<IEnumerable<GetLevelDto>>> GetLevels(int dimensionId)
     {
         IEnumerable<GetLevelDto> levels = await _levelService.GetLevels(dimensionId);
-        return new GetLevelsResultDto { Levels = levels, IsSuccess = true };
+        return new ResponseDto<IEnumerable<GetLevelDto>> { Data = levels, IsSuccess = true };
     }
 
     [HttpGet("dimensionlevels")]
-    public async Task<GetDimensionLevelsResultDto> GetDimensionLevels()
+    public async Task<ResponseDto<IEnumerable<GetDimensionLevelDto>>> GetDimensionLevels()
     {
         IEnumerable<GetDimensionLevelDto> dimensionLevels = await _levelService.GetDimensionLevels();
-        return new GetDimensionLevelsResultDto { DimensionLevels = dimensionLevels, IsSuccess = true };
+        return new ResponseDto<IEnumerable<GetDimensionLevelDto>> { Data = dimensionLevels, IsSuccess = true };
     }
 
     [HttpPost("level")]
-    public async Task<int> CreateLevel(CreateLevelDto dimension)
+    public async Task<ResponseDto<int>> CreateLevel(CreateLevelDto dimension)
     {
-        return await _levelService.CreateLevelAsync(dimension);
+        int id = await _levelService.CreateLevelAsync(dimension);
+        return new ResponseDto<int> { Data = id, IsSuccess = true };
     }
 }

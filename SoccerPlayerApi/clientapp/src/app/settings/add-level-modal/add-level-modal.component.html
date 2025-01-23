@@ -1,0 +1,15 @@
+<div *ngIf="showModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3>Create New Level</h3>
+    <form (ngSubmit)="addLevel()">
+      <div>
+        <label for="levelValue">Level Value</label>
+        <input id="levelValue" [(ngModel)]="newLevel.value" name="value" required />
+      </div>
+      <div>
+        <button type="submit" [disabled]="!newLevel.value">Add Level</button>
+      </div>
+    </form>
+    <button (click)="closeModal()">Close</button>
+  </div>
+</div>

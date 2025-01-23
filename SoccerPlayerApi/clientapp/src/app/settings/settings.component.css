@@ -1,54 +1,123 @@
 .settings-container {
   padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  max-width: 1200px;  /* Max width to prevent stretching too far */
+  width: 100%;        /* Ensure it takes full width of the screen */
+  margin: 0 auto;     /* Center the container */
 }
 
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+/* Flex container for settings and dimensions - making them stack vertically */
+.row-section {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  gap: 30px;              /* Space between sections */
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+/* Styling for the list (top side of each section) */
+.list-section {
+  width: 100%;            /* Ensure it takes full width */
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+/* Styling for the form (bottom side of each section) */
+.form-section {
+  width: 100%;            /* Ensure it takes full width */
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+/* Common styling for both tables */
 table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-table, th, td {
+table th, table td {
+  padding: 12px;
+  text-align: left;
   border: 1px solid #ddd;
 }
 
-th, td {
-  padding: 8px;
-  text-align: left;
-}
-
-th {
+table th {
   background-color: #f4f4f4;
 }
 
-tr:hover {
+table tr:hover {
   background-color: #f9f9f9;
 }
 
-input {
-  width: 100%;
-  max-width: 100%; /* Ensure it doesn't go beyond the table width */
-  padding: 6px;
+/* Form sections styling */
+.add-setting-form,
+.add-dimension-form {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-setting-form h3,
+.add-dimension-form h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.add-setting-form form,
+.add-dimension-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-setting-form label,
+.add-dimension-form label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.add-setting-form input,
+.add-dimension-form input {
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  box-sizing: border-box; /* Ensure padding is included in width calculation */
+  margin-bottom: 15px;
 }
 
-button {
-  padding: 6px 12px;
+.add-setting-form button,
+.add-dimension-form button {
+  padding: 10px 15px;
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
   font-size: 14px;
+  cursor: pointer;
+  width: 100%;
 }
 
-button:hover {
+.add-setting-form button:hover,
+.add-dimension-form button:hover {
   background-color: #45a049;
 }
 
-button:disabled {
+.add-setting-form button:disabled,
+.add-dimension-form button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* Optional: Add a border between sections to clearly separate each */
+.settings-container > div:not(.add-dimension-form, .add-setting-form) {
+  margin-bottom: 30px;
 }

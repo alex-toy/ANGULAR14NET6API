@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.VisualBasic;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
@@ -30,8 +29,9 @@ public class DimensionService : IDimensionService
     public async Task<IEnumerable<DimensionDto>> GetDimensions()
     {
         return await _context.Dimensions
+            .Include(d => d.Levels)
             .Where(d => d.Id != GlobalVar.TIME_DIMENSION) // time
-            .Select(d => new DimensionDto { Id = d.Id, Value = d.Value })
+            .Select(d => new DimensionDto { Id = d.Id, Value = d.Value, Levels = d.Levels.Select(x => x.ToDto()).ToList() })
             .ToListAsync();
     }
 
@@ -40,9 +40,9 @@ public class DimensionService : IDimensionService
         return await _context.Dimensions.CountAsync();
     }
 
-    public async Task<int> CreateDimensionAsync(Dimension dimension)
+    public async Task<int> CreateDimensionAsync(DimensionDto dimension)
     {
-        int entityId = await _dimensionRepo.CreateAsync(dimension);
+        int entityId = await _dimensionRepo.CreateAsync(dimension.ToDb());
         await _context.SaveChangesAsync();
         return entityId;
     }

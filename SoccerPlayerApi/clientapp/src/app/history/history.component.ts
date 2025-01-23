@@ -146,11 +146,14 @@ export class HistoryComponent {
 
   fetchDimensionLevels(): void {
     this.levelService.getDimensionLevels().subscribe({
-      next: dimensionLevelResult => {
-        this.dimensionLevels = dimensionLevelResult.dimensionLevels;
-        this.selectedLevels = this.dimensionLevels.reduce( (acc, curr) => { return { 
-          ...acc, [curr.dimensionId] : curr.levels[0].id }
-        }, {})
+      next: result => {
+        this.dimensionLevels = result.data;
+        this.selectedLevels = this.dimensionLevels.reduce((acc, curr) => {
+          if (curr.levels && curr.levels.length > 0) {
+            return { ...acc, [curr.dimensionId]: curr.levels[0].id };
+          }
+          return acc;
+        }, {});
       },
       error: (err) => {
         console.error('Error fetching dimension levels', err);

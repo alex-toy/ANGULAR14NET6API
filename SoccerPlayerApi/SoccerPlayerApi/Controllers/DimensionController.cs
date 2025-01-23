@@ -35,10 +35,11 @@ public class DimensionController
         return new ResponseDto<int> { Data = dimensionCount, IsSuccess = true };
     }
 
-    [HttpPost("dimension")]
-    public async Task<int> CreateDimension(Dimension dimension)
+    [HttpPost("create")]
+    public async Task<ResponseDto<int>> CreateDimension(DimensionDto dimension)
     {
-        return await _dimensionService.CreateDimensionAsync(dimension);
+        int id = await _dimensionService.CreateDimensionAsync(dimension);
+        return new ResponseDto<int> { Data = id, IsSuccess = true };
     }
 
     [HttpGet("dimensionvalues/{levelId}")]

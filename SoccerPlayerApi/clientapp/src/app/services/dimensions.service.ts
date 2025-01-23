@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { GetDimensionsResultDto } from '../models/dimensions/getDimensionsResultDto';
 import { GetAggregationsResultDto } from '../models/aggregations/getAggregationsResultDto';
 import { ResponseDto } from '../models/responseDto';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
@@ -14,6 +13,10 @@ export class DimensionsService {
   private url = `${environment.apiUrl}/dimension`;
 
   constructor(private httpClient: HttpClient) {}
+
+  createDimension(newDimension: DimensionDto): Observable<ResponseDto<number>> {
+    return this.httpClient.post<ResponseDto<number>>(`${this.url}/create`, newDimension);
+  }
 
   getDimensions(): Observable<ResponseDto<DimensionDto[]>> {
     return this.httpClient.get<ResponseDto<DimensionDto[]>>(`${this.url}/dimensions`)

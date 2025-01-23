@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import { SettingsDto } from '../models/settings/settingsDto';
 import { SettingCreateDto } from '../models/settings/settingCreateDto';
+import { DimensionsService } from '../services/dimensions.service';
+import { DimensionDto } from '../models/dimensions/dimensionDto';
+import { CreateLevelDto } from '../models/levels/createLevelDto';
+import { LevelService } from '../services/level.service';
+import { GetLevelDto } from '../models/levels/getLevelDto';
 
 @Component({
   selector: 'app-settings',
@@ -9,34 +14,45 @@ import { SettingCreateDto } from '../models/settings/settingCreateDto';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
-  settings: SettingsDto[] = []; // Array to hold the settings data
-  editableSettings: SettingsDto[] = []; // Array for storing editable settings
-  newSetting: SettingCreateDto = { key: '', value: '' }; // Object for the new setting
+  settings: SettingsDto[] = [];
+  editableSettings: SettingsDto[] = [];
+  newSetting: SettingCreateDto = { key: '', value: '' };
 
-  constructor(private settingsService: SettingsService) { }
+  dimensions: DimensionDto[] = [];
+  newDimension: DimensionDto = { id: 0, value: '', levels: [] };
+
+  newLevel: CreateLevelDto = { value: '', dimensionId: 0, ancestorId: null };
+  showLevelFormForDimension: number | null = null;
+
+  constructor(
+    private settingsService: SettingsService,
+    private dimensionsService: DimensionsService,
+    private levelService: LevelService,
+  ) { }
 
   ngOnInit(): void {
-    this.fetchSettings(); // Fetch settings when the component initializes
+    this.fetchSettings(); 
+    this.fetchDimensions();
   }
 
   fetchSettings(): void {
     this.settingsService.getSettings().subscribe({
       next: (response) => {
-        this.settings = response.data; // Store the settings data
-        this.editableSettings = JSON.parse(JSON.stringify(this.settings)); // Create a copy of settings to allow editing
+        this.settings = response.data;
+        this.editableSettings = JSON.parse(JSON.stringify(this.settings));
       },
       error: (err) => {
-        console.error('Error fetching settings:', err); // Handle errors
+        console.error('Error fetching settings:', err);
       }
     });
   }
-  
+
   updateSetting(setting: SettingsDto): void {
     this.settingsService.updateSetting(setting).subscribe({
       next: (response) => {
         const index = this.editableSettings.findIndex(s => s.id === setting.id);
         if (index !== -1) {
-          this.editableSettings[index] = { ...setting }; // Replace the updated setting
+          this.editableSettings[index] = { ...setting };
         }
       },
       error: (err) => {
@@ -58,5 +74,59 @@ export class SettingsComponent implements OnInit {
         console.error('Error adding new setting:', err);
       }
     });
+  }
+
+  fetchDimensions(): void {
+    this.dimensionsService.getDimensions().subscribe(
+      (response) => {
+        if (response.isSuccess) {
+          this.dimensions = response.data;
+
+          // Fetch levels for each dimension using LevelService
+          this.dimensions.forEach(dimension => {
+            this.levelService.getLevels(dimension.id).subscribe(levelResponse => {
+              dimension.levels = levelResponse.data;
+            });
+          });
+        } else {
+          console.error('Failed to fetch dimensions');
+        }
+      },
+      (error) => {
+        console.error('Error fetching dimensions:', error);
+      }
+    );
+  }
+
+  addDimension(): void {
+    if (this.newDimension.value) {
+      this.dimensionsService.createDimension(this.newDimension).subscribe(
+        response => {
+          this.newDimension = { id: 0, value: '', levels: [] };
+          this.fetchDimensions();
+        },
+        error => {
+          console.error('Error creating dimension:', error);
+        }
+      );
+    }
+  }
+
+  addLevel(dimensionId: number): void {
+    this.showLevelFormForDimension = dimensionId;  // Show modal for this dimension
+  }
+
+  onLevelAdded(newLevel: CreateLevelDto): void {
+    if (this.showLevelFormForDimension !== null) {
+      const dimension = this.dimensions.find(d => d.id === this.showLevelFormForDimension);
+      if (dimension) {
+        dimension.levels.push(newLevel as GetLevelDto);
+        dimension.levels.sort((a, b) => a.id - b.id);  // Sort levels by ID (created order)
+      }
+    }
+  }
+
+  onCloseLevelModal(): void {
+    this.showLevelFormForDimension = null;  // Close the modal
   }
 }

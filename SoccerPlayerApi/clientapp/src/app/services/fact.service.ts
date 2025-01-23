@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { GetFactsResultDto } from '../models/facts/getFactsResultDto';
 import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
-import { GetFactTypesResultDto } from '../models/facts/getFactTypesResultDto';
 import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';

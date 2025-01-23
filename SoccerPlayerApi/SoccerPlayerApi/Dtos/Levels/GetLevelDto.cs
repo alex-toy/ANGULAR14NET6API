@@ -1,4 +1,6 @@
-﻿namespace SoccerPlayerApi.Dtos.Levels;
+﻿using SoccerPlayerApi.Entities.Structure;
+
+namespace SoccerPlayerApi.Dtos.Levels;
 
 public class GetLevelDto
 {
@@ -6,4 +8,15 @@ public class GetLevelDto
     public string Value { get; set; }
     public int DimensionId { get; set; }
     public int? AncestorId { get; set; }
+
+    public Level ToDb()
+    {
+        return new Level
+        {
+            Id = Id,
+            Value = Value,
+            DimensionId = DimensionId,
+            AncestorId = AncestorId,
+        };
+    }
 }
