@@ -9,9 +9,10 @@ import { LevelService } from 'src/app/services/level.service';
   styleUrls: ['./add-level-modal.component.css']
 })
 export class LevelModalComponent {
-  @Input() dimensionId: number | null = null;  // Accept dimensionId as input
-  @Input() showModal: boolean = false;  // Control whether to show the modal
-  @Output() levelAdded = new EventEmitter<CreateLevelDto>();  // Emit event when level is added
+  @Input() dimensionId: number | null = null;
+  @Input() ancestorId: number | null = null;
+  @Input() showModal: boolean = false; 
+  @Output() levelAdded = new EventEmitter<CreateLevelDto>();
   newLevel: CreateLevelDto = { value: '', dimensionId: 0, ancestorId: null };
 
   constructor(private levelService: LevelService) { }
@@ -30,6 +31,7 @@ export class LevelModalComponent {
     if (!this.dimensionId) return;
 
     this.newLevel.dimensionId = this.dimensionId; 
+    this.newLevel.ancestorId = this.ancestorId; 
 
     this.levelService.createLevel(this.newLevel).subscribe({
       next: (response: ResponseDto<number>) => {

@@ -89,6 +89,7 @@
   <!-- Modal for Adding Level -->
   <app-level-modal
     [dimensionId]="showLevelFormForDimension"
+    [ancestorId]="ancestorId"
     [showModal]="showLevelFormForDimension !== null"
     (levelAdded)="onLevelAdded($event)"
   ></app-level-modal>

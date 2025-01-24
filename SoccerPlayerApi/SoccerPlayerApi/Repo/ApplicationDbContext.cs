@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(builder);
 
         builder.Entity<AggregationFact>().ToTable("AggregationFact");
+        builder.Entity<TimeDimension>().ToTable("DateSeries");
 
         builder.Entity<Fact>()
             .HasOne(e => e.DataType)
@@ -97,7 +98,7 @@ public class ApplicationDbContext : DbContext
         );
     }
 
-    public DbSet<Player> Players { get; set; }
+    public DbSet<TimeDimension> DateSeries { get; set; }
     public DbSet<Fact> Facts { get; set; }
     public DbSet<DataType> DataTypes { get; set; }
     public DbSet<Dimension> Dimensions { get; set; }

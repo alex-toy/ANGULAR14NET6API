@@ -6,7 +6,6 @@ using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Environments;
 using SoccerPlayerApi.Services.Facts;
 using SoccerPlayerApi.Services.Levels;
-using SoccerPlayerApi.Services.Players;
 using SoccerPlayerApi.Services.Settings;
 
 namespace SoccerPlayerApi
@@ -26,7 +25,6 @@ namespace SoccerPlayerApi
             builder.Services.AddScoped<IGenericRepo<Dimension>, GenericRepo<Dimension>>();
             builder.Services.AddScoped<IGenericRepo<Fact>, GenericRepo<Fact>>();
             builder.Services.AddScoped<IGenericRepo<Aggregation>, GenericRepo<Aggregation>>();
-            builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IDimensionService, DimensionService>();
             builder.Services.AddScoped<IFactService, FactService>();
             builder.Services.AddScoped<ILevelService, LevelService>();

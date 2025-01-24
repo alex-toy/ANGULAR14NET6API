@@ -304,7 +304,7 @@ public class FactService : IFactService
 
     private async Task<bool> GetFactExists(FactCreateDto fact)
     {
-        Aggregation? timeAggregation = _context.Aggregations.FirstOrDefault(x => x.Value == fact.TimeAggregationLabel);
+        Aggregation? timeAggregation = _context.Aggregations.FirstOrDefault(x => x.Id == fact.TimeAggregationId);
         if (timeAggregation is not null) fact.AggregationIds.Add(timeAggregation.Id);
 
         IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto
@@ -326,7 +326,7 @@ public class FactService : IFactService
 
         factDb.DimensionFacts = dimensionFacts.ToList();
 
-        Aggregation? timeAggregation = _context.Aggregations.FirstOrDefault(x => x.Value == fact.TimeAggregationLabel);
+        Aggregation? timeAggregation = _context.Aggregations.FirstOrDefault(x => x.Id == fact.TimeAggregationId);
 
         if (timeAggregation != null) factDb.DimensionFacts.Add(new AggregationFact { AggregationId = timeAggregation.Id, FactId = entityId });
     }

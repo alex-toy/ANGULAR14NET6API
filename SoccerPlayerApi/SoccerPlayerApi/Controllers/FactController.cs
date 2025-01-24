@@ -3,7 +3,6 @@ using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Facts;
-using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi.Controllers;
 
@@ -15,7 +14,7 @@ public class FactController
     private readonly IDimensionService _dimensionService;
     private readonly IFactService _factService;
 
-    public FactController(IConfiguration configuration, IPlayerService playerService, IDimensionService dimensionService, IFactService factService)
+    public FactController(IConfiguration configuration, IDimensionService dimensionService, IFactService factService)
     {
         _configuration = configuration;
         _dimensionService = dimensionService;

@@ -23,6 +23,7 @@ export class SettingsComponent implements OnInit {
 
   newLevel: CreateLevelDto = { value: '', dimensionId: 0, ancestorId: null };
   showLevelFormForDimension: number | null = null;
+  ancestorId: number | null = null;
 
   constructor(
     private settingsService: SettingsService,
@@ -40,6 +41,18 @@ export class SettingsComponent implements OnInit {
       next: (response) => {
         this.settings = response.data;
         this.editableSettings = JSON.parse(JSON.stringify(this.settings));
+      },
+      error: (err) => {
+        console.error('Error fetching settings:', err);
+      }
+    });
+  }
+
+  fetchLevels(dimensionId : number): void {
+    this.levelService.getLevels(dimensionId).subscribe({
+      next: (response) => {
+        let dimension = this.dimensions.find(x => x.id === dimensionId)!;
+        dimension.levels = response.data;
       },
       error: (err) => {
         console.error('Error fetching settings:', err);
@@ -76,13 +89,28 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  setAncestorId(dimensionId: number){
+    let levels = this.dimensions.find(x => x.id == dimensionId)!.levels;
+    let higherLevel = levels.find(x => x.ancestorId == null);
+    if (higherLevel === undefined) return;
+    let ancestorId = higherLevel!.id;
+    let sonLevel = levels.find(x => x.ancestorId == higherLevel!.id);
+
+    while (sonLevel != undefined){
+      ancestorId = higherLevel!.id;
+      higherLevel = sonLevel;
+      sonLevel = levels.find(x => x.ancestorId === ancestorId);
+    }
+
+    this.ancestorId = higherLevel.id;
+  }
+
   fetchDimensions(): void {
     this.dimensionsService.getDimensions().subscribe(
       (response) => {
         if (response.isSuccess) {
           this.dimensions = response.data;
 
-          // Fetch levels for each dimension using LevelService
           this.dimensions.forEach(dimension => {
             this.levelService.getLevels(dimension.id).subscribe(levelResponse => {
               dimension.levels = levelResponse.data;
@@ -113,7 +141,22 @@ export class SettingsComponent implements OnInit {
   }
 
   addLevel(dimensionId: number): void {
-    this.showLevelFormForDimension = dimensionId;  // Show modal for this dimension
+    this.showLevelFormForDimension = dimensionId;
+    console.log(this.showLevelFormForDimension)
+    
+    let levels = this.dimensions.find(x => x.id == dimensionId)!.levels;
+    let higherLevel = levels.find(x => x.ancestorId == null);
+    if (higherLevel === undefined) return;
+    let ancestorId = higherLevel!.id;
+    let sonLevel = levels.find(x => x.ancestorId == higherLevel!.id);
+    
+    while (sonLevel != undefined){
+      ancestorId = higherLevel!.id;
+      higherLevel = sonLevel;
+      sonLevel = levels.find(x => x.ancestorId === ancestorId);
+    }
+
+    this.ancestorId = higherLevel.id;
   }
 
   onLevelAdded(newLevel: CreateLevelDto): void {
@@ -121,12 +164,13 @@ export class SettingsComponent implements OnInit {
       const dimension = this.dimensions.find(d => d.id === this.showLevelFormForDimension);
       if (dimension) {
         dimension.levels.push(newLevel as GetLevelDto);
-        dimension.levels.sort((a, b) => a.id - b.id);  // Sort levels by ID (created order)
+        dimension.levels.sort((a, b) => a.id - b.id);
       }
+      this.fetchLevels(this.showLevelFormForDimension);
     }
   }
 
   onCloseLevelModal(): void {
-    this.showLevelFormForDimension = null;  // Close the modal
+    this.showLevelFormForDimension = null;
   }
 }

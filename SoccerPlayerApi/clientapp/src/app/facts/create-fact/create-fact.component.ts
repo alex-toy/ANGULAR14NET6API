@@ -24,7 +24,7 @@ export class CreateFactComponent {
     type: '',
     amount: 0,
     aggregationIds: [],
-    timeAggregationLabel: ""
+    TimeAggregationId: ""
   };
 
   factTypes : string[] = [];

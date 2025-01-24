@@ -2,9 +2,7 @@
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Structure;
-using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
-using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi.Controllers;
 
@@ -15,7 +13,7 @@ public class DimensionController
     private readonly IConfiguration _configuration;
     private readonly IDimensionService _dimensionService;
 
-    public DimensionController(IConfiguration configuration, IPlayerService playerService, IDimensionService dimensionService)
+    public DimensionController(IConfiguration configuration, IDimensionService dimensionService)
     {
         _configuration = configuration;
         _dimensionService = dimensionService;

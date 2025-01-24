@@ -68,27 +68,6 @@ namespace SoccerPlayerApi.Migrations
                     b.ToTable("Environments");
                 });
 
-            modelBuilder.Entity("SoccerPlayerApi.Entities.Player", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("JerseyNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Players");
-                });
-
             modelBuilder.Entity("SoccerPlayerApi.Entities.Setting", b =>
                 {
                     b.Property<int>("Id")
@@ -298,6 +277,61 @@ namespace SoccerPlayerApi.Migrations
                             DimensionId = 1,
                             Value = "WEEK"
                         });
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeDimension", b =>
+                {
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("_day");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int")
+                        .HasColumnName("_month");
+
+                    b.Property<string>("MonthLabel")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("_month_label");
+
+                    b.Property<int>("Semester")
+                        .HasColumnType("int")
+                        .HasColumnName("_semester");
+
+                    b.Property<string>("SemesterLabel")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("_semester_label");
+
+                    b.Property<int>("Trimester")
+                        .HasColumnType("int")
+                        .HasColumnName("_trimester");
+
+                    b.Property<string>("TrimesterLabel")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("_trimester_label");
+
+                    b.Property<int>("Week")
+                        .HasColumnType("int")
+                        .HasColumnName("_week");
+
+                    b.Property<string>("WeekLabel")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("_week_label");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int")
+                        .HasColumnName("_year");
+
+                    b.HasKey("Day");
+
+                    b.ToTable("DateSeries", (string)null);
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Environment", b =>

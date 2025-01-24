@@ -3,7 +3,6 @@ using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Levels;
-using SoccerPlayerApi.Services.Players;
 
 namespace SoccerPlayerApi.Controllers;
 
@@ -14,7 +13,7 @@ public class LevelController
     private readonly IConfiguration _configuration;
     private readonly ILevelService _levelService;
 
-    public LevelController(IConfiguration configuration, IPlayerService playerService, ILevelService dimensionService)
+    public LevelController(IConfiguration configuration, ILevelService dimensionService)
     {
         _configuration = configuration;
         _levelService = dimensionService;
