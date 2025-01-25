@@ -213,6 +213,9 @@ namespace SoccerPlayerApi.Migrations
                     b.Property<int>("DataTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TimeAggregationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DataTypeId");
@@ -257,7 +260,7 @@ namespace SoccerPlayerApi.Migrations
                         {
                             Id = 2,
                             DimensionId = 1,
-                            Value = "QUARTER"
+                            Value = "SEMESTER"
                         },
                         new
                         {
@@ -393,7 +396,7 @@ namespace SoccerPlayerApi.Migrations
                         .IsRequired();
 
                     b.HasOne("SoccerPlayerApi.Entities.Structure.Fact", "Fact")
-                        .WithMany("DimensionFacts")
+                        .WithMany("AggregationFacts")
                         .HasForeignKey("FactId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -444,7 +447,7 @@ namespace SoccerPlayerApi.Migrations
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
                 {
-                    b.Navigation("DimensionFacts");
+                    b.Navigation("AggregationFacts");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Level", b =>

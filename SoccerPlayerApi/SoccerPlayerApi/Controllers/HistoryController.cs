@@ -11,13 +11,11 @@ namespace SoccerPlayerApi.Controllers;
 public class HistoryController
 {
     private readonly IConfiguration _configuration;
-    private readonly IDimensionService _dimensionService;
     private readonly IFactService _factService;
 
-    public HistoryController(IConfiguration configuration, IDimensionService dimensionService, IFactService factService)
+    public HistoryController(IConfiguration configuration, IFactService factService)
     {
         _configuration = configuration;
-        _dimensionService = dimensionService;
         _factService = factService;
     }
 

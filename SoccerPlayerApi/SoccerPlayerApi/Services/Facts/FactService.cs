@@ -29,8 +29,8 @@ public class FactService : IFactService
 
     public async Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? scopeFilter)
     {
-        List<int> dimensionIds = _context.Dimensions.Select(d => d.Id).ToList();
-        int dimensionCount = dimensionIds.Count() - 1;
+        List<int> dimensionIds = _context.Dimensions.Where(d => d.Id != GlobalVar.TIME_DIMENSION).Select(d => d.Id).ToList();
+        int dimensionCount = dimensionIds.Count();
         List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
         foreach (var currentDimensionId in dimensionIds)
         {
@@ -209,13 +209,14 @@ public class FactService : IFactService
     public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
     {
         IQueryable<GetFactResultDto> facts = _context.Facts
-            .Include(f => f.DimensionFacts).ThenInclude(df => df.Aggregation).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
+            .Where(f => f.TimeAggregationId == filter.TimeAggregationId)
+            .Include(f => f.AggregationFacts).ThenInclude(df => df.Aggregation).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
             .Select(f => new GetFactResultDto
             {
                 Id = f.Id,
                 Amount = f.Amount,
                 DataType = f.DataTypeId,
-                Dimensions = f.DimensionFacts.Select(df => new DimensionResultDto
+                Dimensions = f.AggregationFacts.Select(df => new DimensionResultDto
                 {
                     DimensionValueId = df.AggregationId,
                     Value = df.Aggregation.Value,
@@ -268,10 +269,10 @@ public class FactService : IFactService
             Message = "fact already exists"
         };
 
-        Fact factDb = new() { Amount = fact.Amount, DataTypeId = fact.DataTypeId };
+        Fact factDb = new() { Amount = fact.Amount, DataTypeId = fact.DataTypeId, TimeAggregationId = fact.TimeAggregationId };
         int entityId = await _factRepo.CreateAsync(factDb);
 
-        AddDimensionFacts(fact, factDb, entityId);
+        AddAggregationFacts(fact, factDb, entityId);
 
         await _context.SaveChangesAsync();
         return new FactCreateResultDto { IsSuccess = true, FactId = entityId };
@@ -304,19 +305,17 @@ public class FactService : IFactService
 
     private async Task<bool> GetFactExists(FactCreateDto fact)
     {
-        Aggregation? timeAggregation = _context.Aggregations.FirstOrDefault(x => x.Id == fact.TimeAggregationId);
-        if (timeAggregation is not null) fact.AggregationIds.Add(timeAggregation.Id);
-
         IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto
         {
             DataTypeId = fact.DataTypeId,
-            AggregationIds = fact.AggregationIds.ToList()
+            AggregationIds = fact.AggregationIds.ToList(),
+            TimeAggregationId = fact.TimeAggregationId
         });
 
         return facts.Count() > 0;
     }
 
-    private void AddDimensionFacts(FactCreateDto fact, Fact factDb, int entityId)
+    private void AddAggregationFacts(FactCreateDto fact, Fact factDb, int entityId)
     {
         IEnumerable<AggregationFact> dimensionFacts = fact.AggregationIds.Select(id => new AggregationFact
         {
@@ -324,11 +323,9 @@ public class FactService : IFactService
             FactId = entityId,
         });
 
-        factDb.DimensionFacts = dimensionFacts.ToList();
+        factDb.AggregationFacts = dimensionFacts.ToList();
 
-        Aggregation? timeAggregation = _context.Aggregations.FirstOrDefault(x => x.Id == fact.TimeAggregationId);
-
-        if (timeAggregation != null) factDb.DimensionFacts.Add(new AggregationFact { AggregationId = timeAggregation.Id, FactId = entityId });
+        factDb.TimeAggregationId = fact.TimeAggregationId;
     }
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(ScopeDto scope)
@@ -373,8 +370,7 @@ public class FactService : IFactService
 
         var timeDimension = from fa in _context.Facts
                             join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                            join df in _context.AggregationFacts on fa.Id equals df.FactId
-                            join dv in _context.Aggregations on df.AggregationId equals dv.Id
+                            join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
                             join lv in _context.Levels on dv.LevelId equals lv.Id
                             join tim in _context.Dimensions on lv.DimensionId equals tim.Id
                             where tim.Id == GlobalVar.TIME_DIMENSION

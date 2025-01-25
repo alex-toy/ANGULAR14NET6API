@@ -10,5 +10,6 @@ public class Fact : Entity
     [Precision(18, 2)]
     public decimal Amount { get; set; }
 
-    public List<AggregationFact> DimensionFacts { get; set; }
+    public List<AggregationFact> AggregationFacts { get; set; }
+    public int TimeAggregationId { get; set; }
 }

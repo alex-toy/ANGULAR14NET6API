@@ -192,7 +192,6 @@ export class HistoryComponent {
 
     let presentDate : string = "";
     let pastSpan : number = 0;
-    this.settingsService.getHistoryDatesMonth(presentDate, pastSpan)
     
     switch ( this.selectedTimeAggregationLabel ) {
       case "MONTH":

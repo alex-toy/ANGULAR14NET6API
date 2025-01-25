@@ -84,7 +84,7 @@ public class DimensionService : IDimensionService
             FactId = entityId,
         });
 
-        factDb.DimensionFacts = dimensionFacts.ToList();
+        factDb.AggregationFacts = dimensionFacts.ToList();
     }
 
     private static Expression<Func<GetFactResultDto, bool>> DimensionFilter(GetFactDimensionFilterDto factDimensionFilter1)

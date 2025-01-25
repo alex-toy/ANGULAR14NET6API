@@ -91,10 +91,10 @@ public class ApplicationDbContext : DbContext
 
         builder.Entity<Level>().HasData(
             new Level { Id = 1, DimensionId = 1, Value = "YEAR" },
-            new Level { Id = 2, DimensionId = 1, Value = "QUARTER" },
-            new Level { Id = 3, DimensionId = 1, Value = "TRIMESTER" },
-            new Level { Id = 4, DimensionId = 1, Value = "MONTH" },
-            new Level { Id = 5, DimensionId = 1, Value = "WEEK" }
+            new Level { Id = 2, DimensionId = 1, Value = "SEMESTER", AncestorId = 1 },
+            new Level { Id = 3, DimensionId = 1, Value = "TRIMESTER", AncestorId = 2 },
+            new Level { Id = 4, DimensionId = 1, Value = "MONTH", AncestorId = 3 },
+            new Level { Id = 5, DimensionId = 1, Value = "WEEK", AncestorId = 4 }
         );
     }
 
