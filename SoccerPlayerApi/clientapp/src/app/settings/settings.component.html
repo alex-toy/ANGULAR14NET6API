@@ -93,4 +93,55 @@
     [showModal]="showLevelFormForDimension !== null"
     (levelAdded)="onLevelAdded($event)"
   ></app-level-modal>
+
+  <div class="form-section">
+    <div class="add-type-form">
+      <h3>Add New Type</h3>
+      <form (ngSubmit)="addType()">
+        <div>
+          <label for="newTypeLabel">Label:</label>
+          <input id="newTypeLabel" [(ngModel)]="newType.label" name="label" required />
+        </div>
+        <button type="submit" [disabled]="!newType.label">Add Type</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="list-section">
+    <h3>Types</h3>
+    <ul>
+      <li *ngFor="let type of types">
+        {{ type.label }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="aggregation-form">
+    <h3>Create Aggregation</h3>
+  
+    <form (ngSubmit)="addAggregation()">
+      <div class="form-group">
+        <label for="levelId">Level ID</label>
+        <input type="number" id="levelId" [(ngModel)]="newAggregation.levelId" name="levelId" required />
+      </div>
+  
+      <div class="form-group">
+        <label for="value">Value</label>
+        <input type="text" id="value" [(ngModel)]="newAggregation.value" name="value" required />
+      </div>
+  
+      <button type="submit" [disabled]="!newAggregation.levelId || !newAggregation.value">Create Aggregation</button>
+    </form>
+  </div>
+  
+  <div class="aggregations-list">
+    <h3>Existing Aggregations</h3>
+    <ul>
+      <li *ngFor="let aggregation of aggregations">
+        Level ID: {{ aggregation.levelId }} - Value: {{ aggregation.value }}
+      </li>
+    </ul>
+  </div>
+  
+
 </div>

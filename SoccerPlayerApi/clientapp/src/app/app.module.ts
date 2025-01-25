@@ -4,8 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { PlayersComponent } from './players/players.component';
-import { CreatePlayerComponent } from './players/create-player/create-player.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactsComponent } from './facts/facts.component';
@@ -27,8 +25,6 @@ import { LevelModalComponent } from './settings/add-level-modal/add-level-modal.
 @NgModule({
   declarations: [
     AppComponent,
-    PlayersComponent,
-    CreatePlayerComponent,
     FactsComponent,
     CreateFactComponent,
     ScopesComponent,

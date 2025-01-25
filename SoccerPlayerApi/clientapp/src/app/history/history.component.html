@@ -60,21 +60,24 @@
           <thead>
             <tr>
               <th>Type</th>
-              <th *ngFor="let year of timeAggregationLabel">{{ year }}</th>
+              <th *ngFor="let year of timeAggregationDtos">{{ year.label }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let type of types">
-              <td>{{ type }}</td>
-              <td *ngFor="let year of timeAggregationLabel">
-                <span *ngIf="!isEditing[type + '-' + year]" (click)="editAmount(type, year)">
-                  {{ getAmountForTypeAndYear(type, year) || 0 }}
+              <td>{{ type.label }}</td>
+              <td *ngFor="let timeAggregation of timeAggregationDtos">
+                <span *ngIf="!isEditing[getEditKey(type.id, timeAggregation.timeAggregationId)]" 
+                  (click)="editAmount(type.id, timeAggregation.timeAggregationId)">
+                  {{ getAmountForTypeAndYear(type.id, timeAggregation.timeAggregationId) }}
                 </span>
-                <input *ngIf="isEditing[type + '-' + year]" 
-                       [value]="getAmountForTypeAndYear(type, year)" 
-                       (blur)="saveAmount(type, year, $event)" 
-                       (keydown.enter)="saveAmount(type, year, $event)"
-                       (keydown.escape)="cancelEdit(type, year)" />
+                <input class="number-input"
+                  *ngIf="isEditing[getEditKey(type.id, timeAggregation.timeAggregationId)]" 
+                  [value]="getAmountForTypeAndYear(type.id, timeAggregation.timeAggregationId)" 
+                  (blur)="saveAmount(type.id, timeAggregation, $event)" 
+                  (keydown.enter)="saveAmount(type.id, timeAggregation, $event)"
+                  (keydown.escape)="cancelEdit(type.id, timeAggregation.timeAggregationId)" 
+                />
               </td>
             </tr>
           </tbody>

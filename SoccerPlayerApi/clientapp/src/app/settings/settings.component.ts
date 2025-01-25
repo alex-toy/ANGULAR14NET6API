@@ -7,6 +7,9 @@ import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { CreateLevelDto } from '../models/levels/createLevelDto';
 import { LevelService } from '../services/level.service';
 import { GetLevelDto } from '../models/levels/getLevelDto';
+import { TypeDto } from '../models/facts/typeDto';
+import { FactService } from '../services/fact.service';
+import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
 
 @Component({
   selector: 'app-settings',
@@ -25,15 +28,23 @@ export class SettingsComponent implements OnInit {
   showLevelFormForDimension: number | null = null;
   ancestorId: number | null = null;
 
+  newType: TypeDto = { id: 0, label: '' } as TypeDto;
+  types: TypeDto[] = [];
+  
+  newAggregation: AggregationCreateDto = { levelId: 0, value: '' };
+  aggregations: AggregationCreateDto[] = [];
+
   constructor(
     private settingsService: SettingsService,
     private dimensionsService: DimensionsService,
     private levelService: LevelService,
+    private factService: FactService
   ) { }
 
   ngOnInit(): void {
     this.fetchSettings(); 
     this.fetchDimensions();
+    this.fetchTypes();
   }
 
   fetchSettings(): void {
@@ -172,5 +183,59 @@ export class SettingsComponent implements OnInit {
 
   onCloseLevelModal(): void {
     this.showLevelFormForDimension = null;
+  }
+
+  fetchTypes(): void {
+    this.factService.getTypes().subscribe({
+      next: (response) => {
+        this.types = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching types:', err);
+      }
+    });
+  }
+
+  addType(): void {
+    if (!this.newType.label) return;
+
+    this.factService.createType(this.newType).subscribe({
+      next: (response) => {
+        this.types.push(response.data);
+        this.newType = { id: 0, label: '' } as TypeDto;
+      },
+      error: (err) => {
+        console.error('Error adding new type:', err);
+      }
+    });
+  }
+
+  // Fetch existing aggregations from the server
+  fetchAggregations(): void {
+    this.dimensionsService.getAggregations().subscribe({
+      next: (response) => {
+        this.aggregations = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching aggregations:', err);
+      }
+    });
+  }
+
+  // Create a new aggregation
+  addAggregation(): void {
+    if (!this.newAggregation.levelId || !this.newAggregation.value) {
+      return;  // Ensure both fields are filled
+    }
+
+    this.dimensionsService.createAggregation(this.newAggregation).subscribe({
+      next: (response) => {
+        this.aggregations.push(response.data);  // Add new aggregation to list
+        this.newAggregation = { levelId: 0, value: '' };  // Reset form
+      },
+      error: (err) => {
+        console.error('Error adding new aggregation:', err);
+      }
+    });
   }
 }

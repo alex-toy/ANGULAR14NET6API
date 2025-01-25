@@ -254,3 +254,12 @@
   margin-top: 20px;
   border: 1px solid #f5c6cb;
 }
+
+.number-input {
+  width: 60px; /* Adjust the width to fit the number size */
+  max-width: 70px; /* Ensures it doesn’t grow larger than this width */
+  padding: 8px;
+  font-size: 10px;
+  text-align: right;
+}
+

@@ -6,6 +6,7 @@ import { ScopeDto } from '../models/scopes/scopeDto';
 import { ResponseDto } from '../models/responseDto';
 import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
 import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
+import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +29,9 @@ export class HistoryService {
   getScopeData(scope: ScopeDto): Observable<ResponseDto<GetScopeDataDto[]>> {
       const header = new HttpHeaders().set('Content-type', 'application/json');
       return this.http.post<ResponseDto<GetScopeDataDto[]>>(`${this.url}/data`, scope, { headers : header });
+  }
+    
+  getTimeAggregations(levelId: number): Observable<ResponseDto<TimeAggregationDto[]>> {
+      return this.http.get<ResponseDto<TimeAggregationDto[]>>(`${this.url}/timeaggregations/${levelId}`)
   }
 }

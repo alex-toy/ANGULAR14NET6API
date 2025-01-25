@@ -30,7 +30,7 @@ public class DimensionService : IDimensionService
     {
         return await _context.Dimensions
             .Include(d => d.Levels)
-            .Where(d => d.Id != GlobalVar.TIME_DIMENSION) // time
+            .Where(d => d.Id != GlobalVar.TIME_DIMENSION_ID) // time
             .Select(d => new DimensionDto { Id = d.Id, Value = d.Value, Levels = d.Levels.Select(x => x.ToDto()).ToList() })
             .ToListAsync();
     }
@@ -47,7 +47,7 @@ public class DimensionService : IDimensionService
         return entityId;
     }
 
-    public async Task<int> CreateDimensionValueAsync(AggregationCreateDto level)
+    public async Task<int> CreateAggregation(AggregationCreateDto level)
     {
         EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation { 
             LevelId = level.LevelId,
@@ -70,6 +70,7 @@ public class DimensionService : IDimensionService
         List<int> distinctDimensionValueIds = await _context.Aggregations
             .Where(x => fact.AggregationIds.Contains(x.Id))
             .Include(x => x.Level).ThenInclude(x => x.Dimension)
+            .Where(x => x.Level.DimensionId != GlobalVar.TIME_DIMENSION_ID)
             .Select(x => x.Level.Dimension.Id)
             .Distinct()
             .ToListAsync();
@@ -98,5 +99,12 @@ public class DimensionService : IDimensionService
         return factResult => factResult.Dimensions
                                         .Select(x => x.DimensionValueId)
                                         .All(dimensionValueId => dimensionValueIds.Contains(dimensionValueId)) && factResult.Dimensions.Count() == dimensionValueIds.Count;
+    }
+
+    public async Task<IEnumerable<GetAggregationDto>> GetAggregations()
+    {
+        return await _context.Aggregations
+            .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
+            .ToListAsync();
     }
 }

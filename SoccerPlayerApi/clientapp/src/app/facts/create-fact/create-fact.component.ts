@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DimensionDto } from 'src/app/models/dimensions/dimensionDto';
-import { GetDimensionsResultDto } from 'src/app/models/dimensions/getDimensionsResultDto';
 import { GetAggregationDto } from 'src/app/models/aggregations/getAggregationDto';
 import { GetAggregationsResultDto } from 'src/app/models/aggregations/getAggregationsResultDto';
 import { FactCreateDto } from 'src/app/models/facts/factCreateDto';
 import { FactCreateResultDto } from 'src/app/models/facts/factCreateResultDto';
-import { GetFactTypesResultDto } from 'src/app/models/facts/getFactTypesResultDto';
 import { GetDimensionLevelDto } from 'src/app/models/levels/getDimensionLevelDto';
 import { DimensionsService } from 'src/app/services/dimensions.service';
 import { FactService } from 'src/app/services/fact.service';
 import { LevelService } from 'src/app/services/level.service';
 import { ResponseDto } from 'src/app/models/responseDto';
+import { TypeDto } from 'src/app/models/facts/typeDto';
 
 @Component({
   selector: 'app-create-fact',
@@ -21,13 +20,13 @@ import { ResponseDto } from 'src/app/models/responseDto';
 export class CreateFactComponent {
 
   newFact: FactCreateDto = {
-    type: '',
+    dataTypeId: 0,
     amount: 0,
     aggregationIds: [],
     TimeAggregationId: 0
   };
 
-  factTypes : string[] = [];
+  factTypes : TypeDto[] = [];
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
   aggregations: { [dimensionId:number] : GetAggregationDto[]} = {};
@@ -65,7 +64,7 @@ export class CreateFactComponent {
   
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
-      next: (response: ResponseDto<string[]>) => {
+      next: (response: ResponseDto<TypeDto[]>) => {
         this.factTypes = response.data;
       },
       error: (err) => {
@@ -126,7 +125,7 @@ export class CreateFactComponent {
 
   onfactTypeChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    this.newFact.type = selectElement.value;
+    this.newFact.dataTypeId = +selectElement.value;
   }
 
   onSave(): void {

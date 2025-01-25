@@ -1,11 +1,11 @@
 export class FactUpdateDto {
     factId: number = 0;
-    type: string = "";
+    dataTypeId: number = 0;
     amount : number = 0;
 
-    constructor(id: number, type: string, amount: number){
+    constructor(id: number, dataTypeId: number, amount: number){
         this.factId = id;
-        this.type = type;
+        this.dataTypeId = dataTypeId;
         this.amount = amount;
     }
 }

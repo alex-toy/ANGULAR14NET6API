@@ -1,13 +1,13 @@
 export class FactCreateDto {
-    type: string = "";
+    dataTypeId: number = 0;
     amount : number = 0;
     aggregationIds: number[] = [];
     TimeAggregationId: number;
 
-    constructor(t : string, a : number, d : number[], l : string){
-        this.type = t;
+    constructor(t : number, a : number, d : number[], l : number){
+        this.dataTypeId = t;
         this.amount = a;
         this.aggregationIds = d;
-        this.TimeAggregationId = 0;
+        this.TimeAggregationId = l;
     }
 }

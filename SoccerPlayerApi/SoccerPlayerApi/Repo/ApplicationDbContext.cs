@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Entities.Structure;
+using SoccerPlayerApi.Utils;
 
 namespace SoccerPlayerApi.Repo;
 
@@ -90,11 +91,11 @@ public class ApplicationDbContext : DbContext
         );
 
         builder.Entity<Level>().HasData(
-            new Level { Id = 1, DimensionId = 1, Value = "YEAR" },
-            new Level { Id = 2, DimensionId = 1, Value = "SEMESTER", AncestorId = 1 },
-            new Level { Id = 3, DimensionId = 1, Value = "TRIMESTER", AncestorId = 2 },
-            new Level { Id = 4, DimensionId = 1, Value = "MONTH", AncestorId = 3 },
-            new Level { Id = 5, DimensionId = 1, Value = "WEEK", AncestorId = 4 }
+            new Level { Id = GlobalVar.YEAR_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "YEAR" },
+            new Level { Id = GlobalVar.SEMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
+            new Level { Id = GlobalVar.TRIMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
+            new Level { Id = GlobalVar.MONTH_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
+            new Level { Id = GlobalVar.WEEK_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
         );
     }
 

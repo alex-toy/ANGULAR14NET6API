@@ -17,6 +17,8 @@ import { FactService } from '../services/fact.service';
 import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
+import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
+import { TypeDto } from '../models/facts/typeDto';
 
 @Component({
   selector: 'app-history',
@@ -30,12 +32,13 @@ export class HistoryComponent {
   scopes: ScopeDto[] = [];
   selectedScope: ScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
-  types: string[] = [];
+  types: TypeDto[] = [];
 
   filterMode: string = 'dimensions';
   isLoading: boolean = true;
   selectedTimeLabel = 'YEAR';
   selectedTimeAggregationLabel: string = 'YEAR';
+  timeAggregationDtos : TimeAggregationDto[] = [];
   
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
@@ -89,7 +92,7 @@ export class HistoryComponent {
   
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
-      next: (response: ResponseDto<string[]>) => {
+      next: (response: ResponseDto<TypeDto[]>) => {
         this.types = response.data;
       },
       error: (err) => {
@@ -161,6 +164,58 @@ export class HistoryComponent {
     });
   }
 
+  fetchScopeData(): void {
+    this.historyService.getScopeData(this.selectedScope!).subscribe({
+      next: (response: ResponseDto<GetScopeDataDto[]>) => {
+        this.scopeData = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching levels', err);
+      }
+    });
+  }
+
+  fetchTimeAggregations(): void {
+    let levelId : number = 0;
+    console.log(this.selectedTimeAggregationLabel)
+    switch ( this.selectedTimeAggregationLabel ) {
+      case "MONTH":
+        levelId = 4;
+        break;
+      case "WEEK":
+        levelId = 5;
+        break;
+      default:
+        levelId = 1;
+    }
+
+    this.historyService.getTimeAggregations(levelId).subscribe({
+      next: (response: ResponseDto<TimeAggregationDto[]>) => {
+        this.timeAggregationDtos = response.data.sort((a, b) => a.label.localeCompare(b.label));;
+      },
+      error: (err) => {
+        console.error('Error fetching levels', err);
+      }
+    });
+  }
+
+  get uniqueTimeAggregationLabels() {
+    // return this.timeAggregationDtos.map(x => x.label);
+    return ["MONTH", "WEEK"];
+  }
+
+  getAmountForTypeAndYear(typeId: number, year: number): number | null {
+    const item = this.scopeData.find(data => data.typeId === typeId && data.timeDimension.timeAggregationId === year);
+    return item ? item.amount : 0;
+  }
+
+  onTimeAggregationLabelChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedTimeAggregationLabel = selectElement.value;
+    this.fetchTimeAggregations();
+    this.fetchScopeData();
+  }
+
   onLevelChange(dimensionId: number, event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedLevelId = +selectElement.value;
@@ -174,84 +229,23 @@ export class HistoryComponent {
 
   onSelectScope(scope : ScopeDto){
     this.selectedScope = scope;
-    this.fetchScopeData();
+    this.fetchTimeAggregations();
   }
 
-  fetchScopeData(): void {
-    this.historyService.getScopeData(this.selectedScope!).subscribe({
-      next: (response: ResponseDto<GetScopeDataDto[]>) => {
-        this.scopeData = response.data;
-      },
-      error: (err) => {
-        console.error('Error fetching levels', err);
-      }
-    });
+  getEditKey(typeId: number, timeAggregationId: number) : string {
+    return `${typeId}-${timeAggregationId}`;
   }
 
-  get timeAggregationLabel(){
-
-    let presentDate : string = "";
-    let pastSpan : number = 0;
-    
-    switch ( this.selectedTimeAggregationLabel ) {
-      case "MONTH":
-          presentDate = this.settings.find(x => x.key == "PresentMonth")?.value!;
-          pastSpan = +this.settings.find(x => x.key == "PastSpan")?.value!;
-          return this.settingsService.getHistoryDatesMonth(presentDate, pastSpan);
-      case "WEEK":
-          presentDate = this.settings.find(x => x.key == "PresentWeek")?.value!;
-          pastSpan = +this.settings.find(x => x.key == "PastSpan")?.value!;
-          return this.settingsService.getHistoryDatesWeek(presentDate, pastSpan);
-      default:
-          presentDate = this.settings.find(x => x.key == "PresentDate")?.value!;
-          pastSpan = +this.settings.find(x => x.key == "PastSpan")?.value!;
-          return this.settingsService.getHistoryDatesMonth(presentDate, pastSpan);
-    }
+  editAmount(typeId: number, timeAggregationId: number): void {
+    this.isEditing[this.getEditKey(typeId, timeAggregationId)] = true;
   }
 
-  get uniqueYears() {
-    const years = this.scopeData
-      .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
-      .map(item => item.timeDimension.timeAggregationValue);
-    return [...new Set(years)];
-  }
-
-  get sortedYears() {
-    const years = this.scopeData
-      .filter(item => item.timeDimension.timeAggregationLabel === this.selectedTimeAggregationLabel)
-      .map(item => item.timeDimension.timeAggregationValue);
-    return [...new Set(years)].sort((a, b) => parseInt(a) - parseInt(b));
-  }
-
-  get uniqueTimeAggregationLabels() {
-    // const labels = this.scopeData
-    //   .map(item => item.timeDimension.timeAggregationLabel);
-    // return [...new Set(labels)];
-    return ["MONTH", "WEEK"];
-  }
-
-  getAmountForTypeAndYear(type: string, year: string): number | null {
-    const item = this.scopeData.find(
-      (data) => data.type === type && data.timeDimension.timeAggregationValue === year
-    );
-    return item ? item.amount : null;
-  }
-
-  onTimeAggregationLabelChange(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    this.selectedTimeAggregationLabel = selectElement.value;
-  }
-
-  editAmount(type: string, year: string): void {
-    this.isEditing[`${type}-${year}`] = true;
-  }
-
-  saveAmount(type: string, timeLabel: string, event: any): void {
-    const newAmount = +event.target.value; // Parse the new value as a number
-    if (newAmount !== this.getAmountForTypeAndYear(type, timeLabel)) {
-      let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationValue == timeLabel && s.type == type) || null;
+  saveAmount(typeId: number, timeLabel: TimeAggregationDto, event: any): void {
+    const newAmount = +event.target.value;
+    if (newAmount !== this.getAmountForTypeAndYear(typeId, timeLabel.timeAggregationId)) {
+      let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationId == timeLabel.timeAggregationId && s.typeId == typeId) || null;
       if (scope == null) {
-        this.factService.createFact(new FactCreateDto(type, newAmount, this.scopeData[0].aggregationIds, timeLabel)).subscribe({
+        this.factService.createFact(new FactCreateDto(typeId, newAmount, this.scopeData[0].aggregationIds, timeLabel.timeAggregationId)).subscribe({
           next: (response: FactCreateResultDto) => {
             this.fetchScopeData();
           },
@@ -260,7 +254,7 @@ export class HistoryComponent {
           }
         });
       } else {
-        this.factService.updateFact(new FactUpdateDto(scope.factId, type, newAmount)).subscribe({
+        this.factService.updateFact(new FactUpdateDto(scope.factId, typeId, newAmount)).subscribe({
           next: (response: boolean) => {
             if (response) scope!.amount = newAmount;
           },
@@ -270,11 +264,10 @@ export class HistoryComponent {
         });
       }
     }
-    this.isEditing[`${type}-${timeLabel}`] = false; // End editing mode
+    this.isEditing[this.getEditKey(typeId, timeLabel.timeAggregationId)] = false;
   }
 
-  // Method to cancel the edit
-  cancelEdit(type: string, year: string): void {
-    this.isEditing[`${type}-${year}`] = false;
+  cancelEdit(typeId: number, timeAggregationId: number): void {
+    this.isEditing[this.getEditKey(typeId, timeAggregationId)] = false;
   }
 }

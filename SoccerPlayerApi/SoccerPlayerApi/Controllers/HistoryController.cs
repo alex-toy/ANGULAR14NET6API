@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Dtos.Structure;
-using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Facts;
 
 namespace SoccerPlayerApi.Controllers;
@@ -38,5 +38,12 @@ public class HistoryController
     {
         IEnumerable<GetScopeDataDto> facts = await _factService.GetScopeData(scope);
         return new ResponseDto<IEnumerable<GetScopeDataDto>> { Data = facts, IsSuccess = true };
+    }
+
+    [HttpGet("timeaggregations/{levelId}")]
+    public async Task<ResponseDto<IEnumerable<TimeAggregationDto>>> GetTimeAggregations(int levelId)
+    {
+        IEnumerable<TimeAggregationDto> timeAggregations = await _factService.GetTimeAggregations(levelId);
+        return new ResponseDto<IEnumerable<TimeAggregationDto>> { Data = timeAggregations, IsSuccess = true, Count = timeAggregations.Count() };
     }
 }

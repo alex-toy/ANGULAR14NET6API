@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities.Structure;
@@ -6,6 +7,7 @@ using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Utils;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Facts;
@@ -13,23 +15,19 @@ namespace SoccerPlayerApi.Services.Facts;
 public class FactService : IFactService
 {
     private readonly ApplicationDbContext _context;
-    private readonly IGenericRepo<Dimension> _dimensionRepo;
-    private readonly IGenericRepo<Aggregation> _dimensionValueRepo;
     private readonly IGenericRepo<Fact> _factRepo;
     private readonly IDimensionService _dimensionService;
 
-    public FactService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<Aggregation> dimensionValueRepo, IDimensionService dimensionService)
+    public FactService(ApplicationDbContext context, IGenericRepo<Fact> factRepo, IDimensionService dimensionService)
     {
         _context = context;
-        _dimensionRepo = dimensionRepo;
         _factRepo = factRepo;
-        _dimensionValueRepo = dimensionValueRepo;
         _dimensionService = dimensionService;
     }
 
     public async Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? scopeFilter)
     {
-        List<int> dimensionIds = _context.Dimensions.Where(d => d.Id != GlobalVar.TIME_DIMENSION).Select(d => d.Id).ToList();
+        List<int> dimensionIds = _context.Dimensions.Where(d => d.Id != GlobalVar.TIME_DIMENSION_ID).Select(d => d.Id).ToList();
         int dimensionCount = dimensionIds.Count();
         List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
         foreach (var currentDimensionId in dimensionIds)
@@ -194,7 +192,11 @@ public class FactService : IFactService
     {
         int dimensionCount = _context.Dimensions.Count();
         IQueryable<GetScopeDataDto> resultQuery;
-        if (dimensionCount == 3)
+        if (dimensionCount == 4)
+        {
+            resultQuery = GetScopeDataFor_4_Dimensions(scope);
+        }
+        else if (dimensionCount == 3)
         {
             resultQuery = GetScopeDataFor_3_Dimensions(scope);
         }
@@ -278,9 +280,51 @@ public class FactService : IFactService
         return new FactCreateResultDto { IsSuccess = true, FactId = entityId };
     }
 
-    public async Task<IEnumerable<string>> GetFactTypes()
+    public async Task<IEnumerable<TypeDto>> GetFactTypes()
     {
-        return await _context.Facts.Include(f => f.DataType).Select(f => f.DataType.Label).Distinct().ToListAsync();
+        return await _context.Facts
+            .Include(f => f.DataType)
+            .Select(f => new TypeDto { Label = f.DataType.Label, Id = f.DataTypeId })
+            .Distinct()
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<TypeDto>> GetTypes()
+    {
+        return await _context.DataTypes
+            .Select(f => new TypeDto { Label = f.Label, Id = f.Id })
+            .Distinct()
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<TimeAggregationDto>> GetTimeAggregations(int levelId)
+    {
+        string presentKey = levelId switch
+        {
+            4 => "PresentMonthDate",
+            5 => "PresentWeekDate",
+            _ => "PresentMonthDate"
+        };
+
+        string pastSpan = levelId switch
+        {
+            4 => "PastMonthSpan",
+            5 => "PastWeekSpan",
+            _ => "PastMonthSpan"
+        };
+        string presentDate = _context.Settings.Where(s => s.Key == presentKey).FirstOrDefault()!.Value;
+        string pastSpanString = _context.Settings.Where(s => s.Key == pastSpan).FirstOrDefault()!.Value;
+        int.TryParse(pastSpanString, out int span);
+
+        return await _context.Aggregations.Where(a => string.Compare(a.Value, presentDate) <= 0 && a.LevelId == levelId)
+                                               .OrderByDescending(a => a.Value)
+                                               .Take(span)
+                                               .Select(agg => new TimeAggregationDto
+                                               {
+                                                   TimeAggregationId = agg.Id,
+                                                   Label = agg.Value
+                                               })
+                                               .ToListAsync();
     }
 
     public async Task<bool> UpdateFactAsync(FactUpdateDto fact)
@@ -340,7 +384,94 @@ public class FactService : IFactService
                    select new
                    {
                        FactId = fa.Id,
-                       Type = dt.Label,
+                       TypeLabel = dt.Label,
+                       TypeId = dt.Id,
+                       Amount = fa.Amount,
+                       LevelId = lv.Id,
+                       Value = lv.Value,
+                       DimensionId = prod.Id,
+                       AggregationValue = dv.Value,
+                       AggId = dv.Id
+                   };
+
+        var dim2 = from fa in _context.Facts
+                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+                   join df in _context.AggregationFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
+                   join lv in _context.Levels on dv.LevelId equals lv.Id
+                   join loc in _context.Dimensions on lv.DimensionId equals loc.Id
+                   where loc.Id == scope.Aggregations[1].DimensionId
+                   select new
+                   {
+                       FactId = fa.Id,
+                       TypeLabel = dt.Label,
+                       TypeId = dt.Id,
+                       Amount = fa.Amount,
+                       LevelId = lv.Id,
+                       Value = lv.Value,
+                       DimensionId = loc.Id,
+                       AggregationValue = dv.Value,
+                       AggId = dv.Id
+                   };
+
+        var timeDimension = from fa in _context.Facts
+                            join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+                            join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
+                            join lv in _context.Levels on dv.LevelId equals lv.Id
+                            join tim in _context.Dimensions on lv.DimensionId equals tim.Id
+                            where tim.Id == GlobalVar.TIME_DIMENSION_ID
+                            select new
+                            {
+                                FactId = fa.Id,
+                                TypeLabel = dt.Label,
+                                TypeId = dt.Id,
+                                Amount = fa.Amount,
+                                LevelId = lv.Id,
+                                Value = lv.Value,
+                                DimensionId = tim.Id,
+                                AggregationValue = dv.Value,
+                                AggId = dv.Id
+                            };
+
+        var resultQuery = from d1 in dim1
+                          join d2 in dim2 on d1.FactId equals d2.FactId
+                          join tim in timeDimension on d1.FactId equals tim.FactId
+                          where
+                            d1.AggId == scope.Aggregations[0].AggregationId &&
+                            d2.AggId == scope.Aggregations[1].AggregationId
+                          select new GetScopeDataDto
+                          {
+                              FactId = d1.FactId,
+                              TypeId = d1.TypeId,
+                              TypeLabel = d1.TypeLabel,
+                              Amount = d1.Amount,
+                              AggregationIds = new() { d1.AggId, d2.AggId },
+                              TimeDimension = new TimeDimensionDto
+                              {
+                                  TimeLevelId = tim.LevelId,
+                                  TimeAggregationId = tim.AggId,
+                                  TimeAggregationLabel = tim.Value,
+                                  TimeAggregationValue = tim.AggregationValue
+                              }
+                          };
+
+        return resultQuery;
+    }
+
+    private IQueryable<GetScopeDataDto> GetScopeDataFor_4_Dimensions(ScopeDto scope)
+    {
+        var dim1 = from fa in _context.Facts
+                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+                   join df in _context.AggregationFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
+                   join lv in _context.Levels on dv.LevelId equals lv.Id
+                   join prod in _context.Dimensions on lv.DimensionId equals prod.Id
+                   where prod.Id == scope.Aggregations[0].DimensionId
+                   select new
+                   {
+                       FactId = fa.Id,
+                       TypeLabel = dt.Label,
+                       TypeId = dt.Id,
                        Amount = fa.Amount,
                        LevelId = lv.Id,
                        Value = lv.Value,
@@ -368,12 +499,32 @@ public class FactService : IFactService
                        AggId = dv.Id
                    };
 
+        var dim3 = from fa in _context.Facts
+                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+                   join df in _context.AggregationFacts on fa.Id equals df.FactId
+                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
+                   join lv in _context.Levels on dv.LevelId equals lv.Id
+                   join loc in _context.Dimensions on lv.DimensionId equals loc.Id
+                   where loc.Id == scope.Aggregations[2].DimensionId
+                   select new
+                   {
+                       FactId = fa.Id,
+                       TypeLabel = dt.Label,
+                       TypeId = dt.Id,
+                       Amount = fa.Amount,
+                       LevelId = lv.Id,
+                       Value = lv.Value,
+                       DimensionId = loc.Id,
+                       AggregationValue = dv.Value,
+                       AggId = dv.Id
+                   };
+
         var timeDimension = from fa in _context.Facts
                             join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
                             join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
                             join lv in _context.Levels on dv.LevelId equals lv.Id
                             join tim in _context.Dimensions on lv.DimensionId equals tim.Id
-                            where tim.Id == GlobalVar.TIME_DIMENSION
+                            where tim.Id == GlobalVar.TIME_DIMENSION_ID
                             select new
                             {
                                 FactId = fa.Id,
@@ -388,16 +539,19 @@ public class FactService : IFactService
 
         var resultQuery = from d1 in dim1
                           join d2 in dim2 on d1.FactId equals d2.FactId
+                          join d3 in dim3 on d1.FactId equals d3.FactId
                           join tim in timeDimension on d1.FactId equals tim.FactId
-                          where 
-                            d1.AggId == scope.Aggregations[0].AggregationId && 
-                            d2.AggId == scope.Aggregations[1].AggregationId
+                          where
+                            d1.AggId == scope.Aggregations[0].AggregationId &&
+                            d2.AggId == scope.Aggregations[1].AggregationId &&
+                            d3.AggId == scope.Aggregations[2].AggregationId
                           select new GetScopeDataDto
                           {
                               FactId = d1.FactId,
-                              Type = d1.Type,
+                              TypeId = d1.TypeId,
+                              TypeLabel = d1.TypeLabel,
                               Amount = d1.Amount,
-                              AggregationIds = new () { d1.AggId, d2.AggId },
+                              AggregationIds = new() { d1.AggId, d2.AggId, d3.AggId },
                               TimeDimension = new TimeDimensionDto
                               {
                                   TimeLevelId = tim.LevelId,
@@ -408,5 +562,14 @@ public class FactService : IFactService
                           };
 
         return resultQuery;
+    }
+
+    public async Task<TypeDto> CreateTypeAsync(TypeCreateDto type)
+    {
+        DataType typeDb = new() { Label = type.Label };
+        EntityEntry<DataType> entityId = await _context.DataTypes.AddAsync(typeDb);
+
+        await _context.SaveChangesAsync();
+        return new TypeDto { Id = entityId.Entity.Id, Label = type.Label };
     }
 }

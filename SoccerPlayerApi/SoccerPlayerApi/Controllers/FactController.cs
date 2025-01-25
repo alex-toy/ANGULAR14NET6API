@@ -41,9 +41,23 @@ public class FactController
     }
 
     [HttpGet("facttypes")]
-    public async Task<ResponseDto<IEnumerable<string>>> GetFactTypes()
+    public async Task<ResponseDto<IEnumerable<TypeDto>>> GetFactTypes() // a modifier pour qu'elle ne reamène que les types liés à un scope
     {
-        IEnumerable<string> levels = await _factService.GetFactTypes();
-        return new ResponseDto<IEnumerable<string>> { Data = levels, IsSuccess = true };
+        IEnumerable<TypeDto> levels = await _factService.GetFactTypes();
+        return new ResponseDto<IEnumerable<TypeDto>> { Data = levels, IsSuccess = true };
+    }
+
+    [HttpGet("types")]
+    public async Task<ResponseDto<IEnumerable<TypeDto>>> GetTypes()
+    {
+        IEnumerable<TypeDto> levels = await _factService.GetTypes();
+        return new ResponseDto<IEnumerable<TypeDto>> { Data = levels, IsSuccess = true };
+    }
+
+    [HttpPost("createtype")]
+    public async Task<ResponseDto<TypeDto>> CreateType(TypeCreateDto fact)
+    {
+        TypeDto type = await _factService.CreateTypeAsync(fact);
+        return new ResponseDto<TypeDto> { Data = type, IsSuccess = true };
     }
 }

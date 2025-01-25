@@ -121,3 +121,116 @@ table tr:hover {
 .settings-container > div:not(.add-dimension-form, .add-setting-form) {
   margin-bottom: 30px;
 }
+
+/* Form Section for Adding a New Type */
+.add-type-form {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 30px; /* Space from previous sections */
+}
+
+.add-type-form h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.add-type-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-type-form label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.add-type-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.add-type-form button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.add-type-form button:hover {
+  background-color: #45a049;
+}
+
+.add-type-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Style for the Types List */
+.list-section h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 0;
+}
+
+.list-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list-section ul li {
+  padding: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-section ul li:hover {
+  background-color: #f1f1f1;
+}
+
+.aggregation-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.aggregations-list {
+  margin-top: 30px;
+}
+
+.aggregations-list ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.aggregations-list li {
+  padding: 5px 0;
+}
