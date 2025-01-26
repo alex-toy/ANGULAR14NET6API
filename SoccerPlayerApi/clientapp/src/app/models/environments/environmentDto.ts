@@ -1,3 +1,5 @@
+import { EnvironmentSortingDto } from "./environmentSortingDto";
+
 export interface EnvironmentDto {
     id: number;
     name: string;
@@ -17,4 +19,6 @@ export interface EnvironmentDto {
 
     levelIdFilter5: number;
     levelLabel5: string;
+
+    environmentSortings : EnvironmentSortingDto[];
 }

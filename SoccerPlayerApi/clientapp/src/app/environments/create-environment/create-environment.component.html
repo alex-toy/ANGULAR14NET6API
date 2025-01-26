@@ -1,30 +1,102 @@
 <div class="container">
-    <h2>Create New Environment</h2>
-  
-    <form (ngSubmit)="onSubmit()" #environmentForm="ngForm">
-      <div class="form-group">
+  <h2>Create New Environment</h2>
+
+  <form (ngSubmit)="onSubmit()" #environmentForm="ngForm">
+    <!-- Name and Description in a single row -->
+    <div class="form-group row">
+      <div class="col-6">
         <label for="name">Name:</label>
         <input type="text" id="name" class="form-control" required [(ngModel)]="environment.name" name="name">
       </div>
-  
-      <div class="form-group">
+      <div class="col-6">
         <label for="description">Description:</label>
-        <input type="text" id="description" class="form-control" [(ngModel)]="environment.description" name="description">
+        <textarea id="description" class="form-control" [(ngModel)]="environment.description" name="description"></textarea>
       </div>
-  
-      <div class="form-group" *ngFor="let dimensionLevel of dimensionLevels; let i = index">
-        <label for="level1">{{ dimensionLevel.value }}</label>
+    </div>
 
-        <select id="levelSelect-{{dimensionLevel.dimensionId}}" (change)="onLevelChange(dimensionLevel.dimensionId, $event)">
+    <!-- Dimension Filters in a single row -->
+    <div class="form-group row">
+      <div *ngFor="let dimensionLevel of dimensionLevels; let i = index" class="col-3">
+        <label for="levelSelect{{ dimensionLevel.dimensionId }}">{{ dimensionLevel.value }}</label>
+        <select id="levelSelect{{ dimensionLevel.dimensionId }}" class="form-control"
+          (change)="onLevelChange(dimensionLevel.dimensionId, $event)">
           <option value="">Select Level</option>
           <option *ngFor="let level of dimensionLevel.levels" [value]="level.id">{{ level.value }}</option>
         </select>
       </div>
-  
-      <button type="submit" class="btn btn-primary" 
-        [disabled]="!environmentForm.form.valid"
-        (clic)="onSubmit()"
-      >Create</button>
-    </form>
-  </div>
-  
+    </div>
+
+    <!-- Environment Sorting Section -->
+    <h3>Environment Sortings</h3>
+    <div *ngFor="let sorting of environment.environmentSortings; let i = index" class="form-group">
+      <p><strong>Sorting {{ i + 1 }}</strong></p>
+      <p>Aggregator: {{ sorting.aggregator === 0 ? 'SUM' : sorting.aggregator === 1 ? 'AVERAGE' : 'Alphabetical' }} 
+      | Start Time: {{ sorting.startTimeSpan }} | End Time: {{ sorting.endTimeSpan }} 
+      | Ascending: {{ sorting.isAscending === 1 ? 'Yes' : 'No' }}
+      | Time Span: {{ sorting.timeSpanBase === 0 ? 'History' : 'Simulation' }}</p>
+      <button type="button" class="btn btn-danger" (click)="removeSorting(i)">Remove</button>
+    </div>
+
+    <!-- Add Sorting Section -->
+    <button type="button" class="btn btn-success" (click)="addSorting()">Add Sorting</button>
+
+    <div class="form-group row">
+      <div class="col-2">
+        <label for="aggregator">Aggregator:</label>
+        <select id="aggregator" [(ngModel)]="newSorting.aggregator" name="aggregator" class="form-control">
+          <option value="0">SUM</option>
+          <option value="1">AVERAGE</option>
+          <option value="3">Alphabetical</option>
+        </select>
+      </div>
+      <div class="col-2">
+        <label for="startTimeSpan">Time Levels:</label>
+        <select id="timeLevels" name="timeLevels" class="form-control" (change)="onTimeAggregationLabelChange($event)">
+          <option value="">Select Time Level</option>
+          <option *ngFor="let time of timeLevels" [value]="time.id">{{ time.value }}</option>
+        </select>
+      </div>
+      <div class="col-2" *ngIf="selectedTimeLevelId > 0">
+        <label for="startTimeSpan">Start Time Span:</label>
+        <select id="startTimeSpan" [(ngModel)]="newSorting.startTimeSpan" name="startTimeSpan" class="form-control">
+          <option value="">Select Start Time Span</option>
+          <option *ngFor="let time of timeAggregations" [value]="time.timeAggregationId">{{ time.label }}</option>
+        </select>
+      </div>
+      <div class="col-2" *ngIf="newSorting.startTimeSpan > 0">
+        <label for="endTimeSpan">End Time Span:</label>
+        <select id="endTimeSpan" [(ngModel)]="newSorting.endTimeSpan" name="endTimeSpan" class="form-control">
+          <option value="">Select Start Time Span</option>
+          <option *ngFor="let time of timeAggregations" [value]="time.timeAggregationId">{{ time.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-3">
+        <label for="isAscending">Is Ascending:</label>
+        <select id="isAscending" [(ngModel)]="newSorting.isAscending" name="isAscending" class="form-control">
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+      <div class="col-3">
+        <label for="timeSpanBase">Time Span Base:</label>
+        <select id="timeSpanBase" [(ngModel)]="newSorting.timeSpanBase" name="timeSpanBase" class="form-control">
+          <option value="0">History</option>
+          <option value="1">Simulation</option>
+        </select>
+      </div>
+      <div class="col-3">
+        <label for="timeSpanBase">Data Type:</label>
+        <select id="dataTypeSelect" [(ngModel)]="newSorting.dataTypeId" name="dataTypeSelect" class="form-control">
+          <option value="">Select Data Type</option>
+          <option *ngFor="let type of dataTypes" [value]="type.id">{{ type.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary" [disabled]="!environmentForm.form.valid">Create Environment</button>
+  </form>
+</div>

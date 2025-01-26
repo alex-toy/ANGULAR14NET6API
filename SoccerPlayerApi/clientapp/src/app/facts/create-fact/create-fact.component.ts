@@ -10,7 +10,7 @@ import { DimensionsService } from 'src/app/services/dimensions.service';
 import { FactService } from 'src/app/services/fact.service';
 import { LevelService } from 'src/app/services/level.service';
 import { ResponseDto } from 'src/app/models/responseDto';
-import { TypeDto } from 'src/app/models/facts/typeDto';
+import { DataTypeDto } from 'src/app/models/facts/typeDto';
 
 @Component({
   selector: 'app-create-fact',
@@ -26,7 +26,7 @@ export class CreateFactComponent {
     TimeAggregationId: 0
   };
 
-  factTypes : TypeDto[] = [];
+  factTypes : DataTypeDto[] = [];
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
   aggregations: { [dimensionId:number] : GetAggregationDto[]} = {};
@@ -64,7 +64,7 @@ export class CreateFactComponent {
   
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
-      next: (response: ResponseDto<TypeDto[]>) => {
+      next: (response: ResponseDto<DataTypeDto[]>) => {
         this.factTypes = response.data;
       },
       error: (err) => {

@@ -4,9 +4,9 @@
   <h2>{{ environment.name }} Details</h2>
   
   <!-- Toggle between Edit and View Mode -->
-  <button *ngIf="!isEditMode" class="btn btn-warning" (click)="toggleEditMode()">Edit</button>
+  <button class="btn btn-warning" (click)="toggleEditMode()">Edit</button>
 
-  <div *ngIf="isEditMode">
+  <div *ngIf="isEditMode" class="edit-environment">
     <!-- Editable form for Environment details -->
     <form [formGroup]="environmentForm" (ngSubmit)="updateEnvironment()">
 
@@ -35,15 +35,32 @@
   <div *ngIf="!isEditMode">
     <!-- Display environment details when not in edit mode -->
     <p><strong>Description:</strong> {{ environment.description || 'No description available' }}</p>
+  
     <h4>Levels:</h4>
     <ul>
-      <li><strong>Level 1:</strong> {{ environment.levelIdFilter1 }}</li>
-      <li><strong>Level 2:</strong> {{ environment.levelIdFilter2 || 'N/A' }}</li>
-      <li><strong>Level 3:</strong> {{ environment.levelIdFilter3 || 'N/A' }}</li>
-      <li><strong>Level 4:</strong> {{ environment.levelIdFilter4 || 'N/A' }}</li>
-      <li><strong>Level 5:</strong> {{ environment.levelIdFilter5 || 'N/A' }}</li>
+      <li class="level-item">
+        <strong>Level 1:</strong>
+        <span>{{ environment.levelIdFilter1 || 'N/A' }}</span>
+      </li>
+      <li class="level-item">
+        <strong>Level 2:</strong>
+        <span>{{ environment.levelIdFilter2 || 'N/A' }}</span>
+      </li>
+      <li class="level-item">
+        <strong>Level 3:</strong>
+        <span>{{ environment.levelIdFilter3 || 'N/A' }}</span>
+      </li>
+      <li class="level-item">
+        <strong>Level 4:</strong>
+        <span>{{ environment.levelIdFilter4 || 'N/A' }}</span>
+      </li>
+      <li class="level-item">
+        <strong>Level 5:</strong>
+        <span>{{ environment.levelIdFilter5 || 'N/A' }}</span>
+      </li>
     </ul>
   </div>
+  
 
   <a [routerLink]="['/environments']" class="back-btn">Back to Environments</a>
 </div>

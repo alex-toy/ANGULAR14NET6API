@@ -1,17 +1,74 @@
-/* Editable Form Styling */
-.edit-environment .form-group {
-  margin-bottom: 15px;
+/* General Layout */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
 }
 
+/* Environment Form Container */
+.edit-environment {
+  max-width: 100%;  /* Make the form container occupy the full width */
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin: 20px auto;  /* Center the form with some top/bottom margin */
+  box-sizing: border-box;
+  width: calc(100% - 40px);  /* Ensure the form takes full width minus the padding */
+}
+
+/* Form Group Styling */
+.edit-environment .form-group {
+  margin-bottom: 20px;
+}
+
+/* Input and Textarea Styling */
 .edit-environment input, 
 .edit-environment textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
+  width: 100%;  /* Ensure they occupy the full width of the container */
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Focus states for inputs and textareas */
+.edit-environment input:focus, 
+.edit-environment textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+/* Button Styling */
 .edit-environment button {
-  margin-top: 20px;
+  width: 100%;  /* Make the button occupy full width */
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #28a745;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-environment button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.edit-environment button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.edit-environment button:active {
+  background-color: #1e7e34;
+  transform: translateY(0);
 }
 
 /* Loading and Back Button */
@@ -20,20 +77,107 @@
   font-size: 18px;
   font-weight: bold;
   color: #888;
+  margin-top: 20px;
 }
 
 .back-btn {
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
-  padding: 8px 16px;
+  padding: 10px 20px;
   text-decoration: none;
-  border-radius: 4px;
-  margin-top: 20px;
+  border-radius: 6px;
   display: inline-block;
   font-size: 16px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
 }
 
 .back-btn:hover {
-  background-color: #218838;
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.back-btn:active {
+  background-color: #003f7f;
+  transform: translateY(0);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .edit-environment {
+    padding: 15px;  /* Reduced padding on smaller screens */
+  }
+
+  .edit-environment input,
+  .edit-environment textarea,
+  .edit-environment button {
+    font-size: 14px;
+  }
+
+  .edit-environment .form-group {
+    margin-bottom: 15px;
+  }
+}
+/* Display Environment Details (View Mode) */
+.environment-details p {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.environment-details h4 {
+  font-size: 20px;
+  color: #333;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.environment-details ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.environment-details ul li {
+  font-size: 16px;
+  color: #555;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.environment-details ul li:last-child {
+  border-bottom: none; /* Remove border for the last item */
+}
+
+.environment-details ul li strong {
+  font-weight: 600;
+}
+
+/* Styling for each level item */
+.environment-details ul li.level-item {
+  background-color: #f9f9f9;
+}
+
+.environment-details ul li.level-item:nth-child(odd) {
+  background-color: #f1f1f1; /* Add alternating background color for better readability */
+}
+
+.environment-details ul li.level-item span {
+  font-weight: 500;
+  color: #333;
+}
+
+/* For better spacing and clarity on mobile */
+@media (max-width: 768px) {
+  .environment-details h4 {
+    font-size: 18px;
+  }
+
+  .environment-details ul li {
+    font-size: 14px;
+    padding: 12px;
+  }
 }

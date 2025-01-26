@@ -1,14 +1,115 @@
-/* Add custom styles for the create environment form */
+/* Container for the form */
 .container {
-    max-width: 600px;
-    margin-top: 50px;
+  width: 90vw; /* Ensure the container takes up most of the viewport width */
+  max-width: 100%; /* Remove any max-width restriction */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  margin: 0 auto; /* Center the form horizontally */
+}
+
+/* Form Section */
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Input and Select Styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+/* Row styles */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.col-6 {
+  width: 40%;
+  padding: 10px;
+  margin-right: 5px;
+}
+
+.col-3 {
+  width: 30%;
+  padding: 10px;
+}
+
+.col-2 {
+  width: 23%;
+  padding: 3px;
+}
+
+textarea.form-control {
+  height: 150px; /* Set a fixed height for description textarea */
+}
+
+/* Form Control Styling */
+.form-control {
+  width: 90%; /* Make inputs and selects take the full width */
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+.form-control:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+input[type="number"].form-control {
+  -moz-appearance: textfield; /* Remove spinner from number input in Firefox */
+}
+
+input[type="number"]::-webkit-outer-spin-button, 
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  width: 100%; /* Make the button take full width */
+  padding: 12px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+button[type="submit"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+    margin-top: 30px;
   }
-  
-  .form-group {
-    margin-bottom: 15px;
+
+  .col-6, .col-3 {
+    width: 100%; /* Make form fields stack on smaller screens */
   }
-  
-  button {
-    margin-top: 20px;
-  }
-  
+}

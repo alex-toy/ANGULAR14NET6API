@@ -17,4 +17,6 @@ public class EnvironmentDto
 
     public int? LevelIdFilter4 { get; set; }
     public string LevelLabel4 { get; set; } = string.Empty;
+
+    public List<EnvironmentSortingDto> EnvironmentSortings { get; set; } = new List<EnvironmentSortingDto>();
 }

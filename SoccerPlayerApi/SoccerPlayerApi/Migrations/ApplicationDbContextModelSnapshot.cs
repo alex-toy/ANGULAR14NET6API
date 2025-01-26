@@ -68,7 +68,7 @@ namespace SoccerPlayerApi.Migrations
                     b.ToTable("Environments");
                 });
 
-            modelBuilder.Entity("SoccerPlayerApi.Entities.EnvironmentScope", b =>
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Environments.EnvironmentScope", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,6 +116,44 @@ namespace SoccerPlayerApi.Migrations
                     b.HasIndex("EnvironmentId");
 
                     b.ToTable("EnvironmentScopes");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Environments.EnvironmentSorting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Aggregator")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DataTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EndTimeSpan")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EnvironmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsAscending")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartTimeSpan")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeSpanBase")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DataTypeId");
+
+                    b.HasIndex("EnvironmentId");
+
+                    b.ToTable("EnvironmentSortings");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Setting", b =>
@@ -427,7 +465,7 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("LevelFilter4");
                 });
 
-            modelBuilder.Entity("SoccerPlayerApi.Entities.EnvironmentScope", b =>
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Environments.EnvironmentScope", b =>
                 {
                     b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "Dimension1Aggregation")
                         .WithMany()
@@ -463,6 +501,25 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("Dimension3Aggregation");
 
                     b.Navigation("Dimension4Aggregation");
+
+                    b.Navigation("Environment");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Environments.EnvironmentSorting", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.DataType", "DataType")
+                        .WithMany()
+                        .HasForeignKey("DataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SoccerPlayerApi.Entities.Environment", "Environment")
+                        .WithMany()
+                        .HasForeignKey("EnvironmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DataType");
 
                     b.Navigation("Environment");
                 });

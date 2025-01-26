@@ -8,7 +8,7 @@ import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { ResponseDto } from '../models/responseDto';
-import { TypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/typeDto';
 import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
 
 @Injectable({
@@ -34,16 +34,16 @@ export class FactService {
     return this.httpClient.post<boolean>(`${this.apiUrl}/updatefact`, fact, { headers : header })
   }
 
-  getFactTypes(): Observable<ResponseDto<TypeDto[]>> {
-    return this.httpClient.get<ResponseDto<TypeDto[]>>(`${this.apiUrl}/facttypes`)
+  getFactTypes(): Observable<ResponseDto<DataTypeDto[]>> {
+    return this.httpClient.get<ResponseDto<DataTypeDto[]>>(`${this.apiUrl}/facttypes`)
   }
 
-  getTypes(): Observable<ResponseDto<TypeDto[]>> {
-    return this.httpClient.get<ResponseDto<TypeDto[]>>(`${this.apiUrl}/types`)
+  getDataTypes(): Observable<ResponseDto<DataTypeDto[]>> {
+    return this.httpClient.get<ResponseDto<DataTypeDto[]>>(`${this.apiUrl}/types`)
   }
 
-  createType(type: TypeDto): Observable<ResponseDto<TypeDto>> {
+  createType(type: DataTypeDto): Observable<ResponseDto<DataTypeDto>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.post<ResponseDto<TypeDto>>(`${this.apiUrl}/createtype`, type, { headers : header })
+    return this.httpClient.post<ResponseDto<DataTypeDto>>(`${this.apiUrl}/createtype`, type, { headers : header })
   }
 }

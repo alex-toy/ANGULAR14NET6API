@@ -112,7 +112,9 @@ export class EnvironmentDetailsComponent {
         levelIdFilter3: this.environmentForm.value.levelIdFilter3,
         
         dimension4Id: this.environmentForm.value.dimension4Id,
-        levelIdFilter4: this.environmentForm.value.levelIdFilter4
+        levelIdFilter4: this.environmentForm.value.levelIdFilter4,
+
+        environmentSortings : []
       };
 
       this.environmentService.updateEnvironment(updatedEnvironment).subscribe({

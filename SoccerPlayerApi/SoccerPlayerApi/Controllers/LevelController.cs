@@ -26,6 +26,13 @@ public class LevelController
         return new ResponseDto<IEnumerable<GetLevelDto>> { Data = levels, IsSuccess = true };
     }
 
+    [HttpGet("timelevels")]
+    public async Task<ResponseDto<IEnumerable<GetLevelDto>>> GetTimeLevels()
+    {
+        IEnumerable<GetLevelDto> levels = await _levelService.GetTimeLevels();
+        return new ResponseDto<IEnumerable<GetLevelDto>> { Data = levels, IsSuccess = true };
+    }
+
     [HttpGet("dimensionlevels")]
     public async Task<ResponseDto<IEnumerable<GetDimensionLevelDto>>> GetDimensionLevels()
     {

@@ -17,6 +17,8 @@ public class EnvironmentCreateDto
     public int? Dimension4Id { get; set; }
     public int? LevelIdFilter4 { get; set; }
 
+    public List<EnvironmentSortingDto> EnvironmentSortings { get; set; } = new List<EnvironmentSortingDto>();
+
     public Entities.Environment ToDb()
     {
         return new Entities.Environment

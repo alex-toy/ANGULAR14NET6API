@@ -8,5 +8,6 @@ namespace SoccerPlayerApi.Services.Levels
         Task<int> CreateLevelAsync(CreateLevelDto level);
         Task<IEnumerable<GetDimensionLevelDto>> GetDimensionLevels();
         Task<IEnumerable<GetLevelDto>> GetLevels(int dimensionId);
+        Task<IEnumerable<GetLevelDto>> GetTimeLevels();
     }
 }

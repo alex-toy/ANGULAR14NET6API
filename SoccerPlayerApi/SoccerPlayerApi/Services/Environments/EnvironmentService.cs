@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Environment;
 using SoccerPlayerApi.Dtos.Scopes;
-using SoccerPlayerApi.Entities;
+using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Services.Facts;
 
@@ -54,8 +54,19 @@ public class EnvironmentService : IEnvironmentService
         var environmentId = entity.Entity.Id;
 
         await CreateRelatedEnvironmentScopes(environment, environmentId);
+        await CreateEnvironmentSortings(environment.EnvironmentSortings, environmentId);
 
         return environmentId;
+    }
+
+    public async Task<bool> CreateEnvironmentSortings(IEnumerable<EnvironmentSortingDto> environmentSortings, int environmentId)
+    {
+        IEnumerable<EnvironmentSorting> environmentSortingDbs = environmentSortings.Select(es => es.ToDb(environmentId));
+
+        await _context.EnvironmentSortings.AddRangeAsync(environmentSortingDbs);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<bool> DeleteById(int id)

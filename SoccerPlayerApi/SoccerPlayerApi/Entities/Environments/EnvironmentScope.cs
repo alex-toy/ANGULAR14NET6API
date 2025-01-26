@@ -1,6 +1,6 @@
 ﻿using SoccerPlayerApi.Entities.Structure;
 
-namespace SoccerPlayerApi.Entities;
+namespace SoccerPlayerApi.Entities.Environments;
 
 public class EnvironmentScope : Entity
 {

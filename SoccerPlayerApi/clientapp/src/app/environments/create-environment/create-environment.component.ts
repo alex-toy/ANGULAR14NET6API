@@ -4,6 +4,13 @@ import { EnvironmentCreateDto } from 'src/app/models/environments/environmentCre
 import { GetDimensionLevelDto } from 'src/app/models/levels/getDimensionLevelDto';
 import { EnvironmentService } from 'src/app/services/environment.service';
 import { LevelService } from 'src/app/services/level.service';
+import { EnvironmentSortingDto } from 'src/app/models/environments/environmentSortingDto'; // Import the new DTO
+import { FactService } from 'src/app/services/fact.service';
+import { DataTypeDto } from 'src/app/models/facts/typeDto';
+import { HistoryService } from 'src/app/services/history.service';
+import { TimeAggregationDto } from 'src/app/models/facts/timeAggregationDto';
+import { ResponseDto } from 'src/app/models/responseDto';
+import { GetLevelDto } from 'src/app/models/levels/getLevelDto';
 
 @Component({
   selector: 'app-create-environment',
@@ -12,40 +19,106 @@ import { LevelService } from 'src/app/services/level.service';
 })
 export class CreateEnvironmentComponent {
   dimensionLevels: GetDimensionLevelDto[] = [];
-  selectedLevels: { [dimensionId:number] : number} = {};
-  environment : EnvironmentCreateDto = {
+  selectedLevels: { [dimensionId: number]: number } = {};
+  dataTypes: DataTypeDto[] = [];
+  selectedTimeLevelId: number = 0;
+  timeAggregations : TimeAggregationDto[] = [];
+  timeLevels : GetLevelDto[] = [];
+  selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, value : "" };
+
+  environment: EnvironmentCreateDto = {
     name: '',
     description: '',
-    dimension1Id : 0,
+    dimension1Id: 0,
     levelIdFilter1: 0,
-    dimension2Id : null,
+    dimension2Id: null,
     levelIdFilter2: null,
-    dimension3Id : null,
+    dimension3Id: null,
     levelIdFilter3: null,
-    dimension4Id : null,
+    dimension4Id: null,
     levelIdFilter4: null,
+    environmentSortings: []
+  };
+
+  newSorting: EnvironmentSortingDto = {
+    environmentId: 0,
+    aggregator: 0,
+    startTimeSpan: 0,
+    endTimeSpan: 0,
+    isAscending: 0,
+    timeSpanBase: 0,
+    dataTypeId: 0
+  };
+
+  // New EnvironmentSortingDto
+  environmentSorting: EnvironmentSortingDto = {
+    environmentId: 0,  // Will be set after environment creation
+    aggregator: 0,     // Default SUM
+    startTimeSpan: 0,
+    endTimeSpan: 0,
+    isAscending: 1,    // Default Ascending
+    timeSpanBase: 0,    // Default History
+    dataTypeId: 0
   };
 
   constructor(
     private environmentService: EnvironmentService,
-    private levelService: LevelService, 
+    private levelService: LevelService,
+    private historyService: HistoryService,
+    private factService: FactService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.fetchTimeLevels();
     this.fetchDimensionLevels();
+    this.fetchDataTypes();
+    this.fetchTimeAggregations();
   }
 
   fetchDimensionLevels(): void {
     this.levelService.getDimensionLevels().subscribe({
       next: result => {
         this.dimensionLevels = result.data;
-        this.selectedLevels = this.dimensionLevels.reduce( (acc, curr) => { return { 
-          ...acc, [curr.dimensionId] : curr.levels[0].id }
-        }, {})
+        this.selectedLevels = this.dimensionLevels.reduce((acc, curr) => {
+          return { ...acc, [curr.dimensionId]: curr.levels[0].id };
+        }, {});
       },
       error: (err) => {
         console.error('Error fetching dimension levels', err);
+      }
+    });
+  }
+
+  fetchDataTypes(): void {
+    this.factService.getDataTypes().subscribe({
+      next: (response) => {
+        this.dataTypes = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching types:', err);
+      }
+    });
+  }
+  
+    fetchTimeLevels() {
+      this.levelService.getTimeLevels().subscribe({
+        next: (response: ResponseDto<GetLevelDto[]>) => {
+          this.timeLevels = response.data;
+        },
+        error: (err) => {
+          console.error('Error fetching levels', err);
+        }
+      });
+    }
+
+  fetchTimeAggregations(): void {
+    this.historyService.getTimeAggregations(+this.selectedTimeLevelId || 1).subscribe({
+      next: (response: ResponseDto<TimeAggregationDto[]>) => {
+        this.timeAggregations = response.data.sort((a, b) => a.label.localeCompare(b.label));;
+      },
+      error: (err) => {
+        console.error('Error fetching levels', err);
       }
     });
   }
@@ -54,11 +127,16 @@ export class CreateEnvironmentComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedLevelId = +selectElement.value;
     this.selectedLevels[dimensionId] = selectedLevelId;
+    console.log(this.selectedLevels)
   }
 
-  onSubmit() {
-    let levelFilterIds = Object.values(this.selectedLevels);
+  onTimeAggregationLabelChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedTimeLevelId = +selectElement.value;
+    this.fetchTimeAggregations();
+  }
 
+  onSubmit(): void {
     let dimensionCounter = 1;
     for (const [dimensionId, levelId] of Object.entries(this.selectedLevels)) {
       if (dimensionCounter == 1) {
@@ -83,18 +161,58 @@ export class CreateEnvironmentComponent {
 
       dimensionCounter++;
     }
-    
+
     this.environmentService.createEnvironment(this.environment).subscribe({
       next: (response) => {
-        if (response.isSuccess){
+        if (response.isSuccess) {
+          this.environmentSorting.environmentId = response.data;
+          this.createEnvironmentSorting();
           this.router.navigate(['/environments']);
         } else {
-          console.log(response.message)
+          console.log(response.message);
         }
       },
       error: (err) => {
         console.error('Error creating environment:', err);
       }
     });
+  }
+
+  createEnvironmentSorting(): void {
+    this.environmentService.createEnvironmentSorting(this.environmentSorting).subscribe({
+      next: (response) => {
+        if (response.isSuccess) {
+          console.log('Environment sorting created successfully!');
+        } else {
+          console.log('Error creating environment sorting:', response.message);
+        }
+      },
+      error: (err) => {
+        console.error('Error creating environment sorting:', err);
+      }
+    });
+  }
+
+  addSorting(): void {
+    this.environment.environmentSortings.push({ ...this.newSorting });
+    this.resetSortingForm();
+  }
+
+  // Reset the sorting form fields
+  resetSortingForm(): void {
+    this.newSorting = {
+      environmentId: 0,
+      aggregator: 0,
+      startTimeSpan: 0,
+      endTimeSpan: 0,
+      isAscending: 0,
+      timeSpanBase: 0,
+      dataTypeId : 0
+    };
+  }
+
+  // Remove a sorting configuration by its index
+  removeSorting(index: number): void {
+    this.environment.environmentSortings.splice(index, 1);
   }
 }

@@ -18,7 +18,8 @@ import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
-import { TypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/typeDto';
+import { GetLevelDto } from '../models/levels/getLevelDto';
 
 @Component({
   selector: 'app-history',
@@ -32,11 +33,15 @@ export class HistoryComponent {
   scopes: ScopeDto[] = [];
   selectedScope: ScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
-  types: TypeDto[] = [];
+  types: DataTypeDto[] = [];
 
   filterMode: string = 'dimensions';
   isLoading: boolean = true;
+
   selectedTimeLabel = 'YEAR';
+  timeLevels : GetLevelDto[] = [];
+  selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, value : "" };
+
   selectedTimeAggregationLabel: string = 'YEAR';
   timeAggregationDtos : TimeAggregationDto[] = [];
   
@@ -59,6 +64,7 @@ export class HistoryComponent {
   ) {}
 
   ngOnInit(): void {
+    this.fetchTimeLevels();
     this.fetchSettings();
     this.fetchScopes();
     this.fetchDimensions();
@@ -104,7 +110,7 @@ export class HistoryComponent {
   
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
-      next: (response: ResponseDto<TypeDto[]>) => {
+      next: (response: ResponseDto<DataTypeDto[]>) => {
         this.types = response.data;
       },
       error: (err) => {
@@ -176,18 +182,7 @@ export class HistoryComponent {
   }
 
   fetchTimeAggregations(): void {
-    let levelId : number = 0;
-    console.log(this.selectedTimeAggregationLabel)
-    switch ( this.selectedTimeAggregationLabel ) {
-      case "MONTH":
-        levelId = 4;
-        break;
-      case "WEEK":
-        levelId = 5;
-        break;
-      default:
-        levelId = 1;
-    }
+    let levelId: number = { "YEAR": 1, "SEMESTER": 2, "TRIMESTER": 3, "MONTH": 4, "WEEK": 5 }[this.selectedTimeAggregationLabel] || 1;
 
     this.historyService.getTimeAggregations(levelId).subscribe({
       next: (response: ResponseDto<TimeAggregationDto[]>) => {
@@ -199,9 +194,15 @@ export class HistoryComponent {
     });
   }
 
-  get uniqueTimeAggregationLabels() {
-    // return this.timeAggregationDtos.map(x => x.label);
-    return ["MONTH", "WEEK"];
+  fetchTimeLevels() {
+    this.levelService.getTimeLevels().subscribe({
+      next: (response: ResponseDto<GetLevelDto[]>) => {
+        this.timeLevels = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching levels', err);
+      }
+    });
   }
 
   getAmountForTypeAndYear(typeId: number, year: number): number | null {
@@ -230,6 +231,7 @@ export class HistoryComponent {
   onSelectScope(scope : ScopeDto){
     this.selectedScope = scope;
     this.fetchTimeAggregations();
+    this.fetchScopeData();
   }
 
   getEditKey(typeId: number, timeAggregationId: number) : string {
@@ -269,5 +271,9 @@ export class HistoryComponent {
 
   cancelEdit(typeId: number, timeAggregationId: number): void {
     this.isEditing[this.getEditKey(typeId, timeAggregationId)] = false;
+  }
+
+  get uniqueTimeAggregationLabels() {
+    return this.timeLevels.map(tl => tl.value);
   }
 }

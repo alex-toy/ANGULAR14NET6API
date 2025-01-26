@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities;
+using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Utils;
 
@@ -38,23 +39,7 @@ public class ApplicationDbContext : DbContext
                .HasIndex(s => s.Key)
                .IsUnique();
 
-        builder.Entity<Setting>().HasData(
-            new Setting { Id = 1, Key = "PresentDate", Value = "2024-12-01" },
-            new Setting { Id = 2, Key = "PastSpan", Value = "24" },
-            new Setting { Id = 3, Key = "FutureSpan", Value = "12" }
-        );
-
-        builder.Entity<Dimension>().HasData(
-            new Dimension { Id = 1, Value = "Time" }
-        );
-
-        builder.Entity<Level>().HasData(
-            new Level { Id = GlobalVar.YEAR_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "YEAR" },
-            new Level { Id = GlobalVar.SEMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
-            new Level { Id = GlobalVar.TRIMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
-            new Level { Id = GlobalVar.MONTH_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
-            new Level { Id = GlobalVar.WEEK_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
-        );
+        SeedData(builder);
     }
 
     public DbSet<TimeDimension> DateSeries { get; set; }
@@ -67,6 +52,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Entities.Environment> Environments { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<EnvironmentScope> EnvironmentScopes { get; set; }
+    public DbSet<EnvironmentSorting> EnvironmentSortings { get; set; }
 
     private static void ConfigureLevel(ModelBuilder builder)
     {
@@ -114,6 +100,18 @@ public class ApplicationDbContext : DbContext
             .WithMany(l => l.Environment4s)
             .HasForeignKey(e => e.LevelIdFilter4)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<EnvironmentSorting>()
+            .HasOne(e => e.Environment)
+            .WithMany()
+            .HasForeignKey(e => e.EnvironmentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EnvironmentSorting>()
+            .HasOne(e => e.DataType)
+            .WithMany()
+            .HasForeignKey(e => e.DataTypeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     private static void ConfigureEnvironmentScope(ModelBuilder builder)
@@ -141,5 +139,26 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(e => e.Dimension4AggregationId)
             .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private static void SeedData(ModelBuilder builder)
+    {
+        builder.Entity<Setting>().HasData(
+            new Setting { Id = 1, Key = "PresentDate", Value = "2024-12-01" },
+            new Setting { Id = 2, Key = "PastSpan", Value = "24" },
+            new Setting { Id = 3, Key = "FutureSpan", Value = "12" }
+        );
+
+        builder.Entity<Dimension>().HasData(
+            new Dimension { Id = 1, Value = "Time" }
+        );
+
+        builder.Entity<Level>().HasData(
+            new Level { Id = GlobalVar.YEAR_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "YEAR" },
+            new Level { Id = GlobalVar.SEMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
+            new Level { Id = GlobalVar.TRIMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
+            new Level { Id = GlobalVar.MONTH_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
+            new Level { Id = GlobalVar.WEEK_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
+        );
     }
 }

@@ -1,6 +1,6 @@
 import { ResultDto } from "../resultDto";
 
-export interface TypeDto extends ResultDto{
+export interface DataTypeDto extends ResultDto{
     id: number;
     label: string;
 } 

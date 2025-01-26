@@ -7,7 +7,7 @@ import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { CreateLevelDto } from '../models/levels/createLevelDto';
 import { LevelService } from '../services/level.service';
 import { GetLevelDto } from '../models/levels/getLevelDto';
-import { TypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/typeDto';
 import { FactService } from '../services/fact.service';
 import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
 
@@ -28,8 +28,8 @@ export class SettingsComponent implements OnInit {
   showLevelFormForDimension: number | null = null;
   ancestorId: number | null = null;
 
-  newType: TypeDto = { id: 0, label: '' } as TypeDto;
-  types: TypeDto[] = [];
+  newType: DataTypeDto = { id: 0, label: '' } as DataTypeDto;
+  types: DataTypeDto[] = [];
   
   newAggregation: AggregationCreateDto = { levelId: 0, value: '' };
   aggregations: AggregationCreateDto[] = [];
@@ -44,7 +44,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.fetchSettings(); 
     this.fetchDimensions();
-    this.fetchTypes();
+    this.fetchDataTypes();
   }
 
   fetchSettings(): void {
@@ -185,8 +185,8 @@ export class SettingsComponent implements OnInit {
     this.showLevelFormForDimension = null;
   }
 
-  fetchTypes(): void {
-    this.factService.getTypes().subscribe({
+  fetchDataTypes(): void {
+    this.factService.getDataTypes().subscribe({
       next: (response) => {
         this.types = response.data;
       },
@@ -202,7 +202,7 @@ export class SettingsComponent implements OnInit {
     this.factService.createType(this.newType).subscribe({
       next: (response) => {
         this.types.push(response.data);
-        this.newType = { id: 0, label: '' } as TypeDto;
+        this.newType = { id: 0, label: '' } as DataTypeDto;
       },
       error: (err) => {
         console.error('Error adding new type:', err);

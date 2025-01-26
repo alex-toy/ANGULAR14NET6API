@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
-using SoccerPlayerApi.Entities;
+using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
@@ -354,19 +354,19 @@ public class FactService : IFactService
         return new FactCreateResultDto { IsSuccess = true, FactId = entityId };
     }
 
-    public async Task<IEnumerable<TypeDto>> GetFactTypes()
+    public async Task<IEnumerable<DataTypeDto>> GetFactTypes()
     {
         return await _context.Facts
             .Include(f => f.DataType)
-            .Select(f => new TypeDto { Label = f.DataType.Label, Id = f.DataTypeId })
+            .Select(f => new DataTypeDto { Label = f.DataType.Label, Id = f.DataTypeId })
             .Distinct()
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<TypeDto>> GetTypes()
+    public async Task<IEnumerable<DataTypeDto>> GetTypes()
     {
         return await _context.DataTypes
-            .Select(f => new TypeDto { Label = f.Label, Id = f.Id })
+            .Select(f => new DataTypeDto { Label = f.Label, Id = f.Id })
             .Distinct()
             .ToListAsync();
     }
@@ -638,12 +638,12 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    public async Task<TypeDto> CreateTypeAsync(TypeCreateDto type)
+    public async Task<DataTypeDto> CreateTypeAsync(TypeCreateDto type)
     {
         DataType typeDb = new() { Label = type.Label };
         EntityEntry<DataType> entityId = await _context.DataTypes.AddAsync(typeDb);
 
         await _context.SaveChangesAsync();
-        return new TypeDto { Id = entityId.Entity.Id, Label = type.Label };
+        return new DataTypeDto { Id = entityId.Entity.Id, Label = type.Label };
     }
 }

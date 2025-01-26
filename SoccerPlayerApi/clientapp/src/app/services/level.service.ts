@@ -23,6 +23,10 @@ export class LevelService {
   getLevels(dimensionId: number): Observable<ResponseDto<GetLevelDto[]>> {
     return this.httpClient.get<ResponseDto<GetLevelDto[]>>(`${this.url}/levels/${dimensionId}`);
   }
+
+  getTimeLevels(): Observable<ResponseDto<GetLevelDto[]>> {
+    return this.httpClient.get<ResponseDto<GetLevelDto[]>>(`${this.url}/timelevels`);
+  }
   
   getDimensionLevels(): Observable<ResponseDto<GetDimensionLevelDto[]>> {
     return this.httpClient.get<ResponseDto<GetDimensionLevelDto[]>>(`${this.url}/dimensionlevels`);

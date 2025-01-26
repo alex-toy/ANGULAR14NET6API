@@ -6,6 +6,7 @@ import { ResponseDto } from '../models/responseDto';
 import { EnvironmentDto } from '../models/environments/environmentDto';
 import { EnvironmentCreateDto } from '../models/environments/environmentCreateDto';
 import { EnvironmentUpdateDto } from '../models/environments/environmentUpdateDto';
+import { EnvironmentSortingDto } from '../models/environments/environmentSortingDto';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,9 @@ export class EnvironmentService {
 
   deleteEnvironment(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/delete/${id}`);
+  }
+  
+  createEnvironmentSorting(sortingDto: EnvironmentSortingDto): Observable<any> {
+    return this.httpClient.post<any>(`${this.apiUrl}/create-environment-sorting`, sortingDto);
   }
 }

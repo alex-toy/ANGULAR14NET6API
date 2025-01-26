@@ -15,7 +15,7 @@ import { GetFactResultDto } from '../models/facts/getFactResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { GetAggregationDto } from '../models/aggregations/getAggregationDto';
 import { ResponseDto } from '../models/responseDto';
-import { TypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/typeDto';
 
 @Component({
   selector: 'app-facts',
@@ -25,14 +25,14 @@ import { TypeDto } from '../models/facts/typeDto';
 export class FactsComponent {
   factsResult: GetFactsResultDto | null = null;
   amount: number = 0;
-  type: TypeDto = {id: 0, label: "" } as TypeDto;
+  type: DataTypeDto = {id: 0, label: "" } as DataTypeDto;
   filter: GetFactFilterDto = {
     type: '',
     factDimensionFilters: [],
     aggregationIds: []
   };
   
-  factTypes : TypeDto[] = [];
+  factTypes : DataTypeDto[] = [];
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
   dimensionValues: { [dimensionId:number] : GetAggregationDto[]} = {};
@@ -95,7 +95,7 @@ export class FactsComponent {
   
   fetchFactTypes(): void {
     this.factService.getFactTypes().subscribe({
-      next: (response: ResponseDto<TypeDto[]>) => {
+      next: (response: ResponseDto<DataTypeDto[]>) => {
         this.factTypes = response.data;
       },
       error: (err) => {
