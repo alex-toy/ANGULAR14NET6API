@@ -14,8 +14,6 @@ public class EnvironmentUpdateDto
 
     public int? LevelIdFilter4 { get; set; }
 
-    public int? LevelIdFilter5 { get; set; }
-
     public Entities.Environment ToDb()
     {
         return new Entities.Environment
@@ -25,8 +23,7 @@ public class EnvironmentUpdateDto
             LevelIdFilter1 = LevelIdFilter1,
             LevelIdFilter2 = LevelIdFilter2,
             LevelIdFilter3 = LevelIdFilter3,
-            LevelIdFilter4 = LevelIdFilter4,
-            LevelIdFilter5 = LevelIdFilter5,
+            LevelIdFilter4 = LevelIdFilter4
         };
     }
 }

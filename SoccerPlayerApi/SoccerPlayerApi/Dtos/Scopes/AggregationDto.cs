@@ -1,4 +1,6 @@
-﻿namespace SoccerPlayerApi.Dtos.Scopes;
+﻿using SoccerPlayerApi.Entities.Structure;
+
+namespace SoccerPlayerApi.Dtos.Scopes;
 
 public class AggregationDto
 {

@@ -67,7 +67,6 @@ public class FactService : IFactService
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
-            .Include(e => e.LevelFilter5)
             .FirstOrDefault(d => d.Id == environmentId);
 
         if (environment is null) throw new Exception("environment doesn't exist");

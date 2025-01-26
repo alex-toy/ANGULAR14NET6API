@@ -16,11 +16,14 @@ export class CreateEnvironmentComponent {
   environment : EnvironmentCreateDto = {
     name: '',
     description: '',
-    levelIdFilter1: null,
+    dimension1Id : 0,
+    levelIdFilter1: 0,
+    dimension2Id : null,
     levelIdFilter2: null,
+    dimension3Id : null,
     levelIdFilter3: null,
+    dimension4Id : null,
     levelIdFilter4: null,
-    levelIdFilter5: null
   };
 
   constructor(
@@ -55,11 +58,31 @@ export class CreateEnvironmentComponent {
 
   onSubmit() {
     let levelFilterIds = Object.values(this.selectedLevels);
-    if (levelFilterIds.length >= 1) this.environment.levelIdFilter1 = levelFilterIds[0];
-    if (levelFilterIds.length >= 2) this.environment.levelIdFilter2 = levelFilterIds[1];
-    if (levelFilterIds.length >= 3) this.environment.levelIdFilter3 = levelFilterIds[2];
-    if (levelFilterIds.length >= 4) this.environment.levelIdFilter4 = levelFilterIds[3];
-    if (levelFilterIds.length >= 5) this.environment.levelIdFilter5 = levelFilterIds[4];
+
+    let dimensionCounter = 1;
+    for (const [dimensionId, levelId] of Object.entries(this.selectedLevels)) {
+      if (dimensionCounter == 1) {
+        this.environment.dimension1Id = +dimensionId;
+        this.environment.levelIdFilter1 = levelId;
+      }
+
+      if (dimensionCounter == 2) {
+        this.environment.dimension2Id = +dimensionId;
+        this.environment.levelIdFilter2 = levelId;
+      }
+
+      if (dimensionCounter == 3) {
+        this.environment.dimension3Id = +dimensionId;
+        this.environment.levelIdFilter3 = levelId;
+      }
+
+      if (dimensionCounter == 4) {
+        this.environment.dimension4Id = +dimensionId;
+        this.environment.levelIdFilter4 = levelId;
+      }
+
+      dimensionCounter++;
+    }
     
     this.environmentService.createEnvironment(this.environment).subscribe({
       next: (response) => {

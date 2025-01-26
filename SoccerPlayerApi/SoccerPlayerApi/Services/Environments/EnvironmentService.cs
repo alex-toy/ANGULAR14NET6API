@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Environment;
+using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Repo;
 
@@ -22,7 +23,6 @@ public class EnvironmentService : IEnvironmentService
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
-            .Include(e => e.LevelFilter5)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         return environment?.ToDto();
@@ -35,7 +35,6 @@ public class EnvironmentService : IEnvironmentService
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
-            .Include(e => e.LevelFilter5)
             .ToListAsync();
 
         return environments.Select(x => x.ToDto());
@@ -51,6 +50,31 @@ public class EnvironmentService : IEnvironmentService
 
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
+    }
+
+    public async Task<bool> CreateEnvironmentScopes(IEnumerable<ScopeDto> scopes, int environmentId)
+    {
+        IEnumerable<EnvironmentScope> temp = scopes.Select(s => new EnvironmentScope
+        {
+            EnvironmentId = environmentId,
+
+            Dimension1Id = s.Aggregations.First().DimensionId,
+            Dimension1AggregationId = s.Aggregations.First().AggregationId,
+
+            Dimension2Id = s.Aggregations.Count() >= 2 ? s.Aggregations.ElementAt(1).DimensionId : null,
+            Dimension2AggregationId = s.Aggregations.Count() >= 2 ? s.Aggregations.ElementAt(1)?.AggregationId : null,
+
+            Dimension3Id = s.Aggregations.Count() >= 3 ? s.Aggregations.ElementAt(2).DimensionId : null,
+            Dimension3AggregationId = s.Aggregations.Count() >= 3 ? s.Aggregations.ElementAt(2)?.AggregationId : null,
+
+            Dimension4Id = s.Aggregations.Count() >= 4 ? s.Aggregations.ElementAt(3).DimensionId : null,
+            Dimension4AggregationId = s.Aggregations.Count() >= 4 ? s.Aggregations.ElementAt(3)?.AggregationId : null,
+        });
+
+        await _context.EnvironmentScopes.AddRangeAsync(temp);
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     private void CheckDimensionsNotOverlapped(EnvironmentCreateDto environment)
@@ -77,12 +101,6 @@ public class EnvironmentService : IEnvironmentService
         {
             levelCount++;
             levelIds.Add(environment.LevelIdFilter4.Value);
-        }
-
-        if (environment.LevelIdFilter5.HasValue)
-        {
-            levelCount++;
-            levelIds.Add(environment.LevelIdFilter5.Value);
         }
 
         var dimensionIds = _context.Levels.Include(x => x.Dimension)

@@ -22,23 +22,7 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.DataTypeId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Level>()
-            .HasOne(l => l.Ancestor)
-            .WithMany(l => l.Children)
-            .HasForeignKey(l => l.AncestorId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Level>()
-            .HasOne(l => l.Dimension)
-            .WithMany()
-            .HasForeignKey(l => l.DimensionId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Level>()
-            .HasMany(l => l.DimensionValues)
-            .WithOne(l => l.Level)
-            .HasForeignKey(l => l.LevelId)
-            .OnDelete(DeleteBehavior.NoAction);
+        ConfigureLevel(builder);
 
         builder.Entity<Dimension>()
             .HasMany(l => l.Levels)
@@ -46,35 +30,9 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(l => l.DimensionId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Entities.Environment>()
-            .HasOne(e => e.LevelFilter1)
-            .WithMany(l => l.Environment1s)
-            .HasForeignKey(e => e.LevelIdFilter1)
-            .OnDelete(DeleteBehavior.NoAction);
+        ConfigureEnvironment(builder);
 
-        builder.Entity<Entities.Environment>()
-            .HasOne(e => e.LevelFilter2)
-            .WithMany(l => l.Environment2s)
-            .HasForeignKey(e => e.LevelIdFilter2)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Entities.Environment>()
-            .HasOne(e => e.LevelFilter3)
-            .WithMany(l => l.Environment3s)
-            .HasForeignKey(e => e.LevelIdFilter3)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Entities.Environment>()
-            .HasOne(e => e.LevelFilter4)
-            .WithMany(l => l.Environment4s)
-            .HasForeignKey(e => e.LevelIdFilter4)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<Entities.Environment>()
-            .HasOne(e => e.LevelFilter5)
-            .WithMany(l => l.Environment5s)
-            .HasForeignKey(e => e.LevelIdFilter5)
-            .OnDelete(DeleteBehavior.NoAction);
+        ConfigureEnvironmentScope(builder);
 
         builder.Entity<Setting>()
                .HasIndex(s => s.Key)
@@ -108,4 +66,80 @@ public class ApplicationDbContext : DbContext
     public DbSet<Level> Levels { get; set; }
     public DbSet<Entities.Environment> Environments { get; set; }
     public DbSet<Setting> Settings { get; set; }
+    public DbSet<EnvironmentScope> EnvironmentScopes { get; set; }
+
+    private static void ConfigureLevel(ModelBuilder builder)
+    {
+        builder.Entity<Level>()
+            .HasOne(l => l.Ancestor)
+            .WithMany(l => l.Children)
+            .HasForeignKey(l => l.AncestorId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Level>()
+            .HasOne(l => l.Dimension)
+            .WithMany()
+            .HasForeignKey(l => l.DimensionId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Level>()
+            .HasMany(l => l.DimensionValues)
+            .WithOne(l => l.Level)
+            .HasForeignKey(l => l.LevelId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private static void ConfigureEnvironment(ModelBuilder builder)
+    {
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter1)
+            .WithMany(l => l.Environment1s)
+            .HasForeignKey(e => e.LevelIdFilter1)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter2)
+            .WithMany(l => l.Environment2s)
+            .HasForeignKey(e => e.LevelIdFilter2)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter3)
+            .WithMany(l => l.Environment3s)
+            .HasForeignKey(e => e.LevelIdFilter3)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Entities.Environment>()
+            .HasOne(e => e.LevelFilter4)
+            .WithMany(l => l.Environment4s)
+            .HasForeignKey(e => e.LevelIdFilter4)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private static void ConfigureEnvironmentScope(ModelBuilder builder)
+    {
+        builder.Entity<EnvironmentScope>()
+            .HasOne(e => e.Dimension1Aggregation)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension1AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<EnvironmentScope>()
+            .HasOne(e => e.Dimension2Aggregation)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension2AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<EnvironmentScope>()
+            .HasOne(e => e.Dimension3Aggregation)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension3AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<EnvironmentScope>()
+            .HasOne(e => e.Dimension4Aggregation)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension4AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
 }

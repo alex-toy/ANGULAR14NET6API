@@ -21,9 +21,6 @@ public class Environment : Entity
     public int? LevelIdFilter4 { get; set; }
     public Level? LevelFilter4 { get; set; }
 
-    public int? LevelIdFilter5 { get; set; }
-    public Level? LevelFilter5 { get; set; }
-
     public void Map(EnvironmentUpdateDto environment)
     {
        Name = environment.Name;
@@ -32,7 +29,6 @@ public class Environment : Entity
        LevelIdFilter2 = environment.LevelIdFilter2;
        LevelIdFilter3 = environment.LevelIdFilter3;
        LevelIdFilter4 = environment.LevelIdFilter4;
-       LevelIdFilter5 = environment.LevelIdFilter5;
     }
 
     public EnvironmentDto ToDto()
@@ -54,9 +50,6 @@ public class Environment : Entity
 
             LevelIdFilter4 = LevelIdFilter4,
             LevelLabel4 = LevelFilter4?.Value ?? string.Empty,
-
-            LevelIdFilter5 = LevelIdFilter5,
-            LevelLabel5 = LevelFilter5?.Value ?? string.Empty,
         };
     }
 }

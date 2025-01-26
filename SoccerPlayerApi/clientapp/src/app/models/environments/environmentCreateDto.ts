@@ -2,13 +2,15 @@ export interface EnvironmentCreateDto {
     name: string;
     description: string;
 
-    levelIdFilter1: number | null;
+    dimension1Id : number;
+    levelIdFilter1: number;
 
+    dimension2Id : number | null;
     levelIdFilter2: number | null;
 
+    dimension3Id : number | null;
     levelIdFilter3: number | null;
 
+    dimension4Id : number | null;
     levelIdFilter4: number | null;
-
-    levelIdFilter5: number | null;
 }

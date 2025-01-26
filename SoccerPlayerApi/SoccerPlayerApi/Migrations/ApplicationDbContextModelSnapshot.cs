@@ -34,6 +34,9 @@ namespace SoccerPlayerApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("LevelId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LevelIdFilter1")
                         .HasColumnType("int");
 
@@ -46,14 +49,13 @@ namespace SoccerPlayerApi.Migrations
                     b.Property<int?>("LevelIdFilter4")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LevelIdFilter5")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LevelId");
 
                     b.HasIndex("LevelIdFilter1");
 
@@ -63,9 +65,57 @@ namespace SoccerPlayerApi.Migrations
 
                     b.HasIndex("LevelIdFilter4");
 
-                    b.HasIndex("LevelIdFilter5");
-
                     b.ToTable("Environments");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.EnvironmentScope", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Dimension1AggregationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dimension1Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Dimension2AggregationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Dimension2Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Dimension3AggregationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Dimension3Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Dimension4AggregationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Dimension4Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EnvironmentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Dimension1AggregationId");
+
+                    b.HasIndex("Dimension2AggregationId");
+
+                    b.HasIndex("Dimension3AggregationId");
+
+                    b.HasIndex("Dimension4AggregationId");
+
+                    b.HasIndex("EnvironmentId");
+
+                    b.ToTable("EnvironmentScopes");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Setting", b =>
@@ -259,24 +309,28 @@ namespace SoccerPlayerApi.Migrations
                         new
                         {
                             Id = 2,
+                            AncestorId = 1,
                             DimensionId = 1,
                             Value = "SEMESTER"
                         },
                         new
                         {
                             Id = 3,
+                            AncestorId = 2,
                             DimensionId = 1,
                             Value = "TRIMESTER"
                         },
                         new
                         {
                             Id = 4,
+                            AncestorId = 3,
                             DimensionId = 1,
                             Value = "MONTH"
                         },
                         new
                         {
                             Id = 5,
+                            AncestorId = 4,
                             DimensionId = 1,
                             Value = "WEEK"
                         });
@@ -339,6 +393,10 @@ namespace SoccerPlayerApi.Migrations
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Environment", b =>
                 {
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Level", null)
+                        .WithMany("Environment5s")
+                        .HasForeignKey("LevelId");
+
                     b.HasOne("SoccerPlayerApi.Entities.Structure.Level", "LevelFilter1")
                         .WithMany("Environment1s")
                         .HasForeignKey("LevelIdFilter1")
@@ -360,11 +418,6 @@ namespace SoccerPlayerApi.Migrations
                         .HasForeignKey("LevelIdFilter4")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SoccerPlayerApi.Entities.Structure.Level", "LevelFilter5")
-                        .WithMany("Environment5s")
-                        .HasForeignKey("LevelIdFilter5")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.Navigation("LevelFilter1");
 
                     b.Navigation("LevelFilter2");
@@ -372,8 +425,46 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("LevelFilter3");
 
                     b.Navigation("LevelFilter4");
+                });
 
-                    b.Navigation("LevelFilter5");
+            modelBuilder.Entity("SoccerPlayerApi.Entities.EnvironmentScope", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "Dimension1Aggregation")
+                        .WithMany()
+                        .HasForeignKey("Dimension1AggregationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "Dimension2Aggregation")
+                        .WithMany()
+                        .HasForeignKey("Dimension2AggregationId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "Dimension3Aggregation")
+                        .WithMany()
+                        .HasForeignKey("Dimension3AggregationId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "Dimension4Aggregation")
+                        .WithMany()
+                        .HasForeignKey("Dimension4AggregationId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SoccerPlayerApi.Entities.Environment", "Environment")
+                        .WithMany()
+                        .HasForeignKey("EnvironmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dimension1Aggregation");
+
+                    b.Navigation("Dimension2Aggregation");
+
+                    b.Navigation("Dimension3Aggregation");
+
+                    b.Navigation("Dimension4Aggregation");
+
+                    b.Navigation("Environment");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Aggregation", b =>

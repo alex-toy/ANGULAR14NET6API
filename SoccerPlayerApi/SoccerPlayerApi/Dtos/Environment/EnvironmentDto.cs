@@ -17,7 +17,4 @@ public class EnvironmentDto
 
     public int? LevelIdFilter4 { get; set; }
     public string LevelLabel4 { get; set; } = string.Empty;
-
-    public int? LevelIdFilter5 { get; set; }
-    public string LevelLabel5 { get; set; } = string.Empty;
 }
