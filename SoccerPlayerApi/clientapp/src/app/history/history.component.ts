@@ -90,10 +90,11 @@ export class HistoryComponent {
     });
   }
   
-  fetchFactTypes(): void {
-    this.factService.getFactTypes().subscribe({
-      next: (response: ResponseDto<TypeDto[]>) => {
-        this.types = response.data;
+  fetchScopesByEnvironment(): void {
+    this.historyService.getScopesByEnvironment(this.selectedEnvironmentId).subscribe({
+      next: (response: ResponseDto<ScopeDto[]>) => {
+        this.scopes = response.data.map(d => new ScopeDto(d));
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching scopes', err);
@@ -101,11 +102,10 @@ export class HistoryComponent {
     });
   }
   
-  fetchScopesByEnvironment(): void {
-    this.historyService.getScopesByEnvironment(this.selectedEnvironmentId).subscribe({
-      next: (response: ResponseDto<ScopeDto[]>) => {
-        this.scopes = response.data.map(d => new ScopeDto(d));
-        this.isLoading = false;
+  fetchFactTypes(): void {
+    this.factService.getFactTypes().subscribe({
+      next: (response: ResponseDto<TypeDto[]>) => {
+        this.types = response.data;
       },
       error: (err) => {
         console.error('Error fetching scopes', err);

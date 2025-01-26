@@ -2,9 +2,16 @@ export interface EnvironmentUpdateDto {
     id: number;
     name: string;
     description: string;
+
+    dimension1Id : number;
     levelIdFilter1: number;
-    levelIdFilter2?: number;
-    levelIdFilter3?: number;
-    levelIdFilter4?: number;
-    levelIdFilter5?: number;
+
+    dimension2Id : number | null;
+    levelIdFilter2: number | null;
+
+    dimension3Id : number | null;
+    levelIdFilter3: number | null;
+
+    dimension4Id : number | null;
+    levelIdFilter4: number | null;
 }

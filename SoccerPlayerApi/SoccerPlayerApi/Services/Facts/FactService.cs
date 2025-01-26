@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
+using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
@@ -61,6 +62,80 @@ public class FactService : IFactService
     }
 
     public async Task<IEnumerable<ScopeDto>> GetScopesByEnvironmentId(int environmentId)
+    {
+        List<EnvironmentScope>? environmentScopes = await _context.EnvironmentScopes
+                                                                        .Include(es => es.Dimension1Aggregation)
+                                                                        .Include(es => es.Dimension2Aggregation)
+                                                                        .Include(es => es.Dimension3Aggregation)
+                                                                        .Include(es => es.Dimension4Aggregation)
+                                                                        .Where(d => d.EnvironmentId == environmentId)
+                                                                        .ToListAsync();
+
+        if (environmentScopes is null) throw new Exception("environment scopes don't exist");
+
+        IEnumerable<ScopeDto> scopes = environmentScopes.Select(es => ExtractScopeDto(es));
+
+        return scopes ?? new List<ScopeDto>();
+    }
+
+    private static ScopeDto ExtractScopeDto(EnvironmentScope es)
+    {
+        if (
+            es.Dimension4Id is not null && es.Dimension4AggregationId is not null && es.Dimension4Aggregation is not null &&
+            es.Dimension3Id is not null && es.Dimension3AggregationId is not null && es.Dimension3Aggregation is not null &&
+            es.Dimension2Id is not null && es.Dimension2AggregationId is not null && es.Dimension2Aggregation is not null
+        )
+        {
+            return new ScopeDto
+            {
+                Aggregations = new List<AggregationDto>()
+                {
+                    new AggregationDto { AggregationId = es.Dimension1AggregationId, DimensionId = es.Dimension1Id, LevelLabel = es.Dimension1Aggregation.Value },
+                    new AggregationDto { AggregationId = es.Dimension2AggregationId.Value, DimensionId = es.Dimension2Id.Value, LevelLabel = es.Dimension2Aggregation.Value, },
+                    new AggregationDto { AggregationId = es.Dimension3AggregationId.Value, DimensionId = es.Dimension3Id.Value, LevelLabel = es.Dimension3Aggregation.Value, },
+                    new AggregationDto { AggregationId = es.Dimension4AggregationId.Value, DimensionId = es.Dimension4Id.Value, LevelLabel = es.Dimension4Aggregation.Value, }
+                }
+            };
+        }
+
+        if (
+            es.Dimension3Id is not null && es.Dimension3AggregationId is not null && es.Dimension3Aggregation is not null &&
+            es.Dimension2Id is not null && es.Dimension2AggregationId is not null && es.Dimension2Aggregation is not null
+        )
+        {
+            return new ScopeDto
+            {
+                Aggregations = new List<AggregationDto>()
+                {
+                    new AggregationDto { AggregationId = es.Dimension1AggregationId, DimensionId = es.Dimension1Id, LevelLabel = es.Dimension1Aggregation.Value, },
+                    new AggregationDto { AggregationId = es.Dimension2AggregationId.Value, DimensionId = es.Dimension2Id.Value, LevelLabel = es.Dimension2Aggregation.Value, },
+                    new AggregationDto { AggregationId = es.Dimension3AggregationId.Value, DimensionId = es.Dimension3Id.Value, LevelLabel = es.Dimension3Aggregation.Value, },
+                }
+            };
+        }
+
+        if (es.Dimension2Id is not null && es.Dimension2AggregationId is not null && es.Dimension2Aggregation is not null)
+        {
+            return new ScopeDto
+            {
+                Aggregations = new List<AggregationDto>()
+                {
+                    new AggregationDto { AggregationId = es.Dimension1AggregationId, DimensionId = es.Dimension1Id, LevelLabel = es.Dimension1Aggregation.Value, },
+                    new AggregationDto { AggregationId = es.Dimension2AggregationId.Value, DimensionId = es.Dimension2Id.Value, LevelLabel = es.Dimension2Aggregation.Value, },
+                }
+            };
+        }
+
+        return new ScopeDto
+        {
+            Aggregations = new List<AggregationDto>()
+            {
+                new AggregationDto { AggregationId = es.Dimension1AggregationId, DimensionId = es.Dimension1Id, LevelLabel = es.Dimension1Aggregation.Value, }
+            }
+        };
+    }
+
+    public async Task<IEnumerable<ScopeDto>> GetScopesByEnvironmentIdOld(int environmentId)
     {
         Entities.Environment? environment = _context.Environments
             .Include(e => e.LevelFilter1)

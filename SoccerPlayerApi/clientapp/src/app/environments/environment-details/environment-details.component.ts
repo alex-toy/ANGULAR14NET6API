@@ -26,7 +26,6 @@ export class EnvironmentDetailsComponent {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    // Initialize form
     this.environmentForm = this.fb.group({
       name: ['', Validators.required],
       description: [''],
@@ -72,7 +71,6 @@ export class EnvironmentDetailsComponent {
     });
   }
 
-  // Initialize form with environment details
   initializeForm(): void {
     if (this.environment) {
       this.environmentForm.patchValue({
@@ -97,24 +95,30 @@ export class EnvironmentDetailsComponent {
     this.selectedLevels[dimensionId] = selectedLevelId;
   }
 
-  // Update the environment with the form values
   updateEnvironment(): void {
     if (this.environmentForm.valid && this.environment) {
       const updatedEnvironment: EnvironmentUpdateDto = {
         id: this.environment.id,
         name: this.environmentForm.value.name,
         description: this.environmentForm.value.description,
+
+        dimension1Id: this.environmentForm.value.dimension1Id,
         levelIdFilter1: this.environmentForm.value.levelIdFilter1,
+        
+        dimension2Id: this.environmentForm.value.dimension2Id,
         levelIdFilter2: this.environmentForm.value.levelIdFilter2,
+        
+        dimension3Id: this.environmentForm.value.dimension3Id,
         levelIdFilter3: this.environmentForm.value.levelIdFilter3,
-        levelIdFilter4: this.environmentForm.value.levelIdFilter4,
-        levelIdFilter5: this.environmentForm.value.levelIdFilter5
+        
+        dimension4Id: this.environmentForm.value.dimension4Id,
+        levelIdFilter4: this.environmentForm.value.levelIdFilter4
       };
 
       this.environmentService.updateEnvironment(updatedEnvironment).subscribe({
         next: () => {
-          this.isEditMode = false;  // Turn off edit mode after successful update
-          this.fetchEnvironmentDetails();  // Refresh environment data
+          this.isEditMode = false;
+          this.fetchEnvironmentDetails();
         },
         error: (err) => {
           console.error('Error updating environment:', err);

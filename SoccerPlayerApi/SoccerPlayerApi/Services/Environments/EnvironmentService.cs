@@ -4,16 +4,19 @@ using SoccerPlayerApi.Dtos.Environment;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Repo;
+using SoccerPlayerApi.Services.Facts;
 
 namespace SoccerPlayerApi.Services.Environments;
 
 public class EnvironmentService : IEnvironmentService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IFactService _factService;
 
-    public EnvironmentService(ApplicationDbContext context)
+    public EnvironmentService(ApplicationDbContext context, IFactService factService)
     {
         _context = context;
+        _factService = factService;
     }
 
     public async Task<EnvironmentDto?> GetEnvironmentById(int id)
@@ -47,12 +50,39 @@ public class EnvironmentService : IEnvironmentService
         Entities.Environment environmentDb = environment.ToDb();
 
         EntityEntry<Entities.Environment> entity = await _context.Environments.AddAsync(environmentDb);
+        await _context.SaveChangesAsync();
+        var environmentId = entity.Entity.Id;
+
+        await CreateRelatedEnvironmentScopes(environment, environmentId);
+
+        return environmentId;
+    }
+
+    public async Task<bool> DeleteById(int id)
+    {
+        Entities.Environment? entity = await _context.Environments.FirstOrDefaultAsync(x => x.Id == id);
+        if (entity is not null) _context.Environments.Remove(entity);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<int> UpdateAsync(EnvironmentUpdateDto environment)
+    {
+        Entities.Environment? environmentDb = await _context.Environments.FirstOrDefaultAsync(x => x.Id == environment.Id);
+
+        if (environmentDb is null) return -1;
+
+        environmentDb.Map(environment);
+        EntityEntry<Entities.Environment> entity = _context.Environments.Update(environmentDb);
+
+        await DeleteRelatedEnvironmentScopes(environment.Id);
+        await CreateRelatedEnvironmentScopes(environment.ToCeateDto(), environment.Id);
 
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
     }
 
-    public async Task<bool> CreateEnvironmentScopes(IEnumerable<ScopeDto> scopes, int environmentId)
+    private async Task<bool> CreateEnvironmentScopes(IEnumerable<ScopeDto> scopes, int environmentId)
     {
         IEnumerable<EnvironmentScope> temp = scopes.Select(s => new EnvironmentScope
         {
@@ -112,24 +142,57 @@ public class EnvironmentService : IEnvironmentService
         if (levelCount > dimensionIds) throw new Exception("dimensions are overlapping");
     }
 
-    public async Task<bool> DeleteById(int id)
+    private async Task CreateRelatedEnvironmentScopes(EnvironmentCreateDto environment, int environmentId)
     {
-        Entities.Environment? entity = await _context.Environments.FirstOrDefaultAsync(x => x.Id == id);
-        if (entity is not null) _context.Environments.Remove(entity);
+        ScopeFilterDto filter = SetScopeFilter(environment);
+        IEnumerable<ScopeDto> scopes = await _factService.GetScopes(filter);
+        await CreateEnvironmentScopes(scopes, environmentId);
+    }
+
+    private async Task<bool> DeleteRelatedEnvironmentScopes(int environmentId)
+    {
+        EnvironmentScope? entity = await _context.EnvironmentScopes.FirstOrDefaultAsync(x => x.Id == environmentId);
+        if (entity is not null) _context.EnvironmentScopes.Remove(entity);
         await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<int> UpdateAsync(EnvironmentUpdateDto environment)
+    private static ScopeFilterDto SetScopeFilter(EnvironmentCreateDto environment)
     {
-        Entities.Environment? environmentDb = await _context.Environments.FirstOrDefaultAsync(x => x.Id == environment.Id);
+        ScopeFilterDto filter = new ScopeFilterDto();
+        filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
+        {
+            DimensionId = environment.Dimension1Id,
+            LevelId = environment.LevelIdFilter1
+        });
 
-        if (environmentDb is null) return -1;
+        if (environment.Dimension2Id is not null && environment.LevelIdFilter2 is not null)
+        {
+            filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
+            {
+                DimensionId = environment.Dimension2Id.Value,
+                LevelId = environment.LevelIdFilter2.Value
+            });
+        }
 
-        environmentDb.Map(environment);
-        EntityEntry<Entities.Environment> entity = _context.Environments.Update(environmentDb);
+        if (environment.Dimension3Id is not null && environment.LevelIdFilter3 is not null)
+        {
+            filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
+            {
+                DimensionId = environment.Dimension3Id.Value,
+                LevelId = environment.LevelIdFilter3.Value
+            });
+        }
 
-        await _context.SaveChangesAsync();
-        return entity.Entity.Id;
+        if (environment.Dimension4Id is not null && environment.LevelIdFilter4 is not null)
+        {
+            filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
+            {
+                DimensionId = environment.Dimension4Id.Value,
+                LevelId = environment.LevelIdFilter4.Value
+            });
+        }
+
+        return filter;
     }
 }
