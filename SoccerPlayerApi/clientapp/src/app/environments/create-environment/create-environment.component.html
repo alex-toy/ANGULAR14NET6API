@@ -63,7 +63,7 @@
           <option *ngFor="let time of timeAggregations" [value]="time.timeAggregationId">{{ time.label }}</option>
         </select>
       </div>
-      <div class="col-2" *ngIf="newSorting.startTimeSpan > 0">
+      <div class="col-2" *ngIf="selectedTimeLevelId > 0 && newSorting.startTimeSpan > 0">
         <label for="endTimeSpan">End Time Span:</label>
         <select id="endTimeSpan" [(ngModel)]="newSorting.endTimeSpan" name="endTimeSpan" class="form-control">
           <option value="">Select Start Time Span</option>

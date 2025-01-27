@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoccerPlayerApi.Bos;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities.Environments;
@@ -415,6 +416,15 @@ public class FactService : IFactService
         return true;
     }
 
+    public async Task<DataTypeDto> CreateTypeAsync(TypeCreateDto type)
+    {
+        DataType typeDb = new() { Label = type.Label };
+        EntityEntry<DataType> entityId = await _context.DataTypes.AddAsync(typeDb);
+
+        await _context.SaveChangesAsync();
+        return new DataTypeDto { Id = entityId.Entity.Id, Label = type.Label };
+    }
+
     private static Expression<Func<GetFactResultDto, bool>> DimensionFilter(GetFactDimensionFilterDto factDimensionFilter1)
     {
         return factResult => factDimensionFilter1.LevelId == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).LevelId &&
@@ -448,64 +458,9 @@ public class FactService : IFactService
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(ScopeDto scope)
     {
-        var dim1 = from fa in _context.Facts
-                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                   join df in _context.AggregationFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join prod in _context.Dimensions on lv.DimensionId equals prod.Id
-                   where prod.Id == scope.Aggregations[0].DimensionId
-                   select new
-                   {
-                       FactId = fa.Id,
-                       TypeLabel = dt.Label,
-                       TypeId = dt.Id,
-                       Amount = fa.Amount,
-                       LevelId = lv.Id,
-                       Value = lv.Value,
-                       DimensionId = prod.Id,
-                       AggregationValue = dv.Value,
-                       AggId = dv.Id
-                   };
-
-        var dim2 = from fa in _context.Facts
-                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                   join df in _context.AggregationFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join loc in _context.Dimensions on lv.DimensionId equals loc.Id
-                   where loc.Id == scope.Aggregations[1].DimensionId
-                   select new
-                   {
-                       FactId = fa.Id,
-                       TypeLabel = dt.Label,
-                       TypeId = dt.Id,
-                       Amount = fa.Amount,
-                       LevelId = lv.Id,
-                       Value = lv.Value,
-                       DimensionId = loc.Id,
-                       AggregationValue = dv.Value,
-                       AggId = dv.Id
-                   };
-
-        var timeDimension = from fa in _context.Facts
-                            join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                            join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
-                            join lv in _context.Levels on dv.LevelId equals lv.Id
-                            join tim in _context.Dimensions on lv.DimensionId equals tim.Id
-                            where tim.Id == GlobalVar.TIME_DIMENSION_ID
-                            select new
-                            {
-                                FactId = fa.Id,
-                                TypeLabel = dt.Label,
-                                TypeId = dt.Id,
-                                Amount = fa.Amount,
-                                LevelId = lv.Id,
-                                Value = lv.Value,
-                                DimensionId = tim.Id,
-                                AggregationValue = dv.Value,
-                                AggId = dv.Id
-                            };
+        IQueryable<AxisBo> dim1 = GetDimensionAxis(scope, 1);
+        IQueryable<AxisBo> dim2 = GetDimensionAxis(scope, 2);
+        IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
 
         var resultQuery = from d1 in dim1
                           join d2 in dim2 on d1.FactId equals d2.FactId
@@ -534,82 +489,10 @@ public class FactService : IFactService
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_4_Dimensions(ScopeDto scope)
     {
-        var dim1 = from fa in _context.Facts
-                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                   join df in _context.AggregationFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join prod in _context.Dimensions on lv.DimensionId equals prod.Id
-                   where prod.Id == scope.Aggregations[0].DimensionId
-                   select new
-                   {
-                       FactId = fa.Id,
-                       TypeLabel = dt.Label,
-                       TypeId = dt.Id,
-                       Amount = fa.Amount,
-                       LevelId = lv.Id,
-                       Value = lv.Value,
-                       DimensionId = prod.Id,
-                       AggregationValue = dv.Value,
-                       AggId = dv.Id
-                   };
-
-        var dim2 = from fa in _context.Facts
-                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                   join df in _context.AggregationFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join loc in _context.Dimensions on lv.DimensionId equals loc.Id
-                   where loc.Id == scope.Aggregations[1].DimensionId
-                   select new
-                   {
-                       FactId = fa.Id,
-                       Type = dt.Label,
-                       Amount = fa.Amount,
-                       LevelId = lv.Id,
-                       Value = lv.Value,
-                       DimensionId = loc.Id,
-                       AggregationValue = dv.Value,
-                       AggId = dv.Id
-                   };
-
-        var dim3 = from fa in _context.Facts
-                   join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                   join df in _context.AggregationFacts on fa.Id equals df.FactId
-                   join dv in _context.Aggregations on df.AggregationId equals dv.Id
-                   join lv in _context.Levels on dv.LevelId equals lv.Id
-                   join loc in _context.Dimensions on lv.DimensionId equals loc.Id
-                   where loc.Id == scope.Aggregations[2].DimensionId
-                   select new
-                   {
-                       FactId = fa.Id,
-                       TypeLabel = dt.Label,
-                       TypeId = dt.Id,
-                       Amount = fa.Amount,
-                       LevelId = lv.Id,
-                       Value = lv.Value,
-                       DimensionId = loc.Id,
-                       AggregationValue = dv.Value,
-                       AggId = dv.Id
-                   };
-
-        var timeDimension = from fa in _context.Facts
-                            join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-                            join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
-                            join lv in _context.Levels on dv.LevelId equals lv.Id
-                            join tim in _context.Dimensions on lv.DimensionId equals tim.Id
-                            where tim.Id == GlobalVar.TIME_DIMENSION_ID
-                            select new
-                            {
-                                FactId = fa.Id,
-                                Type = dt.Label,
-                                Amount = fa.Amount,
-                                LevelId = lv.Id,
-                                Value = lv.Value,
-                                DimensionId = tim.Id,
-                                AggregationValue = dv.Value,
-                                AggId = dv.Id
-                            };
+        IQueryable<AxisBo> dim1 = GetDimensionAxis(scope, 1);
+        IQueryable<AxisBo> dim2 = GetDimensionAxis(scope, 2);
+        IQueryable<AxisBo> dim3 = GetDimensionAxis(scope, 3);
+        IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
 
         var resultQuery = from d1 in dim1
                           join d2 in dim2 on d1.FactId equals d2.FactId
@@ -638,12 +521,48 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    public async Task<DataTypeDto> CreateTypeAsync(TypeCreateDto type)
+    private IQueryable<AxisBo> GetDimensionAxis(ScopeDto scope, int dimensionId)
     {
-        DataType typeDb = new() { Label = type.Label };
-        EntityEntry<DataType> entityId = await _context.DataTypes.AddAsync(typeDb);
+        return from fa in _context.Facts
+               join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+               join df in _context.AggregationFacts on fa.Id equals df.FactId
+               join dv in _context.Aggregations on df.AggregationId equals dv.Id
+               join lv in _context.Levels on dv.LevelId equals lv.Id
+               join prod in _context.Dimensions on lv.DimensionId equals prod.Id
+               where prod.Id == scope.Aggregations[dimensionId - 1].DimensionId
+               select new AxisBo
+               {
+                   FactId = fa.Id,
+                   TypeLabel = dt.Label,
+                   TypeId = dt.Id,
+                   Amount = fa.Amount,
+                   LevelId = lv.Id,
+                   Value = lv.Value,
+                   DimensionId = prod.Id,
+                   AggregationValue = dv.Value,
+                   AggId = dv.Id
+               };
+    }
 
-        await _context.SaveChangesAsync();
-        return new DataTypeDto { Id = entityId.Entity.Id, Label = type.Label };
+    private IQueryable<AxisBo> GetTimeDimensionAxis()
+    {
+        return from fa in _context.Facts
+               join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+               join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
+               join lv in _context.Levels on dv.LevelId equals lv.Id
+               join tim in _context.Dimensions on lv.DimensionId equals tim.Id
+               where tim.Id == GlobalVar.TIME_DIMENSION_ID
+               select new AxisBo
+               {
+                   FactId = fa.Id,
+                   TypeLabel = dt.Label,
+                   TypeId = dt.Id,
+                   Amount = fa.Amount,
+                   LevelId = lv.Id,
+                   Value = lv.Value,
+                   DimensionId = tim.Id,
+                   AggregationValue = dv.Value,
+                   AggId = dv.Id
+               };
     }
 }
