@@ -48,9 +48,9 @@ public class FactController
     }
 
     [HttpGet("types")]
-    public async Task<ResponseDto<IEnumerable<DataTypeDto>>> GetTypes()
+    public async Task<ResponseDto<IEnumerable<DataTypeDto>>> GetDataTypes()
     {
-        IEnumerable<DataTypeDto> levels = await _factService.GetTypes();
+        IEnumerable<DataTypeDto> levels = await _factService.GetDataTypes();
         return new ResponseDto<IEnumerable<DataTypeDto>> { Data = levels, IsSuccess = true };
     }
 

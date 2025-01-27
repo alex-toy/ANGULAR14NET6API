@@ -70,7 +70,7 @@ export class HistoryComponent {
     this.fetchDimensions();
     this.fetchDimensionLevels();
     this.fetchEnvironments();
-    this.fetchFactTypes();
+    this.fetchDataTypes();
   }
   
   applyLevelFilter(): void {
@@ -108,8 +108,8 @@ export class HistoryComponent {
     });
   }
   
-  fetchFactTypes(): void {
-    this.factService.getFactTypes().subscribe({
+  fetchDataTypes(): void {
+    this.factService.getDataTypes().subscribe({
       next: (response: ResponseDto<DataTypeDto[]>) => {
         this.types = response.data;
       },
@@ -186,7 +186,8 @@ export class HistoryComponent {
 
     this.historyService.getTimeAggregations(levelId).subscribe({
       next: (response: ResponseDto<TimeAggregationDto[]>) => {
-        this.timeAggregationDtos = response.data.sort((a, b) => a.label.localeCompare(b.label));;
+        this.timeAggregationDtos = response.data.sort((a, b) => a.label.localeCompare(b.label));
+        console.log(this.timeAggregationDtos)
       },
       error: (err) => {
         console.error('Error fetching levels', err);

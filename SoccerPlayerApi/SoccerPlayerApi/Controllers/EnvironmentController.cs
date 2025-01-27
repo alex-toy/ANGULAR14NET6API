@@ -34,7 +34,6 @@ public class EnvironmentController
         try
         {
             int environmentId = await _environmentService.CreateEnvironment(environment);
-
             return new ResponseDto<int> { Data = environmentId, IsSuccess = true, Count = 1 };
         }
         catch (Exception ex)
@@ -44,10 +43,17 @@ public class EnvironmentController
     }
 
     [HttpPut("update")]
-    public async Task<int> Update(EnvironmentUpdateDto environment)
+    public async Task<ResponseDto<int>> Update(EnvironmentUpdateDto environment)
     {
-        int playerId = await _environmentService.UpdateAsync(environment);
-        return playerId;
+        try
+        {
+            int playerId = await _environmentService.UpdateAsync(environment);
+            return new ResponseDto<int> { Data = playerId, IsSuccess = true };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<int> { IsSuccess = false, Count = 0, Message = ex.Message };
+        }
     }
 
     [HttpGet("environment/{id}")]

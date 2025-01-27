@@ -43,18 +43,18 @@ public class EnvironmentService : IEnvironmentService
         return environments.Select(x => x.ToDto());
     }
 
-    public async Task<int> CreateEnvironment(EnvironmentCreateDto environment)
+    public async Task<int> CreateEnvironment(EnvironmentCreateDto environmentDto)
     {
-        CheckDimensionsNotOverlapped(environment);
+        CheckDimensionsNotOverlapped(environmentDto);
 
-        Entities.Environment environmentDb = environment.ToDb();
+        Entities.Environment environmentDb = environmentDto.ToDb();
 
         EntityEntry<Entities.Environment> entity = await _context.Environments.AddAsync(environmentDb);
         await _context.SaveChangesAsync();
         var environmentId = entity.Entity.Id;
 
-        await CreateRelatedEnvironmentScopes(environment, environmentId);
-        await CreateEnvironmentSortings(environment.EnvironmentSortings, environmentId);
+        await CreateRelatedEnvironmentScopes(environmentDto, environmentId);
+        await CreateEnvironmentSortings(environmentDto.EnvironmentSortings, environmentId);
 
         return environmentId;
     }

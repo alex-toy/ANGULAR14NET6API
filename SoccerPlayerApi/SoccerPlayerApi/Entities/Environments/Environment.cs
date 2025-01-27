@@ -1,4 +1,5 @@
 ﻿using SoccerPlayerApi.Dtos.Environment;
+using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Entities.Structure;
 
 namespace SoccerPlayerApi.Entities;
@@ -20,6 +21,8 @@ public class Environment : Entity
 
     public int? LevelIdFilter4 { get; set; }
     public Level? LevelFilter4 { get; set; }
+
+    public List<EnvironmentScope> EnvironmentScopes { get; set; }
 
     public void Map(EnvironmentUpdateDto environment)
     {

@@ -13,7 +13,7 @@ namespace SoccerPlayerApi.Services.Facts
         Task<IEnumerable<ScopeDto>> GetScopes(ScopeFilterDto? filter);
         Task<IEnumerable<ScopeDto>> GetScopesByEnvironmentId(int universeId);
         Task<IEnumerable<TimeAggregationDto>> GetTimeAggregations(int levelId);
-        Task<IEnumerable<DataTypeDto>> GetTypes();
+        Task<IEnumerable<DataTypeDto>> GetDataTypes();
         Task<bool> UpdateFactAsync(FactUpdateDto fact);
     }
 }

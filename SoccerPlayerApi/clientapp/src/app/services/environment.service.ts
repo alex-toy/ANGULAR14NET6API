@@ -30,9 +30,9 @@ export class EnvironmentService {
     return this.httpClient.post<ResponseDto<number>>(`${this.apiUrl}/create`, environment, { headers : header });
   }
 
-  updateEnvironment(environment: EnvironmentUpdateDto): Observable<any> {
+  updateEnvironment(environment: EnvironmentUpdateDto): Observable<ResponseDto<number>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.put<any>(`${this.apiUrl}/update`, environment, { headers : header });
+    return this.httpClient.put<ResponseDto<number>>(`${this.apiUrl}/update`, environment, { headers : header });
   }
 
   deleteEnvironment(id: number): Observable<void> {
