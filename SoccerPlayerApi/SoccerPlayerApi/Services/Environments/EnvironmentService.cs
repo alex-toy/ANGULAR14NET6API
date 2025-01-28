@@ -66,6 +66,12 @@ public class EnvironmentService : IEnvironmentService
         await _context.EnvironmentSortings.AddRangeAsync(environmentSortingDbs);
         await _context.SaveChangesAsync();
 
+        //EnvironmentSorting environmentSorting = await _context.EnvironmentSortings
+        //                                                                    .Include(es => es.Environment.EnvironmentScopes.Select(es => es.Aggre))
+        //                                                                        .ThenInclude(e => e.EnvironmentScopes.Select(es => es.Aggre)
+        //                                                                        .ThenInclude(e => e.Aggregation)
+        //                                                                    .FirstAsync();
+
         return true;
     }
 

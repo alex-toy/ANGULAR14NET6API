@@ -1,63 +1,18 @@
 
-WITH 
-	DIM1 AS (
-		SELECT AGG.*, ES.EnvironmentId, FACT.Amount, FACT.Id AS FactId1
-		FROM EnvironmentScopes ES
-		join Aggregations AGG on AGG.Id = ES.Dimension1AggregationId
-		join AggregationFact FA on FA.AggregationId = AGG.Id
-		join Facts FACT on FA.FactId = FACT.Id
-		where ES.Id = 28
-	),
-	DIM2 AS (
-		SELECT AGG.*, ES.EnvironmentId, FACT.Amount, FACT.Id AS FactId2
-		FROM EnvironmentScopes ES
-		join Aggregations AGG on AGG.Id = ES.Dimension2AggregationId
-		join AggregationFact FA on FA.AggregationId = AGG.Id
-		join Facts FACT on FA.FactId = FACT.Id
-		where ES.Id = 28
-	),
-	DIM3 AS (
-		SELECT AGG.*, ES.EnvironmentId, FACT.Amount, FACT.Id AS FactId3
-		FROM EnvironmentScopes ES
-		join Aggregations AGG on AGG.Id = ES.Dimension3AggregationId
-		join AggregationFact FA on FA.AggregationId = AGG.Id
-		join Facts FACT on FA.FactId = FACT.Id
-		where ES.Id = 28
-	)
-SELECT *
-FROM DIM1
-JOIN DIM2 ON DIM1.FactId1 = DIM2.FactId2
-JOIN DIM3 ON DIM1.FactId1 = DIM3.FactId3
-where DIM1.EnvironmentId = 20
-
-
-
-
-
-
---WITH 
---DIM1 AS (
---	SELECT
---		ENV.Id AS EnvId1, ENV.LevelIdFilter1 AS LevelId1, 
---		ESC.Dimension1Id AS DimId1, ESC.Dimension1AggregationId,
---		ESC.Id AS EnvironmentScopeId1
---	FROM Environments ENV
---	JOIN EnvironmentSortings ES ON ES.EnvironmentId = ENV.Id
---	JOIN EnvironmentScopes ESC ON ESC.EnvironmentId = ENV.Id
---	JOIN Aggregations AGG ON AGG.Id = ESC.Dimension1AggregationId
---),
---DIM2 AS (
---	SELECT
---		ENV.Id AS EnvId2, ENV.LevelIdFilter2 AS LevelId2,
---		ESC.Dimension2Id AS DimId2, ESC.Dimension2AggregationId,
---		ESC.Id AS EnvironmentScopeId2
---	FROM Environments ENV
---	JOIN EnvironmentSortings ES ON ES.EnvironmentId = ENV.Id
---	JOIN EnvironmentScopes ESC ON ESC.EnvironmentId = ENV.Id
---	JOIN Aggregations AGG ON AGG.Id = ESC.Dimension2AggregationId
---)
---SELECT * 
---FROM DIM1
---Join DIM2 ON DIM2.EnvironmentScopeId2 = DIM1.EnvironmentScopeId1
-----WHERE dim1.Id = 20
-
+WITH TEMP AS (
+	SELECT 
+		T_AGG.Id, T_AGG.Value, FACT.Amount
+	FROM EnvironmentScopes ES
+	JOIN Aggregations AGG on AGG.Id = ES.Dimension1AggregationId
+	JOIN AggregationFact FA on FA.AggregationId = AGG.Id
+	JOIN Facts FACT on FA.FactId = FACT.Id
+	JOIN Aggregations T_AGG on T_AGG.Id = FACT.TimeAggregationId
+	WHERE 
+		T_AGG.LevelId = 4 AND 
+		DataTypeId = 1 AND 
+		ES.Id = 27 AND
+		T_AGG.Value > '2022-M05' AND
+		T_AGG.Value < '2024-M04'
+)
+SELECT SUM(Amount)
+FROM TEMP
