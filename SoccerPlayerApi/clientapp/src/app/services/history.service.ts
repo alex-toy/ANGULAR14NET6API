@@ -7,6 +7,7 @@ import { ResponseDto } from '../models/responseDto';
 import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
 import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
 import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
+import { EnvironmentScopeDto } from '../models/scopes/environmentScopeDto';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +18,16 @@ export class HistoryService {
 
   constructor(private http: HttpClient) {}
 
-  getScopes(filter: ScopeFilterDto): Observable<ResponseDto<ScopeDto[]>> {
+  getScopes(filter: ScopeFilterDto): Observable<ResponseDto<EnvironmentScopeDto[]>> {
       const header = new HttpHeaders().set('Content-type', 'application/json');
-      return this.http.post<ResponseDto<ScopeDto[]>>(`${this.url}/scopes`, filter, { headers : header });
+      return this.http.post<ResponseDto<EnvironmentScopeDto[]>>(`${this.url}/scopes`, filter, { headers : header });
   }
 
-  getScopesByEnvironment(environmentId: number): Observable<ResponseDto<ScopeDto[]>> {
-      return this.http.get<ResponseDto<ScopeDto[]>>(`${this.url}/scopesbyenvironmentid/${environmentId}`)
+  getScopesByEnvironment(environmentId: number): Observable<ResponseDto<EnvironmentScopeDto[]>> {
+      return this.http.get<ResponseDto<EnvironmentScopeDto[]>>(`${this.url}/scopesbyenvironmentid/${environmentId}`)
   }
     
-  getScopeData(scope: ScopeDto): Observable<ResponseDto<GetScopeDataDto[]>> {
+  getScopeData(scope: EnvironmentScopeDto): Observable<ResponseDto<GetScopeDataDto[]>> {
       const header = new HttpHeaders().set('Content-type', 'application/json');
       return this.http.post<ResponseDto<GetScopeDataDto[]>>(`${this.url}/data`, scope, { headers : header });
   }

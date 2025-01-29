@@ -20,21 +20,21 @@ public class HistoryController
     }
 
     [HttpPost("scopes")]
-    public async Task<ResponseDto<IEnumerable<ScopeDto>>> GetScopes(ScopeFilterDto? filter)
+    public async Task<ResponseDto<IEnumerable<EnvironmentScopeDto>>> GetScopes(ScopeFilterDto? filter)
     {
-        IEnumerable<ScopeDto> scopes = await _factService.GetScopes(filter);
-        return new ResponseDto<IEnumerable<ScopeDto>> { Data = scopes, IsSuccess = true };
+        IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopes(filter);
+        return new ResponseDto<IEnumerable<EnvironmentScopeDto>> { Data = scopes, IsSuccess = true };
     }
 
     [HttpGet("scopesbyenvironmentid/{environmentId}")]
-    public async Task<ResponseDto<IEnumerable<ScopeDto>>> GetScopesByEnvironmentId(int environmentId)
+    public async Task<ResponseDto<IEnumerable<EnvironmentScopeDto>>> GetScopesByEnvironmentId(int environmentId)
     {
-        IEnumerable<ScopeDto> scopes = await _factService.GetScopesByEnvironmentId(environmentId);
-        return new ResponseDto<IEnumerable<ScopeDto>> { Data = scopes, IsSuccess = true };
+        IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopesByEnvironmentId(environmentId);
+        return new ResponseDto<IEnumerable<EnvironmentScopeDto>> { Data = scopes, IsSuccess = true };
     }
 
     [HttpPost("data")]
-    public async Task<ResponseDto<IEnumerable<GetScopeDataDto>>> GetScopeData(ScopeDto scope)
+    public async Task<ResponseDto<IEnumerable<GetScopeDataDto>>> GetScopeData(EnvironmentScopeDto scope)
     {
         IEnumerable<GetScopeDataDto> facts = await _factService.GetScopeData(scope);
         return new ResponseDto<IEnumerable<GetScopeDataDto>> { Data = facts, IsSuccess = true };

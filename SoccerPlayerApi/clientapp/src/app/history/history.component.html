@@ -39,7 +39,7 @@
         <li *ngFor="let scope of scopes" 
           [class.selected]="scope === selectedScope" 
           (click)="onSelectScope(scope)">
-          {{ scope.display }}
+          {{ scope.dimension1AggregationLabel }} - {{ scope.dimension2AggregationLabel }} - {{ scope.dimension3AggregationLabel }}
         </li>
       </ul>
     </div>
@@ -69,11 +69,11 @@
               <td *ngFor="let timeAggregation of timeAggregationDtos">
                 <span *ngIf="!isEditing[getEditKey(type.id, timeAggregation.timeAggregationId)]" 
                   (click)="editAmount(type.id, timeAggregation.timeAggregationId)">
-                  {{ getAmountForTypeAndYear(type.id, timeAggregation.timeAggregationId) }}
+                  {{ getAmountForTypeAndTime(type.id, timeAggregation.timeAggregationId) }}
                 </span>
                 <input class="number-input"
                   *ngIf="isEditing[getEditKey(type.id, timeAggregation.timeAggregationId)]" 
-                  [value]="getAmountForTypeAndYear(type.id, timeAggregation.timeAggregationId)" 
+                  [value]="getAmountForTypeAndTime(type.id, timeAggregation.timeAggregationId)" 
                   (blur)="saveAmount(type.id, timeAggregation, $event)" 
                   (keydown.enter)="saveAmount(type.id, timeAggregation, $event)"
                   (keydown.escape)="cancelEdit(type.id, timeAggregation.timeAggregationId)" 

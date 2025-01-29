@@ -99,23 +99,23 @@ public class EnvironmentService : IEnvironmentService
         return entity.Entity.Id;
     }
 
-    private async Task<bool> CreateEnvironmentScopes(IEnumerable<ScopeDto> scopes, int environmentId)
+    private async Task<bool> CreateEnvironmentScopes(IEnumerable<EnvironmentScopeDto> scopes, int environmentId)
     {
         IEnumerable<EnvironmentScope> temp = scopes.Select(s => new EnvironmentScope
         {
             EnvironmentId = environmentId,
 
-            Dimension1Id = s.Aggregations.First().DimensionId,
-            Dimension1AggregationId = s.Aggregations.First().AggregationId,
+            Dimension1Id = s.Dimension1Id,
+            Dimension1AggregationId = s.Dimension1AggregationId,
 
-            Dimension2Id = s.Aggregations.Count() >= 2 ? s.Aggregations.ElementAt(1).DimensionId : null,
-            Dimension2AggregationId = s.Aggregations.Count() >= 2 ? s.Aggregations.ElementAt(1)?.AggregationId : null,
+            Dimension2Id = s.Dimension2Id,
+            Dimension2AggregationId = s.Dimension2AggregationId,
 
-            Dimension3Id = s.Aggregations.Count() >= 3 ? s.Aggregations.ElementAt(2).DimensionId : null,
-            Dimension3AggregationId = s.Aggregations.Count() >= 3 ? s.Aggregations.ElementAt(2)?.AggregationId : null,
+            Dimension3Id = s.Dimension3Id,
+            Dimension3AggregationId = s.Dimension3AggregationId,
 
-            Dimension4Id = s.Aggregations.Count() >= 4 ? s.Aggregations.ElementAt(3).DimensionId : null,
-            Dimension4AggregationId = s.Aggregations.Count() >= 4 ? s.Aggregations.ElementAt(3)?.AggregationId : null,
+            Dimension4Id = s.Dimension4Id,
+            Dimension4AggregationId = s.Dimension4AggregationId,
         });
 
         await _context.EnvironmentScopes.AddRangeAsync(temp);
@@ -162,7 +162,7 @@ public class EnvironmentService : IEnvironmentService
     private async Task CreateRelatedEnvironmentScopes(EnvironmentCreateDto environment, int environmentId)
     {
         ScopeFilterDto filter = SetScopeFilter(environment);
-        IEnumerable<ScopeDto> scopes = await _factService.GetScopes(filter);
+        IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopes(filter);
         await CreateEnvironmentScopes(scopes, environmentId);
     }
 

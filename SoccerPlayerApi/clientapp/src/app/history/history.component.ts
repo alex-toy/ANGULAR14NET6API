@@ -20,6 +20,7 @@ import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
 import { DataTypeDto } from '../models/facts/typeDto';
 import { GetLevelDto } from '../models/levels/getLevelDto';
+import { EnvironmentScopeDto } from '../models/scopes/environmentScopeDto';
 
 @Component({
   selector: 'app-history',
@@ -30,8 +31,8 @@ export class HistoryComponent {
   settings: SettingsDto[] = [];
   isEditing: { [key: string]: boolean } = {};
 
-  scopes: ScopeDto[] = [];
-  selectedScope: ScopeDto | null = null; // The selected scope
+  scopes: EnvironmentScopeDto[] = [];
+  selectedScope: EnvironmentScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
   types: DataTypeDto[] = [];
 
@@ -86,8 +87,8 @@ export class HistoryComponent {
       scopeDimensionFilters : Object.entries(this.selectedLevels).map(x => new ScopeDimensionFilterDto(+x[0], x[1]))
     } as ScopeFilterDto;
     this.historyService.getScopes(filter).subscribe({
-      next: (response: ResponseDto<ScopeDto[]>) => {
-        this.scopes = response.data.map(d => new ScopeDto(d));
+      next: (response: ResponseDto<EnvironmentScopeDto[]>) => {
+        this.scopes = response.data;
         this.isLoading = false;
       },
       error: (err) => {
@@ -98,8 +99,8 @@ export class HistoryComponent {
   
   fetchScopesByEnvironment(): void {
     this.historyService.getScopesByEnvironment(this.selectedEnvironmentId).subscribe({
-      next: (response: ResponseDto<ScopeDto[]>) => {
-        this.scopes = response.data.map(d => new ScopeDto(d));
+      next: (response: ResponseDto<EnvironmentScopeDto[]>) => {
+        this.scopes = response.data;
         this.isLoading = false;
       },
       error: (err) => {
@@ -171,6 +172,7 @@ export class HistoryComponent {
   }
 
   fetchScopeData(): void {
+    console.log(this.selectedScope)
     this.historyService.getScopeData(this.selectedScope!).subscribe({
       next: (response: ResponseDto<GetScopeDataDto[]>) => {
         this.scopeData = response.data;
@@ -206,7 +208,7 @@ export class HistoryComponent {
     });
   }
 
-  getAmountForTypeAndYear(typeId: number, year: number): number | null {
+  getAmountForTypeAndTime(typeId: number, year: number): number | null {
     const item = this.scopeData.find(data => data.typeId === typeId && data.timeDimension.timeAggregationId === year);
     return item ? item.amount : 0;
   }
@@ -229,7 +231,7 @@ export class HistoryComponent {
     this.selectedEnvironmentId = +selectElement.value;
   }
 
-  onSelectScope(scope : ScopeDto){
+  onSelectScope(scope : EnvironmentScopeDto){
     this.selectedScope = scope;
     this.fetchTimeAggregations();
     this.fetchScopeData();
@@ -245,7 +247,7 @@ export class HistoryComponent {
 
   saveAmount(typeId: number, timeLabel: TimeAggregationDto, event: any): void {
     const newAmount = +event.target.value;
-    if (newAmount !== this.getAmountForTypeAndYear(typeId, timeLabel.timeAggregationId)) {
+    if (newAmount !== this.getAmountForTypeAndTime(typeId, timeLabel.timeAggregationId)) {
       let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationId == timeLabel.timeAggregationId && s.typeId == typeId) || null;
       if (scope == null) {
         this.factService.createFact(new FactCreateDto(typeId, newAmount, this.scopeData[0].aggregationIds, timeLabel.timeAggregationId)).subscribe({

@@ -6,5 +6,6 @@ public class AxisDto
     public int FactId { get; set; }
     public string LevelLabel { get; set; } = string.Empty;
     public string DimensionLabel { get; set; } = string.Empty;
+    public string AggregationLabel { get; set; } = string.Empty;
     public int DimensionId { get; set; }
 }
