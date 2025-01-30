@@ -47,7 +47,8 @@ export class CreateEnvironmentComponent {
     endTimeSpan: 0,
     isAscending: 0,
     timeSpanBase: 0,
-    dataTypeId: 0
+    dataTypeId: 0,
+    timeLevelId: 0
   };
 
   // New EnvironmentSortingDto
@@ -58,7 +59,8 @@ export class CreateEnvironmentComponent {
     endTimeSpan: 0,
     isAscending: 1,    // Default Ascending
     timeSpanBase: 0,    // Default History
-    dataTypeId: 0
+    dataTypeId: 0,
+    timeLevelId: 0
   };
 
   constructor(
@@ -166,7 +168,6 @@ export class CreateEnvironmentComponent {
       next: (response) => {
         if (response.isSuccess) {
           this.environmentSorting.environmentId = response.data;
-          this.createEnvironmentSorting();
           this.router.navigate(['/environments']);
         } else {
           console.log(response.message);
@@ -174,21 +175,6 @@ export class CreateEnvironmentComponent {
       },
       error: (err) => {
         console.error('Error creating environment:', err);
-      }
-    });
-  }
-
-  createEnvironmentSorting(): void {
-    this.environmentService.createEnvironmentSorting(this.environmentSorting).subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          console.log('Environment sorting created successfully!');
-        } else {
-          console.log('Error creating environment sorting:', response.message);
-        }
-      },
-      error: (err) => {
-        console.error('Error creating environment sorting:', err);
       }
     });
   }
@@ -207,7 +193,8 @@ export class CreateEnvironmentComponent {
       endTimeSpan: 0,
       isAscending: 0,
       timeSpanBase: 0,
-      dataTypeId : 0
+      dataTypeId : 0,
+      timeLevelId: 0
     };
   }
 

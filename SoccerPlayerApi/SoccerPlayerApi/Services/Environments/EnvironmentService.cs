@@ -66,11 +66,39 @@ public class EnvironmentService : IEnvironmentService
         await _context.EnvironmentSortings.AddRangeAsync(environmentSortingDbs);
         await _context.SaveChangesAsync();
 
-        //EnvironmentSorting environmentSorting = await _context.EnvironmentSortings
-        //                                                                    .Include(es => es.Environment.EnvironmentScopes.Select(es => es.Aggre))
-        //                                                                        .ThenInclude(e => e.EnvironmentScopes.Select(es => es.Aggre)
-        //                                                                        .ThenInclude(e => e.Aggregation)
-        //                                                                    .FirstAsync();
+        EnvironmentSorting envSorting1 = environmentSortingDbs.First();
+
+        //var timeSerie = from es in _context.EnvironmentScopes
+        //                join agg in _context.Aggregations on es.Dimension1AggregationId equals agg.Id
+        //                join af in _context.AggregationFacts on agg.Id equals af.AggregationId
+        //                join fact in _context.Facts on af.FactId equals fact.Id
+        //                join tAgg in _context.Aggregations on fact.TimeAggregationId equals tAgg.Id
+        //                where es.Id == envSorting1.Id &&
+        //                      fact.DataTypeId == envSorting1.DataTypeId &&
+        //                      tAgg.LevelId == envSorting1.TimeLevelId
+        //                //&&
+        //                //tAgg.Value.CompareTo(tAggStart.Value) > 0 &&
+        //                //tAgg.Value.CompareTo(tAggEnd.Value) < 0
+        //                select fact.Amount;
+
+        var timeSerie = from es in _context.EnvironmentScopes
+                        join agg in _context.Aggregations on es.Dimension1AggregationId equals agg.Id
+                        join af in _context.AggregationFacts on agg.Id equals af.AggregationId
+                        join fact in _context.Facts on af.FactId equals fact.Id
+                        join tAgg in _context.Aggregations on fact.TimeAggregationId equals tAgg.Id
+                        //join tAggStart in _context.Aggregations on envSorting1.StartTimeSpan equals tAggStart.Id
+                        //join tAggEnd in _context.Aggregations on envSorting1.EndTimeSpan equals tAggEnd.Id
+                        where es.Id == 16 &&
+                              fact.DataTypeId == envSorting1.DataTypeId &&
+                              tAgg.LevelId == envSorting1.TimeLevelId
+                        //&&
+                        //tAgg.Value.CompareTo(tAggStart.Value) > 0 &&
+                        //tAgg.Value.CompareTo(tAggEnd.Value) < 0
+                    select fact.Amount;
+
+        decimal sumAmount = timeSerie.Sum();
+
+        await _context.SaveChangesAsync();
 
         return true;
     }

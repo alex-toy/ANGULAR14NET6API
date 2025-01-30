@@ -6,5 +6,6 @@ export interface EnvironmentSortingDto {
     isAscending: number;
     timeSpanBase: number;  // 0 for history, 1 for simulation
     dataTypeId: number;
+    timeLevelId: number;
 }
   

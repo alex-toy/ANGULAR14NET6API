@@ -103,6 +103,9 @@ namespace SoccerPlayerApi.Migrations
                     b.Property<int>("EnvironmentId")
                         .HasColumnType("int");
 
+                    b.Property<double?>("SortingValue")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Dimension1AggregationId");
@@ -142,6 +145,9 @@ namespace SoccerPlayerApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("StartTimeSpan")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeLevelId")
                         .HasColumnType("int");
 
                     b.Property<int>("TimeSpanBase")
@@ -489,7 +495,7 @@ namespace SoccerPlayerApi.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SoccerPlayerApi.Entities.Environment", "Environment")
-                        .WithMany()
+                        .WithMany("EnvironmentScopes")
                         .HasForeignKey("EnvironmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -581,6 +587,11 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("Ancestor");
 
                     b.Navigation("Dimension");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Environment", b =>
+                {
+                    b.Navigation("EnvironmentScopes");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DataType", b =>

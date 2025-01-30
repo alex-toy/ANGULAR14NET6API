@@ -12,6 +12,7 @@ public class EnvironmentSorting : Entity
     public int EndTimeSpan { get; set; }
     public int IsAscending { get; set; }
     public int TimeSpanBase { get; set; } //0 pour history, 1 pour simulation
+    public int TimeLevelId { get; set; }
     public int DataTypeId { get; set; }
     public DataType DataType { get; set; }
 }

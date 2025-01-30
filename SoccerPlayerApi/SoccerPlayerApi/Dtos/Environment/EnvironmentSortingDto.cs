@@ -11,6 +11,7 @@ public class EnvironmentSortingDto
     public int IsAscending { get; set; }
     public int TimeSpanBase { get; set; } //0 pour history, 1 pour simulation
     public int DataTypeId { get; set; }
+    public int TimeLevelId { get; set; }
 
     public EnvironmentSorting ToDb(int environmentId)
     {
@@ -22,7 +23,8 @@ public class EnvironmentSortingDto
             EndTimeSpan = EndTimeSpan, 
             IsAscending = IsAscending, 
             TimeSpanBase = TimeSpanBase,
-            DataTypeId = DataTypeId
+            DataTypeId = DataTypeId,
+            TimeLevelId = TimeLevelId,
         };
     }
 }
