@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Dtos.Environment;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Services.Facts;
+using System.Data;
 
 namespace SoccerPlayerApi.Services.Environments;
 
@@ -66,39 +68,11 @@ public class EnvironmentService : IEnvironmentService
         await _context.EnvironmentSortings.AddRangeAsync(environmentSortingDbs);
         await _context.SaveChangesAsync();
 
-        EnvironmentSorting envSorting1 = environmentSortingDbs.First();
+        EnvironmentSorting envSorting1 = environmentSortingDbs.First(); // il manque l'id à la sortie!!!
 
-        //var timeSerie = from es in _context.EnvironmentScopes
-        //                join agg in _context.Aggregations on es.Dimension1AggregationId equals agg.Id
-        //                join af in _context.AggregationFacts on agg.Id equals af.AggregationId
-        //                join fact in _context.Facts on af.FactId equals fact.Id
-        //                join tAgg in _context.Aggregations on fact.TimeAggregationId equals tAgg.Id
-        //                where es.Id == envSorting1.Id &&
-        //                      fact.DataTypeId == envSorting1.DataTypeId &&
-        //                      tAgg.LevelId == envSorting1.TimeLevelId
-        //                //&&
-        //                //tAgg.Value.CompareTo(tAggStart.Value) > 0 &&
-        //                //tAgg.Value.CompareTo(tAggEnd.Value) < 0
-        //                select fact.Amount;
+        int environmentSortingId = 123;
 
-        var timeSerie = from es in _context.EnvironmentScopes
-                        join agg in _context.Aggregations on es.Dimension1AggregationId equals agg.Id
-                        join af in _context.AggregationFacts on agg.Id equals af.AggregationId
-                        join fact in _context.Facts on af.FactId equals fact.Id
-                        join tAgg in _context.Aggregations on fact.TimeAggregationId equals tAgg.Id
-                        //join tAggStart in _context.Aggregations on envSorting1.StartTimeSpan equals tAggStart.Id
-                        //join tAggEnd in _context.Aggregations on envSorting1.EndTimeSpan equals tAggEnd.Id
-                        where es.Id == 16 &&
-                              fact.DataTypeId == envSorting1.DataTypeId &&
-                              tAgg.LevelId == envSorting1.TimeLevelId
-                        //&&
-                        //tAgg.Value.CompareTo(tAggStart.Value) > 0 &&
-                        //tAgg.Value.CompareTo(tAggEnd.Value) < 0
-                    select fact.Amount;
-
-        decimal sumAmount = timeSerie.Sum();
-
-        await _context.SaveChangesAsync();
+        ExecuteSetEnvironmentSortingFor3Dimensions(environmentSortingId);
 
         return true;
     }
@@ -239,5 +213,30 @@ public class EnvironmentService : IEnvironmentService
         }
 
         return filter;
+    }
+
+    private static void ExecuteSetEnvironmentSortingFor3Dimensions(int environmentSortingId)
+    {
+        string connectionString = "";
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            using (SqlCommand command = new SqlCommand("SetEnvironmentSortingFor3Dimensions", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@EnvironmentSortingId", SqlDbType.Int)).Value = environmentSortingId;
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string timeLabel = reader.GetString(0);
+                        decimal amount = reader.GetDecimal(1);
+                    }
+                }
+            }
+        }
     }
 }
