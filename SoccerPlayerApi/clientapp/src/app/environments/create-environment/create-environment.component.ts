@@ -42,6 +42,7 @@ export class CreateEnvironmentComponent {
 
   newSorting: EnvironmentSortingDto = {
     environmentId: 0,
+    orderIndex: 0,
     aggregator: 0,
     startTimeSpan: 0,
     endTimeSpan: 0,
@@ -53,7 +54,8 @@ export class CreateEnvironmentComponent {
 
   // New EnvironmentSortingDto
   environmentSorting: EnvironmentSortingDto = {
-    environmentId: 0,  // Will be set after environment creation
+    environmentId: 0,
+    orderIndex: 0,
     aggregator: 0,     // Default SUM
     startTimeSpan: 0,
     endTimeSpan: 0,
@@ -129,7 +131,6 @@ export class CreateEnvironmentComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedLevelId = +selectElement.value;
     this.selectedLevels[dimensionId] = selectedLevelId;
-    console.log(this.selectedLevels)
   }
 
   onTimeAggregationLabelChange(event: Event): void {
@@ -180,6 +181,10 @@ export class CreateEnvironmentComponent {
   }
 
   addSorting(): void {
+    const maxOrderIndex = this.environment.environmentSortings.length > 0
+        ? Math.max(...this.environment.environmentSortings.map(x => x.orderIndex))
+        : 0;
+    this.newSorting.orderIndex = maxOrderIndex + 1;
     this.environment.environmentSortings.push({ ...this.newSorting });
     this.resetSortingForm();
   }
@@ -188,6 +193,7 @@ export class CreateEnvironmentComponent {
   resetSortingForm(): void {
     this.newSorting = {
       environmentId: 0,
+      orderIndex: 0,
       aggregator: 0,
       startTimeSpan: 0,
       endTimeSpan: 0,

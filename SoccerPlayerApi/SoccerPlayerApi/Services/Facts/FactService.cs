@@ -5,6 +5,7 @@ using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Entities.Structure;
+using SoccerPlayerApi.Migrations;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
@@ -108,7 +109,9 @@ public class FactService : IFactService
                 Dimension4Id = es.Dimension4Id,
                 Dimension4AggregationId = es.Dimension4AggregationId,
                 Level4Label = es.Dimension4Aggregation.Level.Value,
-                Dimension4AggregationLabel = es.Dimension4Aggregation.Value
+                Dimension4AggregationLabel = es.Dimension4Aggregation.Value,
+
+                SortingValue = es.SortingValue
             };
         }
 
@@ -132,7 +135,9 @@ public class FactService : IFactService
                 Dimension3Id = es.Dimension3Id,
                 Dimension3AggregationId = es.Dimension3AggregationId,
                 Level3Label = es.Dimension3Aggregation.Value,
-                Dimension3AggregationLabel = es.Dimension3Aggregation.Value
+                Dimension3AggregationLabel = es.Dimension3Aggregation.Value,
+
+                SortingValue = es.SortingValue
             };
         }
 
@@ -149,6 +154,8 @@ public class FactService : IFactService
                 Dimension2AggregationId = es.Dimension2AggregationId,
                 Level2Label = es.Dimension2Aggregation.Value,
                 Dimension2AggregationLabel = es.Dimension2Aggregation.Value,
+
+                SortingValue = es.SortingValue
             };
         }
 
@@ -158,6 +165,8 @@ public class FactService : IFactService
             Dimension1AggregationId = es.Dimension1AggregationId,
             Level1Label = es.Dimension1Aggregation.Value,
             Dimension1AggregationLabel = es.Dimension1Aggregation.Value,
+
+            SortingValue = es.SortingValue
         };
     }
 

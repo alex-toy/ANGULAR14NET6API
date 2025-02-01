@@ -25,5 +25,5 @@ export interface EnvironmentScopeDto {
     dimension4Label: string;
     dimension4AggregationLabel : string;
 
-    sortingValue : number;
+    sortingValue : string;
 }

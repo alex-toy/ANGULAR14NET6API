@@ -28,5 +28,5 @@ public class EnvironmentScopeDto
     public string? Level4Label { get; set; }
     public string? Dimension4Label { get; set; }
 
-    public double? SortingValue { get; set; }
+    public string? SortingValue { get; set; }
 }

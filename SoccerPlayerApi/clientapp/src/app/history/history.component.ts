@@ -100,12 +100,32 @@ export class HistoryComponent {
   fetchScopesByEnvironment(): void {
     this.historyService.getScopesByEnvironment(this.selectedEnvironmentId).subscribe({
       next: (response: ResponseDto<EnvironmentScopeDto[]>) => {
-        this.scopes = response.data;
+        this.scopes = this.sortArrayBySortingValue(response.data);
+        console.log(this.scopes)
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching scopes', err);
       }
+    });
+  }
+
+  sortArrayBySortingValue(data: EnvironmentScopeDto[]): EnvironmentScopeDto[] {
+    return data.sort((a, b) => {
+      const sortingValuesA = a.sortingValue.split(";").map(value => parseFloat(value)).sort((x, y) => x - y);
+      const sortingValuesB = b.sortingValue.split(";").map(value => parseFloat(value)).sort((x, y) => x - y);
+  
+      const length = Math.min(sortingValuesA.length, sortingValuesB.length);
+  
+      for (let i = 0; i < length; i++) {
+        if (sortingValuesA[i] < sortingValuesB[i]) return -1;
+        if (sortingValuesA[i] > sortingValuesB[i]) return 1;
+      }
+  
+      if (sortingValuesA.length < sortingValuesB.length) return -1;
+      if (sortingValuesA.length > sortingValuesB.length) return 1;
+  
+      return 0;
     });
   }
   
@@ -189,7 +209,6 @@ export class HistoryComponent {
     this.historyService.getTimeAggregations(levelId).subscribe({
       next: (response: ResponseDto<TimeAggregationDto[]>) => {
         this.timeAggregationDtos = response.data.sort((a, b) => a.label.localeCompare(b.label));
-        console.log(this.timeAggregationDtos)
       },
       error: (err) => {
         console.error('Error fetching levels', err);

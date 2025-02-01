@@ -103,8 +103,9 @@ namespace SoccerPlayerApi.Migrations
                     b.Property<int>("EnvironmentId")
                         .HasColumnType("int");
 
-                    b.Property<double?>("SortingValue")
-                        .HasColumnType("float");
+                    b.Property<string>("SortingValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -142,6 +143,9 @@ namespace SoccerPlayerApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("IsAscending")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderIndex")
                         .HasColumnType("int");
 
                     b.Property<int>("StartTimeSpan")

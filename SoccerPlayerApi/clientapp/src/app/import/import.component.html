@@ -1,1 +1,15 @@
-<p>import works!</p>
+<div class="import-container">
+    <h2>Import Excel File</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div>
+        <label for="file">Select Excel File:</label>
+        <input type="file" id="file" (change)="onFileChange($event)" accept=".xlsx" />
+      </div>
+  
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  
+      <button type="submit" [disabled]="!file">Upload</button>
+    </form>
+  </div>
+  

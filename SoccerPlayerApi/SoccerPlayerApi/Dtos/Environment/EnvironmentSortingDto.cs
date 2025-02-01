@@ -5,6 +5,7 @@ namespace SoccerPlayerApi.Dtos.Environment;
 public class EnvironmentSortingDto
 {
     public int EnvironmentId { get; set; }
+    public int OrderIndex { get; set; }
     public int Aggregator { get; set; } // 0 pour SUM, 1 pour AVERAGE, 3 pour Alphabetique
     public int StartTimeSpan { get; set; }
     public int EndTimeSpan { get; set; }
@@ -18,6 +19,7 @@ public class EnvironmentSortingDto
         return new EnvironmentSorting
         {
             EnvironmentId = environmentId, 
+            OrderIndex = OrderIndex,
             Aggregator = Aggregator, 
             StartTimeSpan = StartTimeSpan,      
             EndTimeSpan = EndTimeSpan, 

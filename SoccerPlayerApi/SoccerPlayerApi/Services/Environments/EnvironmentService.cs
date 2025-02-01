@@ -68,11 +68,7 @@ public class EnvironmentService : IEnvironmentService
         await _context.EnvironmentSortings.AddRangeAsync(environmentSortingDbs);
         await _context.SaveChangesAsync();
 
-        EnvironmentSorting envSorting1 = environmentSortingDbs.First(); // il manque l'id à la sortie!!!
-
-        int environmentSortingId = 123;
-
-        ExecuteSetEnvironmentSortingFor3Dimensions(environmentSortingId);
+        ExecuteSetEnvironmentSortingFor3Dimensions(environmentId);
 
         return true;
     }
@@ -215,28 +211,17 @@ public class EnvironmentService : IEnvironmentService
         return filter;
     }
 
-    private static void ExecuteSetEnvironmentSortingFor3Dimensions(int environmentSortingId)
+    private static void ExecuteSetEnvironmentSortingFor3Dimensions(int environmentId)
     {
-        string connectionString = "";
-        using (SqlConnection connection = new SqlConnection(connectionString))
-        {
-            connection.Open();
+        string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=VisionDb;Trusted_Connection=true;TrustServerCertificate=true;";
+        using SqlConnection connection = new SqlConnection(connectionString);
+        connection.Open();
 
-            using (SqlCommand command = new SqlCommand("SetEnvironmentSortingFor3Dimensions", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
+        using SqlCommand command = new SqlCommand("SetEnvironmentSortingFor3Dimensions", connection);
+        command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.Add(new SqlParameter("@EnvironmentSortingId", SqlDbType.Int)).Value = environmentSortingId;
+        command.Parameters.Add(new SqlParameter("@EnvironmentId", SqlDbType.Int)).Value = environmentId;
 
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        string timeLabel = reader.GetString(0);
-                        decimal amount = reader.GetDecimal(1);
-                    }
-                }
-            }
-        }
+        _ = command.ExecuteNonQuery();
     }
 }

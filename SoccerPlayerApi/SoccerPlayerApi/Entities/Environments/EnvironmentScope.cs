@@ -23,5 +23,5 @@ public class EnvironmentScope : Entity
     public int? Dimension4AggregationId { get; set; }
     public Aggregation? Dimension4Aggregation { get; set; }
 
-    public double? SortingValue { get; set; }
+    public string SortingValue { get; set; } = string.Empty;
 }
