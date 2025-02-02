@@ -20,6 +20,7 @@ import { EnvironmentDetailsComponent } from './environments/environment-details/
 import { CreateEnvironmentComponent } from './environments/create-environment/create-environment.component';
 import { SettingsComponent } from './settings/settings.component';
 import { LevelModalComponent } from './settings/add-level-modal/add-level-modal.component';
+import { AggregationComponent } from './aggregation/aggregation.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { LevelModalComponent } from './settings/add-level-modal/add-level-modal.
     EnvironmentDetailsComponent,
     CreateEnvironmentComponent,
     SettingsComponent,
-    LevelModalComponent 
+    LevelModalComponent,
+    AggregationComponent 
   ],
   imports: [
     BrowserModule,

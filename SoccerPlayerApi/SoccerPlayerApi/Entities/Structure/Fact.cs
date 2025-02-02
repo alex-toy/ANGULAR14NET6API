@@ -11,6 +11,7 @@ public class Fact : Entity
     public decimal Amount { get; set; }
 
     public int TimeAggregationId { get; set; }
+    public TimeAggregation TimeAggregation { get; set; }
 
     public List<AggregationFact> AggregationFacts { get; set; }
 }

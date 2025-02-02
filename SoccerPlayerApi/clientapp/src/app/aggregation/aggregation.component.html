@@ -1,0 +1,20 @@
+
+<div class="dimension-item">
+    <label>Dimensions</label>
+    <select (change)="onDimensionChange($event)">
+        <option value="">Select Level</option>
+        <option *ngFor="let dimension of dimensions" 
+            [value]="dimension.id"
+        >{{ dimension.value }}</option>
+    </select>
+</div>
+
+<div class="level-item">
+    <label>Levels</label>
+    <select (change)="onLevelChange($event)">
+        <option value="">Select Level</option>
+        <option *ngFor="let level of levels" 
+            [value]="level.id"
+        >{{ level.value }}</option>
+    </select>
+</div>

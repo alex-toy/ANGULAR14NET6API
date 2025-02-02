@@ -8,6 +8,7 @@ import { EnvironmentsComponent } from './environments/environments.component';
 import { EnvironmentDetailsComponent } from './environments/environment-details/environment-details.component';
 import { CreateEnvironmentComponent } from './environments/create-environment/create-environment.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AggregationComponent } from './aggregation/aggregation.component';
 
 const routes: Routes = [
   { path: 'environments', component: EnvironmentsComponent },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'simulation', component: SimulationComponent },
   { path: 'export', component: ExportComponent },
   { path: 'settings', component: SettingsComponent },
+  { path: 'aggregation', component: AggregationComponent },
 ];
 
 @NgModule({

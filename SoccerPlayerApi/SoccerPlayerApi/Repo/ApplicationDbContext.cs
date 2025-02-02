@@ -17,11 +17,7 @@ public class ApplicationDbContext : DbContext
         builder.Entity<AggregationFact>().ToTable("AggregationFact");
         builder.Entity<TimeDimension>().ToTable("DateSeries");
 
-        builder.Entity<Fact>()
-            .HasOne(e => e.DataType)
-            .WithMany(l => l.Facts)
-            .HasForeignKey(e => e.DataTypeId)
-            .OnDelete(DeleteBehavior.NoAction);
+        ConfigureFacts(builder);
 
         ConfigureLevel(builder);
 
@@ -32,6 +28,12 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Aggregation>()
+            .HasOne(l => l.MotherAggregation)
+            .WithMany()
+            .HasForeignKey(l => l.MotherAggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<TimeAggregation>()
             .HasOne(l => l.MotherAggregation)
             .WithMany()
             .HasForeignKey(l => l.MotherAggregationId)
@@ -54,11 +56,27 @@ public class ApplicationDbContext : DbContext
     public DbSet<Dimension> Dimensions { get; set; }
     public DbSet<AggregationFact> AggregationFacts { get; set; }
     public DbSet<Aggregation> Aggregations { get; set; }
+    public DbSet<TimeAggregation> TimeAggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
     public DbSet<Entities.Environment> Environments { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<EnvironmentScope> EnvironmentScopes { get; set; }
     public DbSet<EnvironmentSorting> EnvironmentSortings { get; set; }
+
+    private static void ConfigureFacts(ModelBuilder builder)
+    {
+        builder.Entity<Fact>()
+            .HasOne(e => e.DataType)
+            .WithMany(l => l.Facts)
+            .HasForeignKey(e => e.DataTypeId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Fact>()
+            .HasOne(e => e.TimeAggregation)
+            .WithMany()
+            .HasForeignKey(e => e.TimeAggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
 
     private static void ConfigureLevel(ModelBuilder builder)
     {
