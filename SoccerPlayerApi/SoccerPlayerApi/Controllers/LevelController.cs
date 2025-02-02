@@ -43,7 +43,14 @@ public class LevelController
     [HttpPost("level")]
     public async Task<ResponseDto<int>> CreateLevel(CreateLevelDto dimension)
     {
-        int id = await _levelService.CreateLevelAsync(dimension);
-        return new ResponseDto<int> { Data = id, IsSuccess = true };
+        try
+        {
+            int id = await _levelService.CreateLevelAsync(dimension);
+            return new ResponseDto<int> { Data = id, IsSuccess = true, Count = 1 };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<int> { IsSuccess = false, Message = ex.Message };
+        }
     }
 }

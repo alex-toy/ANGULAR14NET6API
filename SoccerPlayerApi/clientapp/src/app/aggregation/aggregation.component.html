@@ -1,6 +1,6 @@
 <div class="dimension-item">
     <label>Dimensions</label>
-    <select (change)="onDimensionChange($event)">
+    <select (change)="onDimensionChange($event)" [(ngModel)]="selectedLevelId">
         <option value="">Select Level</option>
         <option *ngFor="let dimension of dimensions" 
             [value]="dimension.id"
@@ -10,7 +10,7 @@
 
 <div class="level-item" *ngIf="levels.length > 0">
     <label>Levels</label>
-    <select (change)="onLevelChange($event)">
+    <select (change)="onLevelChange($event)" [(ngModel)]="selectedLevel">
         <option value="">Select Level</option>
         <option *ngFor="let level of levels" 
             [value]="level.id"
@@ -20,7 +20,7 @@
 
 <div class="select-container" *ngIf="motherAggregations.length > 0">
     <label for="clientSelect">Mother Aggregations</label>
-    <select id="clientSelect" (change)="onMotherAggregationsChange($event)">
+    <select id="clientSelect" (change)="onMotherAggregationsChange($event)" [(ngModel)]="selectedMotherAggregationId">
         <option value="">Select mother aggregation</option>
         <option *ngFor="let item of motherAggregations" [value]="item.id">
             {{ item.value }}
@@ -30,5 +30,7 @@
 
 <div class="input-container" *ngIf="selectedMotherAggregationId > 0">
     <label for="inputField">Add Aggregation</label>
-    <input type="text" id="inputField" placeholder="new aggregation" />
+    <input type="text" id="inputField" [(ngModel)]="newAggregationValue" placeholder="New aggregation" />
 </div>
+
+<button (click)="onSubmit()" [disabled]="!isFormValid()">Create Aggregation</button>

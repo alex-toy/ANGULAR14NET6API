@@ -5,6 +5,7 @@ import { ResponseDto } from '../models/responseDto';
 import { GetLevelDto } from '../models/levels/getLevelDto';
 import { AggregationService } from '../services/aggregation.service';
 import { GetAggregationDto } from '../models/aggregations/getAggregationDto';
+import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
 
 @Component({
   selector: 'app-aggregation',
@@ -14,8 +15,11 @@ import { GetAggregationDto } from '../models/aggregations/getAggregationDto';
 export class AggregationComponent {
   dimensions: DimensionDto[] = [];
   levels: GetLevelDto[] = [];
+  selectedLevelId: number = 0;
+  selectedLevel: number = 0;
   motherAggregations: GetAggregationDto[] = [];
   selectedMotherAggregationId : number = 0;
+  newAggregationValue: string = '';
   isLoading: boolean = true;
 
   constructor(
@@ -48,6 +52,22 @@ export class AggregationComponent {
       }
     });
   }
+  
+  createAggregation(): void {
+    const aggregationDto: AggregationCreateDto = {
+      levelId: this.selectedLevelId,
+      motherAggregationId: this.selectedMotherAggregationId,
+      value: this.newAggregationValue
+    };
+    this.aggregationService.createAggregation(aggregationDto).subscribe({
+      next: (response) => {
+        console.log(response)
+      },
+      error: (err) => {
+        console.error('Error adding new setting:', err);
+      }
+    });
+  }
 
   onDimensionChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
@@ -59,13 +79,13 @@ export class AggregationComponent {
       return;
     }
     const selectedDimension = this.dimensions.filter(x => x.id === dimensionId)[0];
-    this.levels = selectedDimension.levels;
+    this.levels = selectedDimension.levels.filter(l => l.ancestorId !== null);
   }
 
   onLevelChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    const levelId = +selectElement.value;
-    if (levelId === 0) {
+    this.selectedLevelId = +selectElement.value;
+    if (this.selectedLevelId === 0) {
       this.motherAggregations = [];
       this.selectedMotherAggregationId = 0;
       return;
@@ -75,6 +95,19 @@ export class AggregationComponent {
 
   onMotherAggregationsChange(event: Event) {
     this.selectedMotherAggregationId = +(event.target as HTMLSelectElement).value;
-    console.log("Selected client ID:", this.selectedMotherAggregationId);
+  }
+
+  isFormValid(): boolean {
+    return this.selectedLevelId > 0 && this.selectedMotherAggregationId > 0 && this.newAggregationValue.trim().length > 0;
+  }
+
+  // Method to handle form submission
+  onSubmit(): void {
+    if (!this.isFormValid()) {
+      console.log('Form is not valid');
+      return;
+    }
+      
+    this.createAggregation();
   }
 }

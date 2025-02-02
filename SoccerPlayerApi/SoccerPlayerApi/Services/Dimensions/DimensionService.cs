@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Levels;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
+using SoccerPlayerApi.Services.Levels;
 using SoccerPlayerApi.Utils;
 
 namespace SoccerPlayerApi.Services.Dimensions;
@@ -16,13 +18,15 @@ public class DimensionService : IDimensionService
     private readonly IGenericRepo<Dimension> _dimensionRepo;
     private readonly IGenericRepo<Aggregation> _dimensionValueRepo;
     private readonly IGenericRepo<Fact> _factRepo;
+    private readonly ILevelService _levelService;
 
-    public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<Aggregation> dimensionValueRepo)
+    public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<Aggregation> dimensionValueRepo, ILevelService levelService)
     {
         _context = context;
         _dimensionRepo = dimensionRepo;
         _factRepo = factRepo;
         _dimensionValueRepo = dimensionValueRepo;
+        _levelService = levelService;
     }
 
     public async Task<IEnumerable<DimensionDto>> GetDimensions()
@@ -42,19 +46,12 @@ public class DimensionService : IDimensionService
     public async Task<int> CreateDimensionAsync(DimensionDto dimension)
     {
         int entityId = await _dimensionRepo.CreateAsync(dimension.ToDb());
+
+        await _levelService.CreateLevelAsync(new CreateLevelDto { Value = "all", DimensionId = entityId, AncestorId = null });
+
         await _context.SaveChangesAsync();
         return entityId;
     }
-
-    //public async Task<int> CreateAggregation(AggregationCreateDto level)
-    //{
-    //    EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation { 
-    //        LevelId = level.LevelId,
-    //        Value = level.Value,
-    //    });
-    //    await _context.SaveChangesAsync();
-    //    return entity.Entity.Id;
-    //}
 
     public async Task<IEnumerable<GetAggregationDto>> GetDimensionValues(int levelId)
     {
@@ -99,11 +96,4 @@ public class DimensionService : IDimensionService
                                         .Select(x => x.DimensionValueId)
                                         .All(dimensionValueId => dimensionValueIds.Contains(dimensionValueId)) && factResult.Dimensions.Count() == dimensionValueIds.Count;
     }
-
-    //public async Task<IEnumerable<GetAggregationDto>> GetAggregations()
-    //{
-    //    return await _context.Aggregations
-    //        .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
-    //        .ToListAsync();
-    //}
 }
