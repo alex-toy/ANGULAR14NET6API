@@ -1,0 +1,106 @@
+/* Styling for the container of each select section */
+.dimension-item, .level-item, .select-container {
+    margin-bottom: 20px; /* Adds space below each container */
+    font-family: Arial, sans-serif; /* Sets the font for the containers */
+    max-width: 400px; /* Optional: Limits the width of the containers */
+    padding: 15px; /* Adds padding around the container */
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Styling for labels */
+.dimension-item label, .level-item label, .select-container label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333; /* Dark color for the label */
+    display: block; /* Ensures the label takes up its own line */
+    margin-bottom: 8px; /* Adds space between the label and select/input */
+}
+
+/* Styling for select dropdowns */
+.dimension-item select, .level-item select, .select-container select {
+    width: 100%; /* Makes the select take up the full width of the container */
+    padding: 10px; /* Adds padding inside the select element */
+    font-size: 14px; /* Font size inside the select */
+    border: 1px solid #ccc; /* Light border around the select */
+    border-radius: 4px; /* Rounded corners for the select */
+    background-color: #fff; /* White background for the select */
+    transition: border-color 0.3s ease; /* Smooth transition on hover or focus */
+    margin-bottom: 10px; /* Adds space below the select */
+}
+
+/* Hover effect for the select dropdown */
+.dimension-item select:hover, .level-item select:hover, .select-container select:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
+
+/* Focus effect for the select dropdown */
+.dimension-item select:focus, .level-item select:focus, .select-container select:focus {
+    outline: none; /* Removes the default focus outline */
+    border-color: #0056b3; /* Changes border color when focused */
+}
+
+/* Styling for input fields */
+.dimension-item input, .level-item input, .select-container input {
+    width: 100%; /* Makes the input field take up the full width of the container */
+    padding: 10px; /* Adds padding inside the input */
+    font-size: 14px; /* Font size inside the input */
+    border: 1px solid #ccc; /* Light border around the input */
+    border-radius: 4px; /* Rounded corners for the input */
+    background-color: #fff; /* White background for the input */
+    transition: border-color 0.3s ease; /* Smooth transition on focus */
+}
+
+/* Hover effect for input fields */
+.dimension-item input:hover, .level-item input:hover, .select-container input:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
+
+/* Focus effect for input fields */
+.dimension-item input:focus, .level-item input:focus, .select-container input:focus {
+    outline: none; /* Removes the default focus outline */
+    border-color: #0056b3; /* Changes border color when focused */
+}
+
+/* Styling for the input container */
+.input-container {
+    margin-top: 20px; /* Adds space above the input container */
+    font-family: Arial, sans-serif; /* Sets the font for the input container */
+    max-width: 400px; /* Optional: Limits the width of the input container */
+    padding: 15px; /* Adds padding around the input container */
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Styling for the label of the input */
+.input-container label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333; /* Dark color for the label */
+    display: block; /* Ensures the label takes up its own line */
+    margin-bottom: 8px; /* Adds space between the label and the input */
+}
+
+/* Styling for the input field */
+.input-container input {
+    width: 100%; /* Makes the input field take up the full width of the container */
+    padding: 10px; /* Adds padding inside the input */
+    font-size: 14px; /* Font size inside the input */
+    border: 1px solid #ccc; /* Light border around the input */
+    border-radius: 4px; /* Rounded corners for the input */
+    background-color: #fff; /* White background for the input */
+    transition: border-color 0.3s ease; /* Smooth transition on focus */
+}
+
+/* Hover effect for the input field */
+.input-container input:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
+
+/* Focus effect for the input field */
+.input-container input:focus {
+    outline: none; /* Removes the default focus outline */
+    border-color: #0056b3; /* Changes border color when focused */
+}

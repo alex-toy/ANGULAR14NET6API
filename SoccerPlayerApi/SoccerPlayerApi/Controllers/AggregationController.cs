@@ -5,6 +5,8 @@ using SoccerPlayerApi.Services.Aggregations;
 
 namespace SoccerPlayerApi.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 public class AggregationController
 {
     private readonly IConfiguration _configuration;
@@ -17,23 +19,23 @@ public class AggregationController
     }
 
     [HttpPost("aggregation")]
-    public async Task<int> CreateAggregation(AggregationCreateDto dimensionValue)
+    public async Task<ResponseDto<int>> CreateAggregation(AggregationCreateDto dimensionValue)
     {
-        return await _aggregationService.CreateAggregation(dimensionValue);
+        int temp = await _aggregationService.CreateAggregation(dimensionValue);
+        return new ResponseDto<int> { Data = temp, IsSuccess = true };
     }
 
     [HttpGet("aggregations")]
     public async Task<ResponseDto<IEnumerable<GetAggregationDto>>> GetAggregations()
     {
-        IEnumerable<GetAggregationDto> dimensions = await _aggregationService.GetAggregations();
-        return new ResponseDto<IEnumerable<GetAggregationDto>> { Data = dimensions, IsSuccess = true };
+        IEnumerable<GetAggregationDto> aggregations = await _aggregationService.GetAggregations();
+        return new ResponseDto<IEnumerable<GetAggregationDto>> { Data = aggregations, IsSuccess = true };
     }
 
-    [HttpGet("motheraggregations")]
-    public async Task<ResponseDto<IEnumerable<GetAggregationDto>>> GetMotherAggregations()
+    [HttpGet("motheraggregations/{levelId}")]
+    public async Task<ResponseDto<IEnumerable<GetAggregationDto>>> GetMotherAggregations(int levelId)
     {
-        string query = "SELECT AGG.* \r\n  FROM Aggregations AGG\r\n  JOIN Levels LV ON LV.AncestorId = AGG.LevelId\r\n  where LV.Id = 7";
-        IEnumerable<GetAggregationDto> dimensions = await _aggregationService.GetAggregations();
-        return new ResponseDto<IEnumerable<GetAggregationDto>> { Data = dimensions, IsSuccess = true };
+        IEnumerable<GetAggregationDto> aggregations = await _aggregationService.GetMotherAggregations(levelId);
+        return new ResponseDto<IEnumerable<GetAggregationDto>> { Data = aggregations, IsSuccess = true };
     }
 }

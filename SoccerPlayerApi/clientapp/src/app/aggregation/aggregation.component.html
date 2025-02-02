@@ -1,4 +1,3 @@
-
 <div class="dimension-item">
     <label>Dimensions</label>
     <select (change)="onDimensionChange($event)">
@@ -9,7 +8,7 @@
     </select>
 </div>
 
-<div class="level-item">
+<div class="level-item" *ngIf="levels.length > 0">
     <label>Levels</label>
     <select (change)="onLevelChange($event)">
         <option value="">Select Level</option>
@@ -17,4 +16,19 @@
             [value]="level.id"
         >{{ level.value }}</option>
     </select>
+</div>
+
+<div class="select-container" *ngIf="motherAggregations.length > 0">
+    <label for="clientSelect">Mother Aggregations</label>
+    <select id="clientSelect" (change)="onMotherAggregationsChange($event)">
+        <option value="">Select mother aggregation</option>
+        <option *ngFor="let item of motherAggregations" [value]="item.id">
+            {{ item.value }}
+        </option>
+    </select>
+</div>
+
+<div class="input-container" *ngIf="selectedMotherAggregationId > 0">
+    <label for="inputField">Add Aggregation</label>
+    <input type="text" id="inputField" placeholder="new aggregation" />
 </div>

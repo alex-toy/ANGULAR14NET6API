@@ -30,12 +30,4 @@ export class DimensionsService {
   getDimensionCount(): Observable<ResponseDto<number>> {
     return this.httpClient.get<ResponseDto<number>>(`${this.apiUrl}/dimensioncount`)
   }
-
-  getAggregations(): Observable<{ data: AggregationCreateDto[] }> {
-    return this.httpClient.get<{ data: AggregationCreateDto[] }>(`${this.apiUrl}/aggregations`);
-  }
-
-  createAggregation(aggregation: AggregationCreateDto): Observable<{ data: AggregationCreateDto }> {
-    return this.httpClient.post<{ data: AggregationCreateDto }>(`${this.apiUrl}/aggregation`, aggregation);
-  }
 }

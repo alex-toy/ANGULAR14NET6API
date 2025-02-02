@@ -6,5 +6,6 @@ namespace SoccerPlayerApi.Services.Aggregations
     {
         Task<int> CreateAggregation(AggregationCreateDto level);
         Task<IEnumerable<GetAggregationDto>> GetAggregations();
+        Task<IEnumerable<GetAggregationDto>> GetMotherAggregations(int levelId);
     }
 }

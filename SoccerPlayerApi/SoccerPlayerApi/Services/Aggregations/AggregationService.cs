@@ -50,4 +50,20 @@ public class AggregationService : IAggregationService
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
     }
+
+    public async Task<IEnumerable<GetAggregationDto>> GetMotherAggregations(int levelId)
+    {
+        var result = from agg in _context.Aggregations
+                     join lv in _context.Levels on agg.LevelId equals lv.AncestorId
+                     where lv.Id == levelId
+                     select new GetAggregationDto
+                     {
+                         Id = agg.Id,
+                         LevelId = agg.LevelId,
+                         Value = agg.Value,
+                         MotherAggregationId = agg.MotherAggregationId
+                     };
+
+        return await result.ToListAsync();
+    }
 }

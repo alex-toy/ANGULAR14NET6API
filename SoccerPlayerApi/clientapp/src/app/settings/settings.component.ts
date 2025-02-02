@@ -10,6 +10,8 @@ import { GetLevelDto } from '../models/levels/getLevelDto';
 import { DataTypeDto } from '../models/facts/typeDto';
 import { FactService } from '../services/fact.service';
 import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
+import { AggregationService } from '../services/aggregation.service';
+import { GetAggregationDto } from '../models/aggregations/getAggregationDto';
 
 @Component({
   selector: 'app-settings',
@@ -31,12 +33,13 @@ export class SettingsComponent implements OnInit {
   newType: DataTypeDto = { id: 0, label: '' } as DataTypeDto;
   types: DataTypeDto[] = [];
   
-  newAggregation: AggregationCreateDto = { levelId: 0, value: '' };
-  aggregations: AggregationCreateDto[] = [];
+  newAggregation: AggregationCreateDto = { levelId: 0, motherAggregationId: 0, value: '' };
+  aggregations: GetAggregationDto[] = [];
 
   constructor(
     private settingsService: SettingsService,
     private dimensionsService: DimensionsService,
+    private aggregationService: AggregationService,
     private levelService: LevelService,
     private factService: FactService
   ) { }
@@ -206,35 +209,6 @@ export class SettingsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error adding new type:', err);
-      }
-    });
-  }
-
-  // Fetch existing aggregations from the server
-  fetchAggregations(): void {
-    this.dimensionsService.getAggregations().subscribe({
-      next: (response) => {
-        this.aggregations = response.data;
-      },
-      error: (err) => {
-        console.error('Error fetching aggregations:', err);
-      }
-    });
-  }
-
-  // Create a new aggregation
-  addAggregation(): void {
-    if (!this.newAggregation.levelId || !this.newAggregation.value) {
-      return;  // Ensure both fields are filled
-    }
-
-    this.dimensionsService.createAggregation(this.newAggregation).subscribe({
-      next: (response) => {
-        this.aggregations.push(response.data);  // Add new aggregation to list
-        this.newAggregation = { levelId: 0, value: '' };  // Reset form
-      },
-      error: (err) => {
-        console.error('Error adding new aggregation:', err);
       }
     });
   }
