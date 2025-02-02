@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.DimensionValues;
 using SoccerPlayerApi.Dtos.Facts;
@@ -7,7 +7,6 @@ using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Utils;
-using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Dimensions;
 
@@ -47,15 +46,15 @@ public class DimensionService : IDimensionService
         return entityId;
     }
 
-    public async Task<int> CreateAggregation(AggregationCreateDto level)
-    {
-        EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation { 
-            LevelId = level.LevelId,
-            Value = level.Value,
-        });
-        await _context.SaveChangesAsync();
-        return entity.Entity.Id;
-    }
+    //public async Task<int> CreateAggregation(AggregationCreateDto level)
+    //{
+    //    EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation { 
+    //        LevelId = level.LevelId,
+    //        Value = level.Value,
+    //    });
+    //    await _context.SaveChangesAsync();
+    //    return entity.Entity.Id;
+    //}
 
     public async Task<IEnumerable<GetAggregationDto>> GetDimensionValues(int levelId)
     {
@@ -101,10 +100,10 @@ public class DimensionService : IDimensionService
                                         .All(dimensionValueId => dimensionValueIds.Contains(dimensionValueId)) && factResult.Dimensions.Count() == dimensionValueIds.Count;
     }
 
-    public async Task<IEnumerable<GetAggregationDto>> GetAggregations()
-    {
-        return await _context.Aggregations
-            .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
-            .ToListAsync();
-    }
+    //public async Task<IEnumerable<GetAggregationDto>> GetAggregations()
+    //{
+    //    return await _context.Aggregations
+    //        .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
+    //        .ToListAsync();
+    //}
 }

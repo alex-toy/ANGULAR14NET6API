@@ -193,20 +193,26 @@ namespace SoccerPlayerApi.Migrations
                         new
                         {
                             Id = 1,
-                            Key = "PresentDate",
-                            Value = "2024-12-01"
+                            Key = "PresentWeekDate",
+                            Value = "2024-W09"
                         },
                         new
                         {
                             Id = 2,
-                            Key = "PastSpan",
-                            Value = "24"
+                            Key = "PastWeekSpan",
+                            Value = "10"
                         },
                         new
                         {
                             Id = 3,
-                            Key = "FutureSpan",
-                            Value = "12"
+                            Key = "PresentMonthDate",
+                            Value = "2024-M09"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Key = "PastMonthSpan",
+                            Value = "10"
                         });
                 });
 
@@ -221,6 +227,9 @@ namespace SoccerPlayerApi.Migrations
                     b.Property<int>("LevelId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MotherAggregationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -228,6 +237,8 @@ namespace SoccerPlayerApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LevelId");
+
+                    b.HasIndex("MotherAggregationId");
 
                     b.ToTable("Aggregations");
                 });
@@ -542,7 +553,14 @@ namespace SoccerPlayerApi.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Aggregation", "MotherAggregation")
+                        .WithMany()
+                        .HasForeignKey("MotherAggregationId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Level");
+
+                    b.Navigation("MotherAggregation");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.AggregationFact", b =>

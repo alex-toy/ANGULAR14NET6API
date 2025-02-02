@@ -3,7 +3,7 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   max-width: 1200px;  /* Max width to prevent stretching too far */
-  width: 100%;        /* Ensure it takes full width of the screen */
+  width: 100vw;     /* Ensure it takes full width of the screen */
   margin: 0 auto;     /* Center the container */
 }
 

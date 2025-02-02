@@ -29,9 +29,17 @@ public class FactController
     }
 
     [HttpPost("createfact")]
-    public async Task<FactCreateResultDto> CreateFact(FactCreateDto fact)
+    public async Task<ResponseDto<int>> CreateFact(FactCreateDto fact)
     {
-        return await _factService.CreateFactAsync(fact);
+        try
+        {
+            int factId = await _factService.CreateFactAsync(fact);
+            return new ResponseDto<int> { Data = factId, IsSuccess = true, Count = 1 };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<int> { IsSuccess = false, Message = ex.Message };
+        }
     }
 
     [HttpPost("updatefact")]

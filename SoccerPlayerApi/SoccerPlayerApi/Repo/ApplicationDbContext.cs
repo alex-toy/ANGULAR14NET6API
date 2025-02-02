@@ -31,6 +31,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(l => l.DimensionId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Entity<Aggregation>()
+            .HasOne(l => l.MotherAggregation)
+            .WithMany()
+            .HasForeignKey(l => l.MotherAggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         ConfigureEnvironment(builder);
 
         ConfigureEnvironmentScope(builder);
@@ -144,9 +150,10 @@ public class ApplicationDbContext : DbContext
     private static void SeedData(ModelBuilder builder)
     {
         builder.Entity<Setting>().HasData(
-            new Setting { Id = 1, Key = "PresentDate", Value = "2024-12-01" },
-            new Setting { Id = 2, Key = "PastSpan", Value = "24" },
-            new Setting { Id = 3, Key = "FutureSpan", Value = "12" }
+            new Setting { Id = 1, Key = "PresentWeekDate", Value = "2024-W09" },
+            new Setting { Id = 2, Key = "PastWeekSpan", Value = "10" },
+            new Setting { Id = 3, Key = "PresentMonthDate", Value = "2024-M09" },
+            new Setting { Id = 4, Key = "PastMonthSpan", Value = "10" }
         );
 
         builder.Entity<Dimension>().HasData(

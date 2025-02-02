@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
+using SoccerPlayerApi.Services.Aggregations;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Environments;
 using SoccerPlayerApi.Services.Facts;
@@ -26,6 +27,7 @@ namespace SoccerPlayerApi
             builder.Services.AddScoped<IGenericRepo<Fact>, GenericRepo<Fact>>();
             builder.Services.AddScoped<IGenericRepo<Aggregation>, GenericRepo<Aggregation>>();
             builder.Services.AddScoped<IDimensionService, DimensionService>();
+            builder.Services.AddScoped<IAggregationService, AggregationService>();
             builder.Services.AddScoped<IFactService, FactService>();
             builder.Services.AddScoped<ILevelService, LevelService>();
             builder.Services.AddScoped<IEnvironmentService, EnvironmentService>();

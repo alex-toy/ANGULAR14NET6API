@@ -46,17 +46,4 @@ public class DimensionController
         IEnumerable<GetAggregationDto> dimensionValues = await _dimensionService.GetDimensionValues(levelId);
         return new GetAggregationsResultDto { Aggregations = dimensionValues, IsSuccess = true };
     }
-
-    [HttpPost("aggregation")]
-    public async Task<int> CreateAggregation(AggregationCreateDto dimensionValue)
-    {
-        return await _dimensionService.CreateAggregation(dimensionValue);
-    }
-
-    [HttpGet("aggregations")]
-    public async Task<ResponseDto<IEnumerable<GetAggregationDto>>> GetAggregations()
-    {
-        IEnumerable<GetAggregationDto> dimensions = await _dimensionService.GetAggregations();
-        return new ResponseDto<IEnumerable<GetAggregationDto>> { Data = dimensions, IsSuccess = true };
-    }
 }
