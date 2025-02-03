@@ -2,8 +2,8 @@
 
 public class TimeAggregation : Entity
 {
-    public int LevelId { get; set; }
-    public Level Level { get; set; }
+    public int TimeLevelId { get; set; }
+    public TimeLevel TimeLevel { get; set; }
 
     public int? MotherAggregationId { get; set; }
     public TimeAggregation? MotherAggregation { get; set; }

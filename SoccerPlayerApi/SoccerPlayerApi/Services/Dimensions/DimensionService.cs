@@ -33,7 +33,6 @@ public class DimensionService : IDimensionService
     {
         return await _context.Dimensions
             .Include(d => d.Levels)
-            .Where(d => d.Id != GlobalVar.TIME_DIMENSION_ID) // time
             .Select(d => new DimensionDto { Id = d.Id, Value = d.Value, Levels = d.Levels.Select(x => x.ToDto()).ToList() })
             .ToListAsync();
     }
@@ -45,6 +44,9 @@ public class DimensionService : IDimensionService
 
     public async Task<int> CreateDimensionAsync(DimensionDto dimension)
     {
+        Dimension? dimensionTest = _context.Dimensions.FirstOrDefault(d => d.Value == dimension.Value);
+        if (dimensionTest is not null) throw new Exception("Dimension value should be unique");
+
         int entityId = await _dimensionRepo.CreateAsync(dimension.ToDb());
 
         await _levelService.CreateLevelAsync(new CreateLevelDto { Value = "all", DimensionId = entityId, AncestorId = null });
@@ -66,7 +68,6 @@ public class DimensionService : IDimensionService
         List<int> distinctDimensionValueIds = await _context.Aggregations
             .Where(x => fact.AggregationIds.Contains(x.Id))
             .Include(x => x.Level).ThenInclude(x => x.Dimension)
-            .Where(x => x.Level.DimensionId != GlobalVar.TIME_DIMENSION_ID)
             .Select(x => x.Level.Dimension.Id)
             .Distinct()
             .ToListAsync();

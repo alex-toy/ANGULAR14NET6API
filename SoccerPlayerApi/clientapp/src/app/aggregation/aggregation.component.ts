@@ -109,5 +109,8 @@ export class AggregationComponent {
     }
       
     this.createAggregation();
+    this.selectedLevel = 0;
+    this.motherAggregations = [];
+    this.newAggregationValue = '';
   }
 }

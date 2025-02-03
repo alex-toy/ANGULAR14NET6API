@@ -28,7 +28,7 @@ public class FactService : IFactService
 
     public async Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto? scopeFilter)
     {
-        List<int> dimensionIds = _context.Dimensions.Where(d => d.Id != GlobalVar.TIME_DIMENSION_ID).Select(d => d.Id).ToList();
+        List<int> dimensionIds = _context.Dimensions.Select(d => d.Id).ToList();
         int dimensionCount = dimensionIds.Count();
         List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
         foreach (var currentDimensionId in dimensionIds)
@@ -208,7 +208,7 @@ public class FactService : IFactService
 
     public async Task<IEnumerable<GetScopeDataDto>> GetScopeData(EnvironmentScopeDto scope)
     {
-        int dimensionCount = _context.Dimensions.Count() - 1; // time is not taken into account
+        int dimensionCount = _context.Dimensions.Count();
 
         if (dimensionCount == 0) throw new Exception("no dimensions exist");
 
@@ -275,7 +275,7 @@ public class FactService : IFactService
 
     public async Task<int> CreateFactAsync(FactCreateDto fact)
     {
-        int dimensionCount = _context.Dimensions.Count() - 1;
+        int dimensionCount = _context.Dimensions.Count();
         if (fact.AggregationIds.Count() != dimensionCount) throw new Exception("dimension count doesn't match");
 
         bool areDimensionsCovered = await _dimensionService.GetAreDimensionsCovered(fact, dimensionCount);

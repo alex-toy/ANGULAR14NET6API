@@ -293,18 +293,14 @@ namespace SoccerPlayerApi.Migrations
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Dimensions");
+                    b.HasIndex("Value")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Value = "Time"
-                        });
+                    b.ToTable("Dimensions");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
@@ -359,42 +355,6 @@ namespace SoccerPlayerApi.Migrations
                     b.HasIndex("DimensionId");
 
                     b.ToTable("Levels");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DimensionId = 1,
-                            Value = "YEAR"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AncestorId = 1,
-                            DimensionId = 1,
-                            Value = "SEMESTER"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AncestorId = 2,
-                            DimensionId = 1,
-                            Value = "TRIMESTER"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AncestorId = 3,
-                            DimensionId = 1,
-                            Value = "MONTH"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AncestorId = 4,
-                            DimensionId = 1,
-                            Value = "WEEK"
-                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeAggregation", b =>
@@ -405,10 +365,10 @@ namespace SoccerPlayerApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("LevelId")
+                    b.Property<int?>("MotherAggregationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MotherAggregationId")
+                    b.Property<int>("TimeLevelId")
                         .HasColumnType("int");
 
                     b.Property<string>("Value")
@@ -417,9 +377,9 @@ namespace SoccerPlayerApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LevelId");
-
                     b.HasIndex("MotherAggregationId");
+
+                    b.HasIndex("TimeLevelId");
 
                     b.ToTable("TimeAggregations");
                 });
@@ -477,6 +437,59 @@ namespace SoccerPlayerApi.Migrations
                     b.HasKey("Day");
 
                     b.ToTable("DateSeries", (string)null);
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("AncestorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AncestorId");
+
+                    b.ToTable("TimeLevels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Value = "YEAR"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AncestorId = 1,
+                            Value = "SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AncestorId = 2,
+                            Value = "TRIMESTER"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AncestorId = 3,
+                            Value = "MONTH"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AncestorId = 4,
+                            Value = "WEEK"
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Environment", b =>
@@ -650,20 +663,29 @@ namespace SoccerPlayerApi.Migrations
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeAggregation", b =>
                 {
-                    b.HasOne("SoccerPlayerApi.Entities.Structure.Level", "Level")
-                        .WithMany()
-                        .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SoccerPlayerApi.Entities.Structure.TimeAggregation", "MotherAggregation")
                         .WithMany()
                         .HasForeignKey("MotherAggregationId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.Navigation("Level");
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.TimeLevel", "TimeLevel")
+                        .WithMany()
+                        .HasForeignKey("TimeLevelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("MotherAggregation");
+
+                    b.Navigation("TimeLevel");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeLevel", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.TimeLevel", "Ancestor")
+                        .WithMany()
+                        .HasForeignKey("AncestorId");
+
+                    b.Navigation("Ancestor");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Environment", b =>

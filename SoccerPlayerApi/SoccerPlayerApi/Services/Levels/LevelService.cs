@@ -31,16 +31,14 @@ public class LevelService : ILevelService
 
     public async Task<IEnumerable<GetLevelDto>> GetTimeLevels()
     {
-        return await _context.Levels
-            .Where(l => l.DimensionId == GlobalVar.TIME_DIMENSION_ID)
-            .Select(l => new GetLevelDto { Id = l.Id, Value = l.Value, DimensionId = l.DimensionId, AncestorId = l.AncestorId })
+        return await _context.TimeLevels
+            .Select(l => new GetLevelDto { Id = l.Id, Value = l.Value, AncestorId = l.AncestorId })
             .ToListAsync();
     }
 
     public async Task<IEnumerable<GetDimensionLevelDto>> GetDimensionLevels()
     {
         return await _context.Dimensions
-            .Where(d => d.Id != GlobalVar.TIME_DIMENSION_ID)
             .Include(d => d.Levels)
             .Select(d => new GetDimensionLevelDto() { 
                 DimensionId = d.Id, 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection.Emit;
+using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Entities.Structure;
@@ -21,11 +22,7 @@ public class ApplicationDbContext : DbContext
 
         ConfigureLevel(builder);
 
-        builder.Entity<Dimension>()
-            .HasMany(l => l.Levels)
-            .WithOne(l => l.Dimension)
-            .HasForeignKey(l => l.DimensionId)
-            .OnDelete(DeleteBehavior.NoAction);
+        ConfigureDimension(builder);
 
         builder.Entity<Aggregation>()
             .HasOne(l => l.MotherAggregation)
@@ -37,6 +34,12 @@ public class ApplicationDbContext : DbContext
             .HasOne(l => l.MotherAggregation)
             .WithMany()
             .HasForeignKey(l => l.MotherAggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<TimeAggregation>()
+            .HasOne(l => l.TimeLevel)
+            .WithMany()
+            .HasForeignKey(l => l.TimeLevelId)
             .OnDelete(DeleteBehavior.NoAction);
 
         ConfigureEnvironment(builder);
@@ -58,10 +61,24 @@ public class ApplicationDbContext : DbContext
     public DbSet<Aggregation> Aggregations { get; set; }
     public DbSet<TimeAggregation> TimeAggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
+    public DbSet<TimeLevel> TimeLevels { get; set; }
     public DbSet<Entities.Environment> Environments { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<EnvironmentScope> EnvironmentScopes { get; set; }
     public DbSet<EnvironmentSorting> EnvironmentSortings { get; set; }
+
+    private static void ConfigureDimension(ModelBuilder builder)
+    {
+        builder.Entity<Dimension>()
+            .HasMany(l => l.Levels)
+            .WithOne(l => l.Dimension)
+            .HasForeignKey(l => l.DimensionId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Dimension>()
+            .HasIndex(d => d.Value)
+            .IsUnique();
+    }
 
     private static void ConfigureFacts(ModelBuilder builder)
     {
@@ -174,16 +191,12 @@ public class ApplicationDbContext : DbContext
             new Setting { Id = 4, Key = "PastMonthSpan", Value = "10" }
         );
 
-        builder.Entity<Dimension>().HasData(
-            new Dimension { Id = 1, Value = "Time" }
-        );
-
-        builder.Entity<Level>().HasData(
-            new Level { Id = GlobalVar.YEAR_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "YEAR" },
-            new Level { Id = GlobalVar.SEMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
-            new Level { Id = GlobalVar.TRIMESTER_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
-            new Level { Id = GlobalVar.MONTH_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
-            new Level { Id = GlobalVar.WEEK_LEVEL_ID, DimensionId = GlobalVar.TIME_DIMENSION_ID, Value = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
+        builder.Entity<TimeLevel>().HasData(
+            new TimeLevel { Id = GlobalVar.YEAR_LEVEL_ID, Value = "YEAR" },
+            new TimeLevel { Id = GlobalVar.SEMESTER_LEVEL_ID, Value = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
+            new TimeLevel { Id = GlobalVar.TRIMESTER_LEVEL_ID, Value = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
+            new TimeLevel { Id = GlobalVar.MONTH_LEVEL_ID, Value = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
+            new TimeLevel { Id = GlobalVar.WEEK_LEVEL_ID, Value = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
         );
     }
 }
