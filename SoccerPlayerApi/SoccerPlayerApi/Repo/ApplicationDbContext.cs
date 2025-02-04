@@ -148,6 +148,12 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.EnvironmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Entity<Entities.Environment>()
+            .HasMany(l => l.EnvironmentSortings)
+            .WithOne(l => l.Environment)
+            .HasForeignKey(l => l.EnvironmentId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Entity<EnvironmentSorting>()
             .HasOne(e => e.DataType)
             .WithMany()

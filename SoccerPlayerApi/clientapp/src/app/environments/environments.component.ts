@@ -4,6 +4,8 @@ import { ResponseDto } from '../models/responseDto';
 import { EnvironmentDto } from '../models/environments/environmentDto';
 import { DimensionsService } from '../services/dimensions.service';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
+import { EnvironmentUpdateDto } from '../models/environments/environmentUpdateDto';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-environments',
@@ -19,6 +21,8 @@ export class EnvironmentsComponent {
   constructor(
     private environmentService: EnvironmentService,
     private dimensionService: DimensionsService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -65,5 +69,21 @@ export class EnvironmentsComponent {
         }
       });
     }
+  }
+
+  updateEnvironment(environementId: number): void {
+
+    let environment: EnvironmentDto = this.environments.find(e => e.id === environementId)!;
+    let updateEnvironment = { ...environment } as EnvironmentUpdateDto;
+
+    this.environmentService.updateEnvironment(updateEnvironment).subscribe({
+      next: () => {
+        this.router.navigate(['/environments']);
+      },
+      error: (err) => {
+        console.error('Error updating environment', err);
+        this.errorMessage = 'Error updating environment. Please try again.';
+      }
+    });
   }
 }

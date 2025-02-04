@@ -1,4 +1,5 @@
-﻿using SoccerPlayerApi.Entities.Structure;
+﻿using SoccerPlayerApi.Dtos.Environment;
+using SoccerPlayerApi.Entities.Structure;
 
 namespace SoccerPlayerApi.Entities.Environments;
 
@@ -16,4 +17,20 @@ public class EnvironmentSorting : Entity
     public int TimeLevelId { get; set; }
     public int DataTypeId { get; set; }
     public DataType DataType { get; set; }
+
+    public EnvironmentSortingDto ToDto()
+    {
+        return new()
+        {
+            EnvironmentId = EnvironmentId,
+            OrderIndex = OrderIndex,
+            Aggregator = Aggregator,
+            StartTimeSpan = StartTimeSpan,
+            EndTimeSpan = EndTimeSpan,
+            TimeLevelId = TimeLevelId,
+            IsAscending = IsAscending,
+            TimeSpanBase = TimeSpanBase,
+            DataTypeId = DataTypeId
+        };
+    }
 }

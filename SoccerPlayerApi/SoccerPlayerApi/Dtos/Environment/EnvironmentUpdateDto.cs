@@ -18,6 +18,8 @@ public class EnvironmentUpdateDto
     public int? Dimension4Id { get; set; }
     public int? LevelIdFilter4 { get; set; }
 
+    public List<EnvironmentSortingDto> EnvironmentSortings { get; set; } = new List<EnvironmentSortingDto>();
+
     public EnvironmentCreateDto ToCeateDto()
     {
         return new EnvironmentCreateDto
@@ -35,7 +37,7 @@ public class EnvironmentUpdateDto
             LevelIdFilter3 = LevelIdFilter3,
 
             Dimension4Id = Dimension4Id,
-            LevelIdFilter4 = LevelIdFilter4
+            LevelIdFilter4 = LevelIdFilter4,
         };
     }
 

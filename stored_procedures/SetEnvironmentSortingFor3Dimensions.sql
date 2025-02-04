@@ -1,21 +1,24 @@
 CREATE OR ALTER PROCEDURE SetEnvironmentSortingFor3Dimensions
     @EnvironmentId INT
 AS
+------------------------------------------------------------------------
+--declare @EnvironmentId int = 11;
+------------------------------------------------------------------------
 BEGIN
     IF OBJECT_ID('tempdb..#environmentSortingIds') IS NOT NULL DROP TABLE #environmentSortingIds;
 	SELECT 
-		ESRT.Id AS EnvironmentSortingId, TimeLevelId, T_AGG_S.Value AS StartTimeLabel, T_AGG_E.Value AS EndTimeLabel, 
+		ESRT.Id AS EnvironmentSortingId, ESRT.TimeLevelId, T_AGG_S.Value AS StartTimeLabel, T_AGG_E.Value AS EndTimeLabel, 
 		ESRT.Aggregator, ESRT.DataTypeId, ESRT.OrderIndex, ESRT.IsAscending
 	INTO #environmentSortingIds
 	FROM environmentSortings ESRT
-	JOIN Aggregations T_AGG_S ON T_AGG_S.Id = ESRT.StartTimeSpan
-	JOIN Aggregations T_AGG_E ON T_AGG_E.Id = ESRT.EndTimeSpan 
+	JOIN TimeAggregations T_AGG_S ON T_AGG_S.Id = ESRT.StartTimeSpan
+	JOIN TimeAggregations T_AGG_E ON T_AGG_E.Id = ESRT.EndTimeSpan 
 	WHERE environmentId = @EnvironmentId;
 
 	IF OBJECT_ID('tempdb..#timeSeries') IS NOT NULL DROP TABLE #timeSeries;
 	SELECT 
 		T_AGG.Value AS TimeLabel,
-		T_AGG.LevelId AS TimeLevelId,
+		T_AGG.TimeLevelId AS TimeLevelId,
 		MIN(FACT.Amount) AS Amount,
 		MIN(FACT.DataTypeId) AS DataTypeId,
 		ESCP.Id AS EnvironmentScopeId
@@ -28,10 +31,10 @@ BEGIN
 	JOIN Aggregations AGG_D3 ON AGG_D3.Id = ESCP.Dimension3AggregationId
 	JOIN AggregationFact AF3 ON AF3.AggregationId = AGG_D3.Id
 	JOIN Facts FACT ON AF1.FactId = FACT.Id AND AF2.FactId = FACT.Id AND AF3.FactId = FACT.Id
-	JOIN Aggregations T_AGG ON T_AGG.Id = FACT.TimeAggregationId
+	JOIN TimeAggregations T_AGG ON T_AGG.Id = FACT.TimeAggregationId
 	WHERE 
 		ESCP.EnvironmentId = @EnvironmentId
-	GROUP BY T_AGG.Value, T_AGG.LevelId, ESCP.Id
+	GROUP BY T_AGG.Value, T_AGG.TimeLevelId, ESCP.Id
 
 	IF OBJECT_ID('tempdb..#aggregatedValues') IS NOT NULL DROP TABLE #aggregatedValues;
 	SELECT 

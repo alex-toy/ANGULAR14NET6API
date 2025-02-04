@@ -79,8 +79,7 @@ export class EnvironmentDetailsComponent {
         levelIdFilter1: this.environment.levelIdFilter1,
         levelIdFilter2: this.environment.levelIdFilter2,
         levelIdFilter3: this.environment.levelIdFilter3,
-        levelIdFilter4: this.environment.levelIdFilter4,
-        levelIdFilter5: this.environment.levelIdFilter5
+        levelIdFilter4: this.environment.levelIdFilter4
       });
     }
   }

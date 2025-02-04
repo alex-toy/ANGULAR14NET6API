@@ -30,6 +30,7 @@ public class EnvironmentService : IEnvironmentService
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
+            .Include(e => e.EnvironmentSortings)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         return environment?.ToDto();
@@ -42,6 +43,7 @@ public class EnvironmentService : IEnvironmentService
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
+            .Include(e => e.EnvironmentSortings)
             .ToListAsync();
 
         return environments.Select(x => x.ToDto());
@@ -92,11 +94,22 @@ public class EnvironmentService : IEnvironmentService
         environmentDb.Map(environment);
         EntityEntry<Entities.Environment> entity = _context.Environments.Update(environmentDb);
 
+        await DeleteEnvironmentSortings(environment.Id);
+        await CreateEnvironmentSortings(environment.EnvironmentSortings, environment.Id);
+
         await DeleteRelatedEnvironmentScopes(environment.Id);
         await CreateRelatedEnvironmentScopes(environment.ToCeateDto(), environment.Id);
 
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
+    }
+
+    private async Task<bool> DeleteEnvironmentSortings(int environmentId)
+    {
+        IQueryable<EnvironmentSorting>? entity = _context.EnvironmentSortings.Where(x => x.EnvironmentId == environmentId);
+        if (entity is not null) _context.EnvironmentSortings.RemoveRange(entity);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     private async Task<bool> CreateEnvironmentScopes(IEnumerable<EnvironmentScopeDto> scopes, int environmentId)
@@ -168,8 +181,8 @@ public class EnvironmentService : IEnvironmentService
 
     private async Task<bool> DeleteRelatedEnvironmentScopes(int environmentId)
     {
-        EnvironmentScope? entity = await _context.EnvironmentScopes.FirstOrDefaultAsync(x => x.Id == environmentId);
-        if (entity is not null) _context.EnvironmentScopes.Remove(entity);
+        List<EnvironmentScope>? entity = await _context.EnvironmentScopes.Where(x => x.EnvironmentId == environmentId).ToListAsync();
+        if (entity is not null) _context.EnvironmentScopes.RemoveRange(entity);
         await _context.SaveChangesAsync();
         return true;
     }

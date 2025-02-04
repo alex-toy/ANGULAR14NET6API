@@ -11,7 +11,7 @@ public class Environment : Entity
     public string Description { get; set; } = string.Empty;
 
     public int LevelIdFilter1 { get; set; }
-    public Level? LevelFilter1 { get; set; }
+    public Level LevelFilter1 { get; set; }
 
     public int? LevelIdFilter2 { get; set; }
     public Level? LevelFilter2 { get; set; }
@@ -24,6 +24,8 @@ public class Environment : Entity
 
     public List<EnvironmentScope> EnvironmentScopes { get; set; }
 
+    public List<EnvironmentSorting> EnvironmentSortings { get; set; }
+
     public void Map(EnvironmentUpdateDto environment)
     {
        Name = environment.Name;
@@ -34,25 +36,28 @@ public class Environment : Entity
        LevelIdFilter4 = environment.LevelIdFilter4;
     }
 
-    public EnvironmentDto ToDto()
+    public EnvironmentDto ToDto() => new EnvironmentDto
     {
-        return new EnvironmentDto
-        {
-            Id = Id,
-            Name = Name,
-            Description = Description,
+        Id = Id,
+        Name = Name,
+        Description = Description,
 
-            LevelIdFilter1 = LevelIdFilter1,
-            LevelLabel1 = LevelFilter1?.Value ?? string.Empty,
+        Dimension1Id = LevelFilter1.DimensionId,
+        LevelIdFilter1 = LevelIdFilter1,
+        LevelLabel1 = LevelFilter1?.Value ?? string.Empty,
 
-            LevelIdFilter2 = LevelIdFilter2,
-            LevelLabel2 = LevelFilter2?.Value ?? string.Empty,
+        Dimension2Id = LevelFilter2?.DimensionId,
+        LevelIdFilter2 = LevelIdFilter2,
+        LevelLabel2 = LevelFilter2?.Value ?? string.Empty,
 
-            LevelIdFilter3 = LevelIdFilter3,
-            LevelLabel3 = LevelFilter3?.Value ?? string.Empty,
+        Dimension3Id = LevelFilter3?.DimensionId,
+        LevelIdFilter3 = LevelIdFilter3,
+        LevelLabel3 = LevelFilter3?.Value ?? string.Empty,
 
-            LevelIdFilter4 = LevelIdFilter4,
-            LevelLabel4 = LevelFilter4?.Value ?? string.Empty,
-        };
-    }
+        Dimension4Id = LevelFilter4?.DimensionId,
+        LevelIdFilter4 = LevelIdFilter4,
+        LevelLabel4 = LevelFilter4?.Value ?? string.Empty,
+
+        EnvironmentSortings = EnvironmentSortings.Select(x => x.ToDto()).ToList(),
+    };
 }
