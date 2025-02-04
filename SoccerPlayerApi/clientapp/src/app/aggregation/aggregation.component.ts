@@ -61,7 +61,6 @@ export class AggregationComponent {
     };
     this.aggregationService.createAggregation(aggregationDto).subscribe({
       next: (response) => {
-        console.log(response)
       },
       error: (err) => {
         console.error('Error adding new setting:', err);

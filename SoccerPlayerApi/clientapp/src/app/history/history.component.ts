@@ -192,13 +192,13 @@ export class HistoryComponent {
   }
 
   fetchScopeData(): void {
-    console.log(this.selectedScope)
     this.historyService.getScopeData(this.selectedScope!).subscribe({
       next: (response: ResponseDto<GetScopeDataDto[]>) => {
         this.scopeData = response.data;
+        console.log(this.scopeData)
       },
       error: (err) => {
-        console.error('Error fetching levels', err);
+        console.error('Error fetching scope data', err);
       }
     });
   }
@@ -209,6 +209,7 @@ export class HistoryComponent {
     this.historyService.getTimeAggregations(levelId).subscribe({
       next: (response: ResponseDto<TimeAggregationDto[]>) => {
         this.timeAggregationDtos = response.data.sort((a, b) => a.label.localeCompare(b.label));
+        console.log(response.data)
       },
       error: (err) => {
         console.error('Error fetching levels', err);

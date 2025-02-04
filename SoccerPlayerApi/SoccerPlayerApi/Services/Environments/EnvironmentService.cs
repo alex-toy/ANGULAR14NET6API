@@ -14,11 +14,13 @@ public class EnvironmentService : IEnvironmentService
 {
     private readonly ApplicationDbContext _context;
     private readonly IFactService _factService;
+    private readonly string _connectionString;
 
-    public EnvironmentService(ApplicationDbContext context, IFactService factService)
+    public EnvironmentService(ApplicationDbContext context, IFactService factService, IConfiguration configuration)
     {
         _context = context;
         _factService = factService;
+        _connectionString = configuration.GetConnectionString("default")!;
     }
 
     public async Task<EnvironmentDto?> GetEnvironmentById(int id)
@@ -211,10 +213,9 @@ public class EnvironmentService : IEnvironmentService
         return filter;
     }
 
-    private static void ExecuteSetEnvironmentSortingFor3Dimensions(int environmentId)
+    private void ExecuteSetEnvironmentSortingFor3Dimensions(int environmentId)
     {
-        string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=VisionDb;Trusted_Connection=true;TrustServerCertificate=true;";
-        using SqlConnection connection = new SqlConnection(connectionString);
+        using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
 
         using SqlCommand command = new SqlCommand("SetEnvironmentSortingFor3Dimensions", connection);

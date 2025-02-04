@@ -329,7 +329,7 @@ public class FactService : IFactService
         string pastSpanString = _context.Settings.Where(s => s.Key == pastSpan).FirstOrDefault()!.Value;
         int.TryParse(pastSpanString, out int span);
 
-        return await _context.Aggregations.Where(a => string.Compare(a.Value, presentDate) <= 0 && a.LevelId == levelId)
+        return await _context.TimeAggregations.Where(a => string.Compare(a.Value, presentDate) <= 0 && a.TimeLevelId == levelId)
                                                .OrderByDescending(a => a.Value)
                                                .Take(span)
                                                .Select(agg => new TimeAggregationDto
@@ -682,10 +682,8 @@ public class FactService : IFactService
     {
         return from fa in _context.Facts
                join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-               join dv in _context.Aggregations on fa.TimeAggregationId equals dv.Id
-               join lv in _context.Levels on dv.LevelId equals lv.Id
-               join tim in _context.Dimensions on lv.DimensionId equals tim.Id
-               where tim.Id == GlobalVar.TIME_DIMENSION_ID
+               join dv in _context.TimeAggregations on fa.TimeAggregationId equals dv.Id
+               join lv in _context.TimeLevels on dv.TimeLevelId equals lv.Id
                select new AxisBo
                {
                    FactId = fa.Id,
@@ -694,7 +692,7 @@ public class FactService : IFactService
                    Amount = fa.Amount,
                    LevelId = lv.Id,
                    Value = lv.Value,
-                   DimensionId = tim.Id,
+                   DimensionId = 0,
                    AggregationValue = dv.Value,
                    AggId = dv.Id
                };

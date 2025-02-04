@@ -23,6 +23,8 @@ namespace SoccerPlayerApi
                 options.UseSqlServer(connectionString);
             });
 
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
             builder.Services.AddScoped<IGenericRepo<Dimension>, GenericRepo<Dimension>>();
             builder.Services.AddScoped<IGenericRepo<Fact>, GenericRepo<Fact>>();
             builder.Services.AddScoped<IGenericRepo<Aggregation>, GenericRepo<Aggregation>>();

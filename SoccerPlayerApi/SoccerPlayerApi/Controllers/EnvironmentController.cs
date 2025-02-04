@@ -2,7 +2,6 @@
 using SoccerPlayerApi.Dtos.Environment;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Environments;
-using SoccerPlayerApi.Services.Facts;
 
 namespace SoccerPlayerApi.Controllers;
 
@@ -10,15 +9,11 @@ namespace SoccerPlayerApi.Controllers;
 [Route("[controller]")]
 public class EnvironmentController
 {
-    private readonly IConfiguration _configuration;
     private readonly IEnvironmentService _environmentService;
-    private readonly IFactService _factService;
 
-    public EnvironmentController(IConfiguration configuration, IEnvironmentService service, IFactService factService)
+    public EnvironmentController(IEnvironmentService service)
     {
-        _configuration = configuration;
         _environmentService = service;
-        _factService = factService;
     }
 
     [HttpPost("environments")]
