@@ -94,11 +94,11 @@ public class EnvironmentService : IEnvironmentService
         environmentDb.Map(environment);
         EntityEntry<Entities.Environment> entity = _context.Environments.Update(environmentDb);
 
-        await DeleteEnvironmentSortings(environment.Id);
-        await CreateEnvironmentSortings(environment.EnvironmentSortings, environment.Id);
-
         await DeleteRelatedEnvironmentScopes(environment.Id);
         await CreateRelatedEnvironmentScopes(environment.ToCeateDto(), environment.Id);
+
+        await DeleteEnvironmentSortings(environment.Id);
+        await CreateEnvironmentSortings(environment.EnvironmentSortings, environment.Id);
 
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
@@ -108,31 +108,6 @@ public class EnvironmentService : IEnvironmentService
     {
         IQueryable<EnvironmentSorting>? entity = _context.EnvironmentSortings.Where(x => x.EnvironmentId == environmentId);
         if (entity is not null) _context.EnvironmentSortings.RemoveRange(entity);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    private async Task<bool> CreateEnvironmentScopes(IEnumerable<EnvironmentScopeDto> scopes, int environmentId)
-    {
-        IEnumerable<EnvironmentScope> temp = scopes.Select(s => new EnvironmentScope
-        {
-            EnvironmentId = environmentId,
-
-            Dimension1Id = s.Dimension1Id,
-            Dimension1AggregationId = s.Dimension1AggregationId,
-
-            Dimension2Id = s.Dimension2Id,
-            Dimension2AggregationId = s.Dimension2AggregationId,
-
-            Dimension3Id = s.Dimension3Id,
-            Dimension3AggregationId = s.Dimension3AggregationId,
-
-            Dimension4Id = s.Dimension4Id,
-            Dimension4AggregationId = s.Dimension4AggregationId,
-        });
-
-        await _context.EnvironmentScopes.AddRangeAsync(temp);
-
         await _context.SaveChangesAsync();
         return true;
     }
@@ -176,7 +151,26 @@ public class EnvironmentService : IEnvironmentService
     {
         ScopeFilterDto filter = SetScopeFilter(environment);
         IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopes(filter);
-        await CreateEnvironmentScopes(scopes, environmentId);
+
+        IEnumerable<EnvironmentScope> environmentScopes = scopes.Select(s => new EnvironmentScope
+        {
+            EnvironmentId = environmentId,
+
+            Dimension1Id = s.Dimension1Id,
+            Dimension1AggregationId = s.Dimension1AggregationId,
+
+            Dimension2Id = s.Dimension2Id,
+            Dimension2AggregationId = s.Dimension2AggregationId,
+
+            Dimension3Id = s.Dimension3Id,
+            Dimension3AggregationId = s.Dimension3AggregationId,
+
+            Dimension4Id = s.Dimension4Id,
+            Dimension4AggregationId = s.Dimension4AggregationId,
+        });
+
+        await _context.EnvironmentScopes.AddRangeAsync(environmentScopes);
+        await _context.SaveChangesAsync();
     }
 
     private async Task<bool> DeleteRelatedEnvironmentScopes(int environmentId)
@@ -231,7 +225,7 @@ public class EnvironmentService : IEnvironmentService
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        using SqlCommand command = new SqlCommand("SetEnvironmentSortingFor3Dimensions", connection);
+        using SqlCommand command = new SqlCommand("SetEnvironmentSorting", connection);
         command.CommandType = CommandType.StoredProcedure;
 
         command.Parameters.Add(new SqlParameter("@EnvironmentId", SqlDbType.Int)).Value = environmentId;
