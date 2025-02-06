@@ -4,7 +4,6 @@ import { DimensionDto } from 'src/app/models/dimensions/dimensionDto';
 import { GetAggregationDto } from 'src/app/models/aggregations/getAggregationDto';
 import { GetAggregationsResultDto } from 'src/app/models/aggregations/getAggregationsResultDto';
 import { FactCreateDto } from 'src/app/models/facts/factCreateDto';
-import { FactCreateResultDto } from 'src/app/models/facts/factCreateResultDto';
 import { GetDimensionLevelDto } from 'src/app/models/levels/getDimensionLevelDto';
 import { DimensionsService } from 'src/app/services/dimensions.service';
 import { FactService } from 'src/app/services/fact.service';
@@ -53,7 +52,7 @@ export class CreateFactComponent {
   
   createFact(): void {
     this.factService.createFact(this.newFact).subscribe({
-      next: (data: FactCreateResultDto) => {
+      next: (data) => {
         console.log(data)
       },
       error: (err) => {

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import * as XLSX from 'xlsx';
+import { ImportFactDto } from '../models/facts/ImportFactDto';
 
 @Component({
   selector: 'app-import',
@@ -43,12 +44,12 @@ export class ImportComponent {
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       
       const formattedData = jsonData.slice(1).map((row: any) => ({
-        Fact: row[0],
+        Amount: row[0],
         DataType: row[1],
         Dimension1Aggregation: row[2],
         Dimension2Aggregation: row[3],
         TimeAggregation: row[4]
-      }));
+      } as ImportFactDto));
 
       // Send the data to the backend
       // this.uploadData(formattedData);

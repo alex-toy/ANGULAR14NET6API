@@ -15,7 +15,6 @@ import { SettingsService } from '../services/settings.service';
 import { SettingsDto } from '../models/settings/settingsDto';
 import { FactService } from '../services/fact.service';
 import { FactCreateDto } from '../models/facts/factCreateDto';
-import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
 import { DataTypeDto } from '../models/facts/typeDto';
@@ -271,7 +270,7 @@ export class HistoryComponent {
       let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationId == timeLabel.timeAggregationId && s.typeId == typeId) || null;
       if (scope == null) {
         this.factService.createFact(new FactCreateDto(typeId, newAmount, this.scopeData[0].aggregationIds, timeLabel.timeAggregationId)).subscribe({
-          next: (response: FactCreateResultDto) => {
+          next: (response) => {
             this.fetchScopeData();
           },
           error: (err) => {

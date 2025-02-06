@@ -5,11 +5,9 @@ import { environment } from 'src/environments/environment';
 import { GetFactsResultDto } from '../models/facts/getFactsResultDto';
 import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
 import { FactCreateDto } from '../models/facts/factCreateDto';
-import { FactCreateResultDto } from '../models/facts/factCreateResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { ResponseDto } from '../models/responseDto';
 import { DataTypeDto } from '../models/facts/typeDto';
-import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +22,9 @@ export class FactService {
     return this.httpClient.post<GetFactsResultDto>(`${this.apiUrl}/facts`, filter, { headers : header })
   }
 
-  createFact(fact: FactCreateDto): Observable<FactCreateResultDto> {
+  createFact(fact: FactCreateDto): Observable<ResponseDto<number>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.post<FactCreateResultDto>(`${this.apiUrl}/createfact`, fact, { headers : header })
+    return this.httpClient.post<ResponseDto<number>>(`${this.apiUrl}/createfact`, fact, { headers : header })
   }
 
   updateFact(fact: FactUpdateDto): Observable<boolean> {
