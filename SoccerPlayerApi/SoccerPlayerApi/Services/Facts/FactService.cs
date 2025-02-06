@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data;
+using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Bos;
+using SoccerPlayerApi.Controllers;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities.Environments;
@@ -8,8 +12,6 @@ using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Dimensions;
-using SoccerPlayerApi.Utils;
-using System.Linq.Expressions;
 
 namespace SoccerPlayerApi.Services.Facts;
 
@@ -291,6 +293,34 @@ public class FactService : IFactService
 
         await _context.SaveChangesAsync();
         return entityId;
+    }
+
+    public async Task<IEnumerable<ImportFactCreateResultDto>> CreateImportFactAsync(IEnumerable<ImportFactDto> facts)
+    {
+        List<ImportFactCreateResultDto> result = new ();
+
+        DataTable factsTable = GetDataTable(facts);
+
+        using var connection = _context.Database.GetDbConnection();
+        await connection.OpenAsync();
+
+        using var command = connection.CreateCommand();
+        command.CommandType = CommandType.StoredProcedure;
+        command.CommandText = "CreateImportFacts";
+
+        SqlParameter factsParameter = new ()
+        {
+            ParameterName = "@Facts",
+            SqlDbType = SqlDbType.Structured,
+            TypeName = "dbo.ImportFactType",
+            Value = factsTable
+        };
+
+        command.Parameters.Add(factsParameter);
+
+        await command.ExecuteNonQueryAsync();
+
+        return result;
     }
 
     public async Task<IEnumerable<DataTypeDto>> GetFactTypes()
@@ -696,5 +726,26 @@ public class FactService : IFactService
                    AggregationValue = dv.Value,
                    AggId = dv.Id
                };
+    }
+
+    private static DataTable GetDataTable(IEnumerable<ImportFactDto> facts)
+    {
+        var factsTable = new DataTable();
+        factsTable.Columns.Add("Amount", typeof(decimal));
+        factsTable.Columns.Add("DataType", typeof(string));
+        factsTable.Columns.Add("Dimension1Aggregation", typeof(string));
+        factsTable.Columns.Add("Dimension2Aggregation", typeof(string));
+        factsTable.Columns.Add("Dimension3Aggregation", typeof(string));
+        factsTable.Columns.Add("Dimension4Aggregation", typeof(string));
+        factsTable.Columns.Add("TimeAggregation", typeof(string));
+
+        foreach (var fact in facts)
+        {
+            factsTable.Rows.Add(fact.Amount, fact.DataType, fact.Dimension1Aggregation,
+                                fact.Dimension2Aggregation, fact.Dimension3Aggregation,
+                                fact.Dimension4Aggregation, fact.TimeAggregation);
+        }
+
+        return factsTable;
     }
 }

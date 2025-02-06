@@ -42,6 +42,20 @@ public class FactController
         }
     }
 
+    [HttpPost("createimportfact")]
+    public async Task<ResponseDto<IEnumerable<ImportFactCreateResultDto>>> CreateImportFact(IEnumerable<ImportFactDto> facts)
+    {
+        try
+        {
+            IEnumerable<ImportFactCreateResultDto> results = await _factService.CreateImportFactAsync(facts);
+            return new ResponseDto<IEnumerable<ImportFactCreateResultDto>> { Data = results, IsSuccess = true, Count = 1 };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<IEnumerable<ImportFactCreateResultDto>> { IsSuccess = false, Message = ex.Message };
+        }
+    }
+
     [HttpPost("updatefact")]
     public async Task<bool> UpdateFact(FactUpdateDto fact)
     {

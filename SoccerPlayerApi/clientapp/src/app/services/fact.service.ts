@@ -8,6 +8,8 @@ import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { ResponseDto } from '../models/responseDto';
 import { DataTypeDto } from '../models/facts/typeDto';
+import { ImportFactDto } from '../models/facts/ImportFactDto';
+import { ImportFactCreateResultDto } from '../models/facts/ImportFactCreateResultDto';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +27,11 @@ export class FactService {
   createFact(fact: FactCreateDto): Observable<ResponseDto<number>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
     return this.httpClient.post<ResponseDto<number>>(`${this.apiUrl}/createfact`, fact, { headers : header })
+  }
+
+  createImportFact(facts: ImportFactDto[]): Observable<ResponseDto<ImportFactCreateResultDto[]>> {
+    const header = new HttpHeaders().set('Content-type', 'application/json');
+    return this.httpClient.post<ResponseDto<ImportFactCreateResultDto[]>>(`${this.apiUrl}/createimportfact`, facts, { headers : header })
   }
 
   updateFact(fact: FactUpdateDto): Observable<boolean> {

@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import * as XLSX from 'xlsx';
 import { ImportFactDto } from '../models/facts/ImportFactDto';
+import { FactService } from '../services/fact.service';
 
 @Component({
   selector: 'app-import',
@@ -14,7 +15,10 @@ export class ImportComponent {
   errorMessage: string = '';
   successMessage: string = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private factService: FactService,
+  ) {}
 
   onFileChange(event: any): void {
     const file = event.target.files[0];
@@ -51,10 +55,17 @@ export class ImportComponent {
         TimeAggregation: row[4]
       } as ImportFactDto));
 
-      // Send the data to the backend
-      // this.uploadData(formattedData);
+      this.factService.createImportFact(formattedData);
 
-      console.log(formattedData)
+      
+      this.factService.createImportFact(formattedData).subscribe({
+        next: (response) => {
+          console.log(response)
+        },
+        error: (err) => {
+          console.error('Error createImportFact:', err);
+        }
+      });
 
     };
     reader.readAsBinaryString(this.file);

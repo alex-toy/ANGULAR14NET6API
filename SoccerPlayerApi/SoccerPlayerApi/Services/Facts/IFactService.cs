@@ -1,4 +1,5 @@
-﻿using SoccerPlayerApi.Dtos.Facts;
+﻿using SoccerPlayerApi.Controllers;
+using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 
 namespace SoccerPlayerApi.Services.Facts;
@@ -15,4 +16,5 @@ public interface IFactService
     Task<IEnumerable<TimeAggregationDto>> GetTimeAggregations(int levelId);
     Task<IEnumerable<DataTypeDto>> GetDataTypes();
     Task<bool> UpdateFactAsync(FactUpdateDto fact);
+    Task<IEnumerable<ImportFactCreateResultDto>> CreateImportFactAsync(IEnumerable<ImportFactDto> facts);
 }
