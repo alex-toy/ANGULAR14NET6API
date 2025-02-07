@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Bos;
 using SoccerPlayerApi.Controllers;
+using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Entities.Environments;
@@ -235,28 +236,31 @@ public class FactService : IFactService
         return await resultQuery.ToListAsync();
     }
 
-    public async Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter)
+    public async Task<IEnumerable<FactDto>> GetFacts(GetFactFilterDto filter)
     {
-        IQueryable<GetFactResultDto> facts = _context.Facts
+        IQueryable<FactDto> facts = _context.Facts
             .Where(f => f.TimeAggregationId == filter.TimeAggregationId)
-            .Include(f => f.AggregationFacts).ThenInclude(df => df.Aggregation).ThenInclude(dv => dv.Level).ThenInclude(l => l.Dimension)
-            .Select(f => new GetFactResultDto
+            .Include(f => f.Aggregation1)
+            .Include(f => f.Aggregation2)
+            .Include(f => f.Aggregation3)
+            .Include(f => f.Aggregation4)
+            .Select(fact => new FactDto
             {
-                Id = f.Id,
-                Amount = f.Amount,
-                DataType = f.DataTypeId,
-                Dimensions = f.AggregationFacts.Select(df => new DimensionResultDto
+                Id = fact.Id,
+                Amount = fact.Amount,
+                DataTypeId = fact.DataTypeId,
+                Aggregation1 = new AggregationDto
                 {
-                    DimensionValueId = df.AggregationId,
-                    Value = df.Aggregation.Value,
-                    DimensionId = df.Aggregation.Level.DimensionId,
-                    DimensionLabel = df.Aggregation.Level.Dimension.Value,
-                    LevelId = df.Aggregation.Level.Id,
-                    LevelLabel = df.Aggregation.Level.Value,
-                }).ToList(),
+                    AggregationId = fact.Aggregation1.Id,
+                    AggregationLabel = fact.Aggregation1.Value,
+                    LevelId = fact.Aggregation1.Level.Id,
+                    LevelLabel = fact.Aggregation1.Level.Value,
+                    DimensionId = fact.Aggregation1.Level.DimensionId,
+                    DimensionLabel = fact.Aggregation1.Level.Dimension.Value,
+                }
             });
 
-        if (filter.DataTypeId is not null) facts = facts.Where(fr => fr.DataType == filter.DataTypeId);
+        if (filter.DataTypeId is not null) facts = facts.Where(fr => fr.DataTypeId == filter.DataTypeId);
 
         if (filter.FactDimensionFilters is not null && filter.FactDimensionFilters.Count > 0)
         {
@@ -278,7 +282,7 @@ public class FactService : IFactService
     public async Task<int> CreateFactAsync(FactCreateDto fact)
     {
         int dimensionCount = _context.Dimensions.Count();
-        if (fact.AggregationIds.Count() != dimensionCount) throw new Exception("dimension count doesn't match");
+        if (fact.GetDimensionCount() != dimensionCount) throw new Exception("dimension count doesn't match");
 
         bool areDimensionsCovered = await _dimensionService.GetAreDimensionsCovered(fact, dimensionCount);
         if (!areDimensionsCovered) throw new Exception("dimensions are not all covered");
@@ -286,10 +290,16 @@ public class FactService : IFactService
         bool isFactExists = await GetFactExists(fact);
         if (isFactExists) throw new Exception("fact already exists");
 
-        Fact factDb = new() { Amount = fact.Amount, DataTypeId = fact.DataTypeId, TimeAggregationId = fact.TimeAggregationId };
+        Fact factDb = new() { 
+            Amount = fact.Amount, 
+            DataTypeId = fact.DataTypeId,
+            Dimension1AggregationId = fact.Dimension1AggregationId,
+            Dimension2AggregationId = fact.Dimension2AggregationId,
+            Dimension3AggregationId = fact.Dimension3AggregationId,
+            Dimension4AggregationId = fact.Dimension4AggregationId,
+            TimeAggregationId = fact.TimeAggregationId 
+        };
         int entityId = await _factRepo.CreateAsync(factDb);
-
-        AddAggregationFacts(fact, factDb, entityId);
 
         await _context.SaveChangesAsync();
         return entityId;
@@ -310,7 +320,7 @@ public class FactService : IFactService
 
         SqlParameter factsParameter = new ()
         {
-            ParameterName = "@Facts",
+            ParameterName = "@facts",
             SqlDbType = SqlDbType.Structured,
             TypeName = "dbo.ImportFactType",
             Value = factsTable
@@ -384,7 +394,7 @@ public class FactService : IFactService
         return true;
     }
 
-    public async Task<DataTypeDto> CreateTypeAsync(TypeCreateDto type)
+    public async Task<DataTypeDto> CreateTypeAsync(DataTypeCreateDto type)
     {
         DataType typeDb = new() { Label = type.Label };
         EntityEntry<DataType> entityId = await _context.DataTypes.AddAsync(typeDb);
@@ -518,35 +528,27 @@ public class FactService : IFactService
                };
     }
 
-    private static Expression<Func<GetFactResultDto, bool>> DimensionFilter(GetFactDimensionFilterDto factDimensionFilter1)
+    private static Expression<Func<FactDto, bool>> DimensionFilter(GetFactDimensionFilterDto filter)
     {
-        return factResult => factDimensionFilter1.LevelId == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).LevelId &&
-                             factDimensionFilter1.DimensionValue == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).Value;
+        return fact => filter.LevelId == fact.Aggregation1.LevelId && filter.DimensionLabel == fact.Aggregation1.DimensionLabel ||
+                       fact.Aggregation2 != null && filter.LevelId == fact.Aggregation2.LevelId && filter.DimensionLabel == fact.Aggregation2.DimensionLabel ||
+                       fact.Aggregation3 != null && filter.LevelId == fact.Aggregation3.LevelId && filter.DimensionLabel == fact.Aggregation3.DimensionLabel ||
+                       fact.Aggregation4 != null && filter.LevelId == fact.Aggregation4.LevelId && filter.DimensionLabel == fact.Aggregation4.DimensionLabel;
     }
 
     private async Task<bool> GetFactExists(FactCreateDto fact)
     {
-        IEnumerable<GetFactResultDto> facts = await GetFacts(new GetFactFilterDto
+        IEnumerable<FactDto> facts = await GetFacts(new GetFactFilterDto
         {
             DataTypeId = fact.DataTypeId,
-            AggregationIds = fact.AggregationIds.ToList(),
+            Dimension1AggregationId = fact.Dimension1AggregationId,
+            Dimension2AggregationId = fact.Dimension2AggregationId,
+            Dimension3AggregationId = fact.Dimension3AggregationId,
+            Dimension4AggregationId = fact.Dimension4AggregationId,
             TimeAggregationId = fact.TimeAggregationId
         });
 
         return facts.Count() > 0;
-    }
-
-    private void AddAggregationFacts(FactCreateDto fact, Fact factDb, int entityId)
-    {
-        IEnumerable<AggregationFact> dimensionFacts = fact.AggregationIds.Select(id => new AggregationFact
-        {
-            AggregationId = id,
-            FactId = entityId,
-        });
-
-        factDb.AggregationFacts = dimensionFacts.ToList();
-
-        factDb.TimeAggregationId = fact.TimeAggregationId;
     }
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_1_Dimensions(EnvironmentScopeDto scope)

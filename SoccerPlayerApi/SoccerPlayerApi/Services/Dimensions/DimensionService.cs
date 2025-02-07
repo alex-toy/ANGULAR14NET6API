@@ -85,16 +85,16 @@ public class DimensionService : IDimensionService
         factDb.AggregationFacts = dimensionFacts.ToList();
     }
 
-    private static Expression<Func<GetFactResultDto, bool>> DimensionFilter(GetFactDimensionFilterDto factDimensionFilter1)
+    private static Expression<Func<FactDto, bool>> DimensionFilter(GetFactDimensionFilterDto factDimensionFilter1)
     {
         return factResult => factDimensionFilter1.LevelId == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).LevelId &&
-                             factDimensionFilter1.DimensionValue == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).Value;
+                             factDimensionFilter1.DimensionLabel == factResult.Dimensions.First(x => x.DimensionId == factDimensionFilter1.DimensionId).Value;
     }
 
-    public Expression<Func<GetFactResultDto, bool>> DimensionValueFilter(List<int> dimensionValueIds)
+    public Expression<Func<FactDto, bool>> DimensionValueFilter(List<int> dimensionValueIds)
     {
         return factResult => factResult.Dimensions
-                                        .Select(x => x.DimensionValueId)
+                                        .Select(x => x.AggregationId)
                                         .All(dimensionValueId => dimensionValueIds.Contains(dimensionValueId)) && factResult.Dimensions.Count() == dimensionValueIds.Count;
     }
 }

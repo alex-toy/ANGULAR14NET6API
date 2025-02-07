@@ -1,6 +1,6 @@
 ﻿namespace SoccerPlayerApi.Dtos.Facts;
 
-public class TypeCreateDto
+public class DataTypeCreateDto
 {
     public string Label { get; set; }
 }

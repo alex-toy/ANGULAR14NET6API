@@ -8,7 +8,7 @@ namespace SoccerPlayerApi.Services.Dimensions;
 public interface IDimensionService
 {
     Task<int> CreateDimensionAsync(DimensionDto dimension);
-    Expression<Func<GetFactResultDto, bool>> DimensionValueFilter(List<int> dimensionValueIds);
+    Expression<Func<FactDto, bool>> DimensionValueFilter(List<int> dimensionValueIds);
     Task<bool> GetAreDimensionsCovered(FactCreateDto fact, int dimensionCount);
     Task<int> GetDimensionCount();
     Task<IEnumerable<DimensionDto>> GetDimensions();

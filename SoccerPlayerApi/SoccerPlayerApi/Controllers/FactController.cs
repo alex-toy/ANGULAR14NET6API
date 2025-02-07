@@ -24,7 +24,7 @@ public class FactController
     [HttpPost("facts")]
     public async Task<GetFactsResultDto> GetFacts(GetFactFilterDto filter)
     {
-        IEnumerable<GetFactResultDto> facts = await _factService.GetFacts(filter);
+        IEnumerable<FactDto> facts = await _factService.GetFacts(filter);
         return new GetFactsResultDto { Facts = facts, IsSuccess = true };
     }
 
@@ -77,7 +77,7 @@ public class FactController
     }
 
     [HttpPost("createtype")]
-    public async Task<ResponseDto<DataTypeDto>> CreateType(TypeCreateDto fact)
+    public async Task<ResponseDto<DataTypeDto>> CreateType(DataTypeCreateDto fact)
     {
         DataTypeDto type = await _factService.CreateTypeAsync(fact);
         return new ResponseDto<DataTypeDto> { Data = type, IsSuccess = true };

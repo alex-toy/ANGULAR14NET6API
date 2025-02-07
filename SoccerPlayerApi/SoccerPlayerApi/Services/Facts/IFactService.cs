@@ -7,8 +7,8 @@ namespace SoccerPlayerApi.Services.Facts;
 public interface IFactService
 {
     Task<int> CreateFactAsync(FactCreateDto fact);
-    Task<DataTypeDto> CreateTypeAsync(TypeCreateDto fact);
-    Task<IEnumerable<GetFactResultDto>> GetFacts(GetFactFilterDto filter);
+    Task<DataTypeDto> CreateTypeAsync(DataTypeCreateDto fact);
+    Task<IEnumerable<FactDto>> GetFacts(GetFactFilterDto filter);
     Task<IEnumerable<DataTypeDto>> GetFactTypes();
     Task<IEnumerable<GetScopeDataDto>> GetScopeData(EnvironmentScopeDto scope);
     Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto? filter);

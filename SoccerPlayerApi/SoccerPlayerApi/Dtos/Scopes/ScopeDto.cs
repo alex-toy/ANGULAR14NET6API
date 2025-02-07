@@ -1,4 +1,6 @@
-﻿namespace SoccerPlayerApi.Dtos.Scopes;
+﻿using SoccerPlayerApi.Dtos.Aggregations;
+
+namespace SoccerPlayerApi.Dtos.Scopes;
 
 public class ScopeDto
 {
