@@ -1,4 +1,4 @@
-﻿namespace SoccerPlayerApi.Dtos.DimensionValues;
+﻿namespace SoccerPlayerApi.Dtos.Aggregations;
 
 public class AggregationCreateDto
 {

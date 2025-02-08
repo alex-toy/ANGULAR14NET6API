@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FactService } from '../services/fact.service';
-import { GetFactsResultDto } from '../models/facts/getFactsResultDto';
 import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
 import { LevelService } from '../services/level.service';
 import { DimensionsService } from '../services/dimensions.service';
@@ -9,11 +8,11 @@ import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
 import { GetAggregationsResultDto } from '../models/aggregations/getAggregationsResultDto';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateFactComponent } from './create-fact/create-fact.component';
-import { GetFactResultDto } from '../models/facts/getFactResultDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { GetAggregationDto } from '../models/aggregations/getAggregationDto';
 import { ResponseDto } from '../models/responseDto';
-import { DataTypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/DataTypeDto';
+import { FactDto } from '../models/facts/FactDto';
 
 @Component({
   selector: 'app-facts',
@@ -21,15 +20,10 @@ import { DataTypeDto } from '../models/facts/typeDto';
   styleUrls: ['./facts.component.css']
 })
 export class FactsComponent {
-  factsResult: GetFactsResultDto | null = null;
+  factsResult: FactDto[] = [];
   amount: number = 0;
   type: DataTypeDto = {id: 0, label: "" } as DataTypeDto;
-  filter: GetFactFilterDto = {
-    type: '',
-    factDimensionFilters: [],
-    aggregationIds: []
-  };
-  
+  filter = new GetFactFilterDto(0, 0, 0, 0, undefined, undefined, 0, undefined, undefined, 0, undefined, undefined, undefined);
   factTypes : DataTypeDto[] = [];
   dimensions: DimensionDto[] = [];
   dimensionLevels: GetDimensionLevelDto[] = [];
@@ -56,20 +50,19 @@ export class FactsComponent {
       width: '800px',
     });
 
-    // Optionally, handle actions when the modal is closed
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
   }
 
-  updateFact(fact: GetFactResultDto){
+  updateFact(fact: FactDto){
     this.factService.updateFact(new FactUpdateDto(fact.id, this.type.id, this.amount)).subscribe({
       next: (isSuccess: boolean) => {
         if (isSuccess){
           console.log(isSuccess)
-          const oldFact = this.factsResult?.facts.find(f => f.id === fact.id);
+          const oldFact = this.factsResult.find(f => f.id === fact.id);
           if (oldFact !== undefined) oldFact.amount = fact.amount;
-          if (oldFact !== undefined) oldFact.type = fact.type;
+          if (oldFact !== undefined) oldFact.dataTypeId = fact.dataTypeId;
           this.fetchFacts();
           this.fetchFactTypes();
         }
@@ -82,8 +75,8 @@ export class FactsComponent {
 
   fetchFacts(): void {
     this.factService.getFacts(this.filter).subscribe({
-      next: (data: GetFactsResultDto) => {
-        this.factsResult = data;
+      next: (response: ResponseDto<FactDto[]>) => {
+        this.factsResult = response.data;
       },
       error: (err) => {
         console.error(err);
@@ -153,11 +146,12 @@ export class FactsComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedDimensionValueId = +selectElement.value;
     this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
-    this.filter.aggregationIds = Object.values(this.selectedDimensionValues);
+    console.log(this.selectedDimensionValues)
+    // this.filter.aggregationIds = Object.values(this.selectedDimensionValues);
   }
 
   onfactTypeChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    this.filter.type = selectElement.value;
+    this.filter.dataTypeId = +selectElement.value;
   }
 }

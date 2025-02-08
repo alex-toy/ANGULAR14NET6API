@@ -1,4 +1,4 @@
-﻿using SoccerPlayerApi.Dtos.DimensionValues;
+﻿using SoccerPlayerApi.Dtos.Aggregations;
 
 namespace SoccerPlayerApi.Services.Aggregations
 {

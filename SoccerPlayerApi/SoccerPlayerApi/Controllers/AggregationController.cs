@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SoccerPlayerApi.Dtos.DimensionValues;
+using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Aggregations;
 

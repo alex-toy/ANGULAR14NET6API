@@ -21,7 +21,7 @@
         <select id="levelSelect{{ dimensionLevel.dimensionId }}" class="form-control"
           (change)="onLevelChange(dimensionLevel.dimensionId, $event)">
           <option value="">Select Level</option>
-          <option *ngFor="let level of dimensionLevel.levels" [value]="level.id">{{ level.value }}</option>
+          <option *ngFor="let level of dimensionLevel.levels" [value]="level.id">{{ level.label }}</option>
         </select>
       </div>
     </div>
@@ -53,7 +53,7 @@
         <label for="startTimeSpan">Time Levels:</label>
         <select id="timeLevels" name="timeLevels" class="form-control" [(ngModel)]="newSorting.timeLevelId" (change)="onTimeAggregationLabelChange($event)">
           <option value="">Select Time Level</option>
-          <option *ngFor="let time of timeLevels" [value]="time.id">{{ time.value }}</option>
+          <option *ngFor="let time of timeLevels" [value]="time.id">{{ time.label }}</option>
         </select>
       </div>
       <div class="col-2" *ngIf="selectedTimeLevelId > 0">

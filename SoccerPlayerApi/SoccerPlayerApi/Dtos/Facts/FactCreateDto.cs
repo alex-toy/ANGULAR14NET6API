@@ -1,4 +1,7 @@
-﻿namespace SoccerPlayerApi.Dtos.Facts;
+﻿using SoccerPlayerApi.Entities.Structure;
+using System.Linq.Expressions;
+
+namespace SoccerPlayerApi.Dtos.Facts;
 
 public class FactCreateDto
 {
@@ -19,5 +22,13 @@ public class FactCreateDto
         if (Dimension3AggregationId is not null && Dimension2AggregationId is not null) return 3;
         if (Dimension2AggregationId is not null) return 2;
         return 1;
+    }
+
+    public Expression<Func<Aggregation, bool>> ContainsAggregationId()
+    {
+        return aggregation => Dimension1AggregationId == aggregation.Id ||
+                              Dimension2AggregationId == aggregation.Id ||
+                              Dimension3AggregationId == aggregation.Id ||
+                              Dimension4AggregationId == aggregation.Id;
     }
 }

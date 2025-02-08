@@ -15,7 +15,6 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<AggregationFact>().ToTable("AggregationFact");
         builder.Entity<TimeDimension>().ToTable("DateSeries");
 
         ConfigureFacts(builder);
@@ -50,6 +49,10 @@ public class ApplicationDbContext : DbContext
                .HasIndex(s => s.Key)
                .IsUnique();
 
+        builder.Entity<Aggregation>()
+            .HasIndex(d => d.Value)
+            .IsUnique();
+
         SeedData(builder);
     }
 
@@ -57,7 +60,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Fact> Facts { get; set; }
     public DbSet<DataType> DataTypes { get; set; }
     public DbSet<Dimension> Dimensions { get; set; }
-    public DbSet<AggregationFact> AggregationFacts { get; set; }
     public DbSet<Aggregation> Aggregations { get; set; }
     public DbSet<TimeAggregation> TimeAggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
@@ -76,7 +78,7 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Dimension>()
-            .HasIndex(d => d.Value)
+            .HasIndex(d => d.Label)
             .IsUnique();
     }
 
@@ -93,6 +95,42 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(e => e.TimeAggregationId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Fact>()
+            .HasOne(e => e.Aggregation1)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension1AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Fact>()
+            .HasOne(e => e.Aggregation2)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension2AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Fact>()
+            .HasOne(e => e.Aggregation3)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension3AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Fact>()
+            .HasOne(e => e.Aggregation3)
+            .WithMany()
+            .HasForeignKey(e => e.Dimension3AggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Fact>()
+                .HasIndex(f => new
+                {
+                    f.Dimension1AggregationId,
+                    f.Dimension2AggregationId,
+                    f.Dimension3AggregationId,
+                    f.Dimension4AggregationId,
+                    f.TimeAggregationId,
+                    f.DataTypeId
+                })
+                .IsUnique();
     }
 
     private static void ConfigureLevel(ModelBuilder builder)
@@ -152,7 +190,7 @@ public class ApplicationDbContext : DbContext
             .HasMany(l => l.EnvironmentSortings)
             .WithOne(l => l.Environment)
             .HasForeignKey(l => l.EnvironmentId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<EnvironmentSorting>()
             .HasOne(e => e.DataType)
@@ -198,11 +236,11 @@ public class ApplicationDbContext : DbContext
         );
 
         builder.Entity<TimeLevel>().HasData(
-            new TimeLevel { Id = GlobalVar.YEAR_LEVEL_ID, Value = "YEAR" },
-            new TimeLevel { Id = GlobalVar.SEMESTER_LEVEL_ID, Value = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
-            new TimeLevel { Id = GlobalVar.TRIMESTER_LEVEL_ID, Value = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
-            new TimeLevel { Id = GlobalVar.MONTH_LEVEL_ID, Value = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
-            new TimeLevel { Id = GlobalVar.WEEK_LEVEL_ID, Value = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
+            new TimeLevel { Id = GlobalVar.YEAR_LEVEL_ID, Label = "YEAR" },
+            new TimeLevel { Id = GlobalVar.SEMESTER_LEVEL_ID, Label = "SEMESTER", AncestorId = GlobalVar.YEAR_LEVEL_ID },
+            new TimeLevel { Id = GlobalVar.TRIMESTER_LEVEL_ID, Label = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
+            new TimeLevel { Id = GlobalVar.MONTH_LEVEL_ID, Label = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
+            new TimeLevel { Id = GlobalVar.WEEK_LEVEL_ID, Label = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
         );
     }
 }

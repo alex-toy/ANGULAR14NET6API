@@ -6,7 +6,7 @@ import { EnvironmentService } from 'src/app/services/environment.service';
 import { LevelService } from 'src/app/services/level.service';
 import { EnvironmentSortingDto } from 'src/app/models/environments/environmentSortingDto'; // Import the new DTO
 import { FactService } from 'src/app/services/fact.service';
-import { DataTypeDto } from 'src/app/models/facts/typeDto';
+import { DataTypeDto } from 'src/app/models/facts/DataTypeDto';
 import { HistoryService } from 'src/app/services/history.service';
 import { TimeAggregationDto } from 'src/app/models/facts/timeAggregationDto';
 import { ResponseDto } from 'src/app/models/responseDto';
@@ -24,7 +24,7 @@ export class CreateEnvironmentComponent {
   selectedTimeLevelId: number = 0;
   timeAggregations : TimeAggregationDto[] = [];
   timeLevels : GetLevelDto[] = [];
-  selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, value : "" };
+  selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, label : "" };
 
   environment: EnvironmentCreateDto = {
     name: '',

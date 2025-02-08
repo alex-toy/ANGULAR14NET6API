@@ -2,8 +2,8 @@
 
 public class AggregationDto
 {
-    public int AggregationId { get; set; }
-    public string AggregationLabel { get; set; } = string.Empty;
+    public int Id { get; set; }
+    public string Label { get; set; } = string.Empty;
 
     public int LevelId { get; set; }
     public string LevelLabel { get; set; } = string.Empty;

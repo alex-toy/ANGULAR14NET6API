@@ -2,14 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { GetFactsResultDto } from '../models/facts/getFactsResultDto';
-import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
-import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { ResponseDto } from '../models/responseDto';
-import { DataTypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/DataTypeDto';
 import { ImportFactDto } from '../models/facts/ImportFactDto';
 import { ImportFactCreateResultDto } from '../models/facts/ImportFactCreateResultDto';
+import { FactDto } from '../models/facts/FactDto';
+import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
+import { FactCreateDto } from '../models/facts/factCreateDto';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +19,9 @@ export class FactService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getFacts(filter: GetFactFilterDto): Observable<GetFactsResultDto> {
+  getFacts(filter: GetFactFilterDto): Observable<ResponseDto<FactDto[]>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.post<GetFactsResultDto>(`${this.apiUrl}/facts`, filter, { headers : header })
+    return this.httpClient.post<ResponseDto<FactDto[]>>(`${this.apiUrl}/facts`, filter, { headers : header })
   }
 
   createFact(fact: FactCreateDto): Observable<ResponseDto<number>> {

@@ -16,7 +16,7 @@
       <h3>{{ dimension.value }}</h3>
       <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
         <option value="">Select Level</option>
-        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.label }}</option>
       </select>
       <div *ngIf="aggregations[dimension.dimensionId] && aggregations[dimension.dimensionId].length > 0">
         <select id="dimensionValueSelect" (change)="onDimensionValueChange(dimension.dimensionId, $event)">
@@ -29,7 +29,7 @@
     </div>
     <div class="dimension-item">
       <h3>Input Field</h3>
-      <input matInput [(ngModel)]="newFact.amount" placeholder="Enter value" />
+      <input matInput [(ngModel)]="newFact.Amount" placeholder="Enter value" />
     </div>
   </div>
 

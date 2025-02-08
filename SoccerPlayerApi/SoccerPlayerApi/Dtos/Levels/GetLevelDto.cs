@@ -5,7 +5,7 @@ namespace SoccerPlayerApi.Dtos.Levels;
 public class GetLevelDto
 {
     public int Id { get; set; }
-    public string Value { get; set; }
+    public string Label { get; set; }
     public int DimensionId { get; set; }
     public int? AncestorId { get; set; }
 
@@ -14,7 +14,7 @@ public class GetLevelDto
         return new Level
         {
             Id = Id,
-            Value = Value,
+            Value = Label,
             DimensionId = DimensionId,
             AncestorId = AncestorId,
         };

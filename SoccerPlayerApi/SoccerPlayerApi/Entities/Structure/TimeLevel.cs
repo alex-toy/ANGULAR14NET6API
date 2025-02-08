@@ -1,10 +1,8 @@
 ﻿namespace SoccerPlayerApi.Entities.Structure;
 
-public class TimeLevel
+public class TimeLevel : Entity
 {
-    public int Id { get; set; }
-
-    public string Value { get; set; }
+    public string Label { get; set; }
 
 
     public int? AncestorId { get; set; }

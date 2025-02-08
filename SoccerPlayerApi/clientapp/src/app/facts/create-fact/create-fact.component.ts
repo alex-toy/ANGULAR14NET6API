@@ -9,7 +9,7 @@ import { DimensionsService } from 'src/app/services/dimensions.service';
 import { FactService } from 'src/app/services/fact.service';
 import { LevelService } from 'src/app/services/level.service';
 import { ResponseDto } from 'src/app/models/responseDto';
-import { DataTypeDto } from 'src/app/models/facts/typeDto';
+import { DataTypeDto } from 'src/app/models/facts/DataTypeDto';
 
 @Component({
   selector: 'app-create-fact',
@@ -18,12 +18,7 @@ import { DataTypeDto } from 'src/app/models/facts/typeDto';
 })
 export class CreateFactComponent {
 
-  newFact: FactCreateDto = {
-    dataTypeId: 0,
-    amount: 0,
-    aggregationIds: [],
-    TimeAggregationId: 0
-  };
+  newFact = new FactCreateDto(0, 0, 0, 0, undefined, undefined, 0);
 
   factTypes : DataTypeDto[] = [];
   dimensions: DimensionDto[] = [];
@@ -119,17 +114,21 @@ export class CreateFactComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedDimensionValueId = +selectElement.value;
     this.selectedDimensionValues[dimensionId] = selectedDimensionValueId;
-    this.newFact.aggregationIds = Object.values(this.selectedDimensionValues);
+    console.log(this.selectedDimensionValues)
+    const myArray = Object.keys(this.selectedDimensionValues).map(key => ({ key: key, value: this.selectedDimensionValues[+key] }));
+    // this.newFact.Dimension1AggregationId = this.selectedDimensionValues.AggregationIds[0]
+    
+    // aggregationIds = Object.values(this.selectedDimensionValues);
   }
 
   onfactTypeChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    this.newFact.dataTypeId = +selectElement.value;
+    this.newFact.DataTypeId = +selectElement.value;
   }
 
   onSave(): void {
-    this.newFact.aggregationIds = Object.values(this.selectedDimensionValues);
-    this.createFact();
-    this.dialogRef.close();
+    // this.newFact.aggregationIds = Object.values(this.selectedDimensionValues);
+    // this.createFact();
+    // this.dialogRef.close();
   }
 }

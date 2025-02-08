@@ -7,7 +7,6 @@ import { GetDimensionLevelDto } from '../models/levels/getDimensionLevelDto';
 import { LevelService } from '../services/level.service';
 import { DimensionsService } from '../services/dimensions.service';
 import { ScopeFilterDto } from '../models/scopes/scopeFilterDto';
-import { ScopeDimensionFilterDto } from '../models/scopes/scopeDimensionFilterDto';
 import { GetScopeDataDto } from '../models/scopes/getScopeDataDto';
 import { EnvironmentDto } from '../models/environments/environmentDto';
 import { EnvironmentService } from '../services/environment.service';
@@ -17,7 +16,7 @@ import { FactService } from '../services/fact.service';
 import { FactCreateDto } from '../models/facts/factCreateDto';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
-import { DataTypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/DataTypeDto';
 import { GetLevelDto } from '../models/levels/getLevelDto';
 import { EnvironmentScopeDto } from '../models/scopes/environmentScopeDto';
 
@@ -40,7 +39,7 @@ export class HistoryComponent {
 
   selectedTimeLabel = 'YEAR';
   timeLevels : GetLevelDto[] = [];
-  selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, value : "" };
+  selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, label : "" };
 
   selectedTimeAggregationLabel: string = 'YEAR';
   timeAggregationDtos : TimeAggregationDto[] = [];
@@ -82,8 +81,19 @@ export class HistoryComponent {
   }
   
   fetchScopes(): void {
+    const selectedLevels = Object.keys(this.selectedLevels).map(key => ({ dimId: key, levelId: this.selectedLevels[+key] }));
     let filter = {
-      scopeDimensionFilters : Object.entries(this.selectedLevels).map(x => new ScopeDimensionFilterDto(+x[0], x[1]))
+      Dimension1Id: selectedLevels[0] ? +selectedLevels[0].dimId : null,
+      Level1Id: selectedLevels[0] ? +selectedLevels[0].levelId : null,
+    
+      Dimension2Id: selectedLevels[1] ? +selectedLevels[1].dimId : null,
+      Level2Id: selectedLevels[1] ? +selectedLevels[1].levelId : null,
+    
+      Dimension3Id: selectedLevels[2] ? +selectedLevels[2].dimId : null,
+      Level3Id: selectedLevels[2] ? +selectedLevels[2].levelId : null,
+    
+      Dimension4Id: selectedLevels[3] ? +selectedLevels[3].dimId : null,
+      Level4Id: selectedLevels[3] ? +selectedLevels[3].levelId : null,
     } as ScopeFilterDto;
     this.historyService.getScopes(filter).subscribe({
       next: (response: ResponseDto<EnvironmentScopeDto[]>) => {
@@ -194,7 +204,6 @@ export class HistoryComponent {
     this.historyService.getScopeData(this.selectedScope!).subscribe({
       next: (response: ResponseDto<GetScopeDataDto[]>) => {
         this.scopeData = response.data;
-        console.log(this.scopeData)
       },
       error: (err) => {
         console.error('Error fetching scope data', err);
@@ -208,7 +217,6 @@ export class HistoryComponent {
     this.historyService.getTimeAggregations(levelId).subscribe({
       next: (response: ResponseDto<TimeAggregationDto[]>) => {
         this.timeAggregationDtos = response.data.sort((a, b) => a.label.localeCompare(b.label));
-        console.log(response.data)
       },
       error: (err) => {
         console.error('Error fetching levels', err);
@@ -269,7 +277,17 @@ export class HistoryComponent {
     if (newAmount !== this.getAmountForTypeAndTime(typeId, timeLabel.timeAggregationId)) {
       let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationId == timeLabel.timeAggregationId && s.typeId == typeId) || null;
       if (scope == null) {
-        this.factService.createFact(new FactCreateDto(typeId, newAmount, this.scopeData[0].aggregationIds, timeLabel.timeAggregationId)).subscribe({
+        // a refaire !!!!!!!!!
+        const newFact = new FactCreateDto(
+          newAmount, typeId, 
+          timeLabel.timeAggregationId, 
+          this.scopeData[0].aggregationIds[0],
+          this.scopeData[0].aggregationIds[1] ?? null,
+          this.scopeData[0].aggregationIds[2] ?? null,
+          this.scopeData[0].aggregationIds[3] ?? null
+        );
+        console.log(newFact)
+        this.factService.createFact(newFact).subscribe({
           next: (response) => {
             this.fetchScopeData();
           },
@@ -296,6 +314,6 @@ export class HistoryComponent {
   }
 
   get uniqueTimeAggregationLabels() {
-    return this.timeLevels.map(tl => tl.value);
+    return this.timeLevels.map(tl => tl.label);
   }
 }

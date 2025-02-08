@@ -19,7 +19,7 @@
       <h3>{{ dimension.value }}</h3>
       <select id="levelSelect" (change)="onLevelChange(dimension.dimensionId, $event)">
         <option value="">Select Level</option>
-        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+        <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.label }}</option>
       </select>
       <div *ngIf="dimensionValues[dimension.dimensionId] && dimensionValues[dimension.dimensionId].length > 0">
         <select id="dimensionValueSelect" (change)="onDimensionValueChange(dimension.dimensionId, $event)">
@@ -33,13 +33,14 @@
     
   </div>
 
-  <div *ngIf="factsResult.isSuccess">
-    <div *ngFor="let fact of factsResult.facts" class="fact-container">
+  <div *ngIf="factsResult.length > 0">
+    <div *ngFor="let fact of factsResult" class="fact-container">
       <div class="fact-dimensions">
-        <h2>{{ fact.type }}</h2>
-        <div *ngFor="let dimension of fact.dimensions" class="dimension-row">
-          <p>{{ dimension.value }}</p>
-        </div>
+        <h2>{{ fact.dataType.label }}</h2>
+        <div class="dimension-row"><p>{{ fact.aggregation1.dimensionLabel }}</p></div>
+        <div *ngIf="fact.aggregation2 !== undefined" class="dimension-row"><p>{{ fact.aggregation2.dimensionLabel }}</p></div>
+        <div *ngIf="fact.aggregation3 !== undefined" class="dimension-row"><p>{{ fact.aggregation3.dimensionLabel }}</p></div>
+        <div *ngIf="fact.aggregation4 !== undefined" class="dimension-row"><p>{{ fact.aggregation4.dimensionLabel }}</p></div>
         <p>{{ fact.amount | currency }}</p>
         <input matInput [(ngModel)]="amount" placeholder="Enter value" />
         <button (click)="updateFact(fact)">Edit</button>

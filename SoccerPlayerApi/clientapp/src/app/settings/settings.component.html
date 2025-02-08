@@ -56,16 +56,22 @@
         </tr>
         <tr *ngFor="let dimension of dimensions">
           <td>{{ dimension.id }}</td>
-          <td>{{ dimension.value }}</td>
+          <td>{{ dimension.label }}</td>
           <td>
             <ul>
               <li *ngFor="let level of dimension.levels">
-                {{ level.value }}
+                {{ level.label }}
               </li>
             </ul>
             <button (click)="addLevel(dimension.id)">
               Add Level
             </button>
+            <app-level-modal *ngIf="showLevelFormForDimension == dimension.id"
+              [dimensionId]="showLevelFormForDimension"
+              [ancestorId]="ancestorId"
+              [showModal]="showLevelFormForDimension !== null"
+              (levelAdded)="onLevelAdded($event)"
+            ></app-level-modal>
           </td>
         </tr>
       </table>
@@ -77,22 +83,14 @@
         <h3>Add New Dimension</h3>
         <form (ngSubmit)="addDimension()">
           <div>
-            <label for="dimensionValue">Dimension Value:</label>
-            <input id="dimensionValue" [(ngModel)]="newDimension.value" name="value" required />
+            <label for="dimensionValue">Dimension Label:</label>
+            <input id="dimensionValue" [(ngModel)]="newDimension.label" name="value" required />
           </div>
-          <button type="submit" [disabled]="!newDimension.value">Add Dimension</button>
+          <button type="submit" [disabled]="!newDimension.label">Add Dimension</button>
         </form>
       </div>
     </div>
   </div>
-
-  <!-- Modal for Adding Level -->
-  <app-level-modal
-    [dimensionId]="showLevelFormForDimension"
-    [ancestorId]="ancestorId"
-    [showModal]="showLevelFormForDimension !== null"
-    (levelAdded)="onLevelAdded($event)"
-  ></app-level-modal>
 
   <div class="form-section">
     <div class="add-type-form">

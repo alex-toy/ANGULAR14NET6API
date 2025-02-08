@@ -13,7 +13,7 @@ export class LevelModalComponent {
   @Input() ancestorId: number | null = null;
   @Input() showModal: boolean = false; 
   @Output() levelAdded = new EventEmitter<CreateLevelDto>();
-  newLevel: CreateLevelDto = { value: '', dimensionId: 0, ancestorId: null };
+  newLevel: CreateLevelDto = { label: '', dimensionId: 0, ancestorId: null };
 
   constructor(private levelService: LevelService) { }
 

@@ -24,7 +24,7 @@
         <label for="levelSelect{{ i + 1 }}">{{ dimension.value }}</label>
         <select id="levelSelect{{ i + 1 }}" formControlName="levelIdFilter{{ i + 1 }}" (change)="onLevelChange(dimension.dimensionId, $event)">
           <option value="">Select Level</option>
-          <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+          <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.label }}</option>
         </select>
       </div>
 

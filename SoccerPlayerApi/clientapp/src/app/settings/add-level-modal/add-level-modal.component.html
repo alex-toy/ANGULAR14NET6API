@@ -4,10 +4,10 @@
     <form (ngSubmit)="addLevel()">
       <div>
         <label for="levelValue">Level Value</label>
-        <input id="levelValue" [(ngModel)]="newLevel.value" name="value" required />
+        <input id="levelValue" [(ngModel)]="newLevel.label" name="value" required />
       </div>
       <div>
-        <button type="submit" [disabled]="!newLevel.value">Add Level</button>
+        <button type="submit" [disabled]="!newLevel.label">Add Level</button>
       </div>
     </form>
     <button (click)="closeModal()">Close</button>

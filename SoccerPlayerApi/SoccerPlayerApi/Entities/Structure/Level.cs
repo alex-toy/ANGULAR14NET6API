@@ -28,7 +28,7 @@ public class Level
         return new GetLevelDto
         {
             Id = Id,
-            Value = Value,
+            Label = Value,
             DimensionId = DimensionId,
             AncestorId = AncestorId,
         };

@@ -7,7 +7,7 @@ namespace SoccerPlayerApi.Dtos.Dimensions;
 public class DimensionDto : ResultDto
 {
     public int Id { get; set; }
-    public string Value { get; set; }
+    public string Label { get; set; }
     public List<GetLevelDto> Levels { get; set; } = new List<GetLevelDto>();
 
     public Dimension ToDb()
@@ -15,7 +15,7 @@ public class DimensionDto : ResultDto
         return new Dimension
         {
             Id = Id,
-            Value = Value,
+            Label = Label,
         };
     }
 }

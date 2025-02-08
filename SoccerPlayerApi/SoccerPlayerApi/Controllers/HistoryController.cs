@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Scopes;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Services.Facts;

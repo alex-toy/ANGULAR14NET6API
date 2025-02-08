@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using SoccerPlayerApi.Dtos.DimensionValues;
+using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 

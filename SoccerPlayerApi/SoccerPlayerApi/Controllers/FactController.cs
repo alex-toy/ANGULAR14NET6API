@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Structure;
+using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
 using SoccerPlayerApi.Services.Facts;
 
@@ -22,10 +23,17 @@ public class FactController
     }
 
     [HttpPost("facts")]
-    public async Task<GetFactsResultDto> GetFacts(GetFactFilterDto filter)
+    public async Task<ResponseDto<IEnumerable<FactDto>>> GetFacts(GetFactFilterDto filter)
     {
-        IEnumerable<FactDto> facts = await _factService.GetFacts(filter);
-        return new GetFactsResultDto { Facts = facts, IsSuccess = true };
+        try
+        {
+            IEnumerable<FactDto> facts = await _factService.GetFacts(filter);
+            return new ResponseDto<IEnumerable<FactDto>> { Data = facts, IsSuccess = true, Count = facts.Count() };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<IEnumerable<FactDto>> { IsSuccess = false, Message = ex.Message };
+        }
     }
 
     [HttpPost("createfact")]

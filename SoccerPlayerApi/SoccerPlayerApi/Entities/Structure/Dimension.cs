@@ -2,6 +2,6 @@
 
 public class Dimension : Entity
 {
-    public string Value { get; set; }
+    public string Label { get; set; }
     public List<Level> Levels { get; set; } = new List<Level>();
 }

@@ -16,7 +16,7 @@
         <label for="levelSelect-{{dimension.dimensionId}}">{{ dimension.value }}</label>
         <select id="levelSelect-{{dimension.dimensionId}}" (change)="onLevelChange(dimension.dimensionId, $event)">
           <option value="">Select Level</option>
-          <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.value }}</option>
+          <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.label }}</option>
         </select>
       </div>
       <button (click)="applyLevelFilter()" class="apply-filter-btn">Apply Filter</button>

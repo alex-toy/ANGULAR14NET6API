@@ -29,35 +29,16 @@ public class FactService : IFactService
         _dimensionService = dimensionService;
     }
 
-    public async Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto? scopeFilter)
+    public async Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto scopeFilter)
     {
         List<int> dimensionIds = _context.Dimensions.Select(d => d.Id).ToList();
         int dimensionCount = dimensionIds.Count();
         List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
-        foreach (var currentDimensionId in dimensionIds)
-        {
-            ScopeDimensionFilterDto? correspondingFilter = scopeFilter?.ScopeDimensionFilters.FirstOrDefault(f => f.DimensionId == currentDimensionId);
 
-            var axis = from fa in _context.Facts
-                       join df in _context.AggregationFacts on fa.Id equals df.FactId
-                       join agg in _context.Aggregations on df.AggregationId equals agg.Id
-                       join lv in _context.Levels on agg.LevelId equals lv.Id
-                       join dim in _context.Dimensions on lv.DimensionId equals dim.Id
-                       where (correspondingFilter != null)
-                            ? (dim.Id == currentDimensionId && lv.Id == correspondingFilter.LevelId)
-                            : (dim.Id == currentDimensionId)
-                       select new AxisDto
-                       {
-                           FactId = fa.Id,
-                           LevelLabel = lv.Value,
-                           AggregationId = agg.Id,
-                           DimensionId = lv.DimensionId,
-                           DimensionLabel = lv.Dimension.Value,
-                           AggregationLabel = agg.Value,
-                       };
-
-            axises.Add(axis);
-        }
+        AddDimension1Axis(scopeFilter.Dimension1Id, scopeFilter.Level1Id, axises);
+        AddDimension2Axis(scopeFilter.Dimension2Id, scopeFilter.Level2Id, axises);
+        AddDimension3Axis(scopeFilter.Dimension3Id, scopeFilter.Level3Id, axises);
+        AddDimension4Axis(scopeFilter.Dimension4Id, scopeFilter.Level4Id, axises);
 
         IQueryable<EnvironmentScopeDto> result = JoinAxes(axises, dimensionCount);
 
@@ -171,44 +152,6 @@ public class FactService : IFactService
         };
     }
 
-    public async Task<IEnumerable<EnvironmentScopeDto>> GetScopesByEnvironmentIdOld(int environmentId)
-    {
-        Entities.Environment? environment = _context.Environments
-            .Include(e => e.LevelFilter1)
-            .Include(e => e.LevelFilter2)
-            .Include(e => e.LevelFilter3)
-            .Include(e => e.LevelFilter4)
-            .FirstOrDefault(d => d.Id == environmentId);
-
-        if (environment is null) throw new Exception("environment doesn't exist");
-
-        int dimensionCount = 0;
-        List<IQueryable<AxisDto>> axises = new List<IQueryable<AxisDto>>();
-
-        if (environment.LevelFilter1?.DimensionId is not null)
-        {
-            dimensionCount += 1;
-            AddAxis(axises, environment.LevelFilter1.DimensionId, environment.LevelIdFilter1);
-        }
-
-        if (environment.LevelFilter2?.DimensionId is not null && environment.LevelIdFilter2 is not null)
-        {
-            dimensionCount += 1;
-            AddAxis(axises, environment.LevelFilter2.DimensionId, environment.LevelIdFilter2.Value);
-        }
-
-        if (environment.LevelFilter3?.DimensionId is not null && environment.LevelIdFilter3 is not null)
-        {
-            dimensionCount += 1;
-            AddAxis(axises, environment.LevelFilter3.DimensionId, environment.LevelIdFilter3.Value);
-        }
-
-        IQueryable<EnvironmentScopeDto> result = JoinAxes(axises, dimensionCount);
-
-        List<EnvironmentScopeDto> distinctResult = await result.Distinct().ToListAsync();
-        return distinctResult ?? new List<EnvironmentScopeDto>();
-    }
-
     public async Task<IEnumerable<GetScopeDataDto>> GetScopeData(EnvironmentScopeDto scope)
     {
         int dimensionCount = _context.Dimensions.Count();
@@ -251,30 +194,20 @@ public class FactService : IFactService
                 DataTypeId = fact.DataTypeId,
                 Aggregation1 = new AggregationDto
                 {
-                    AggregationId = fact.Aggregation1.Id,
-                    AggregationLabel = fact.Aggregation1.Value,
+                    Id = fact.Aggregation1.Id,
+                    Label = fact.Aggregation1.Value,
                     LevelId = fact.Aggregation1.Level.Id,
                     LevelLabel = fact.Aggregation1.Level.Value,
                     DimensionId = fact.Aggregation1.Level.DimensionId,
-                    DimensionLabel = fact.Aggregation1.Level.Dimension.Value,
+                    DimensionLabel = fact.Aggregation1.Level.Dimension.Label,
                 }
             });
 
-        if (filter.DataTypeId is not null) facts = facts.Where(fr => fr.DataTypeId == filter.DataTypeId);
+        if (filter.DataTypeId is not null) facts = facts.Where(fact => fact.DataTypeId == filter.DataTypeId);
 
-        if (filter.FactDimensionFilters is not null && filter.FactDimensionFilters.Count > 0)
-        {
-            for (int index = 0; index < Math.Min(filter.FactDimensionFilters.Count(), _context.Dimensions.Count()); index++)
-            {
-                GetFactDimensionFilterDto factDimensionFilter = filter.FactDimensionFilters.ElementAt(index);
-                facts = facts.Where(DimensionFilter(factDimensionFilter));
-            }
-        }
+        facts = facts.Where(filter.FactIsAtLevels());
 
-        if (filter.AggregationIds is not null && filter.AggregationIds.Count > 0)
-        {
-            facts = facts.Where(_dimensionService.DimensionValueFilter(filter.AggregationIds));
-        }
+        facts = facts.Where(filter.FactIsInAggregations());
 
         return await facts.ToListAsync();
     }
@@ -403,26 +336,6 @@ public class FactService : IFactService
         return new DataTypeDto { Id = entityId.Entity.Id, Label = type.Label };
     }
 
-    private void AddAxis(List<IQueryable<AxisDto>> axises, int dimensionId, int levelId)
-    {
-        var axis1 = from fa in _context.Facts
-                    join df in _context.AggregationFacts on fa.Id equals df.FactId
-                    join agg in _context.Aggregations on df.AggregationId equals agg.Id
-                    join lv in _context.Levels on agg.LevelId equals lv.Id
-                    join dim in _context.Dimensions on lv.DimensionId equals dim.Id
-                    where dim.Id == dimensionId && lv.Id == levelId
-                    select new AxisDto
-                    {
-                        FactId = fa.Id,
-                        LevelLabel = agg.Value,
-                        AggregationId = agg.Id,
-                        DimensionId = lv.DimensionId,
-                        DimensionLabel = lv.Dimension.Value,
-                    };
-
-        axises.Add(axis1);
-    }
-
     private static IQueryable<EnvironmentScopeDto> JoinAxes(List<IQueryable<AxisDto>> axises, int dimensionCount)
     {
         if (dimensionCount == 1) return JoinAxisFor1Dimensions(axises);
@@ -528,32 +441,23 @@ public class FactService : IFactService
                };
     }
 
-    private static Expression<Func<FactDto, bool>> DimensionFilter(GetFactDimensionFilterDto filter)
-    {
-        return fact => filter.LevelId == fact.Aggregation1.LevelId && filter.DimensionLabel == fact.Aggregation1.DimensionLabel ||
-                       fact.Aggregation2 != null && filter.LevelId == fact.Aggregation2.LevelId && filter.DimensionLabel == fact.Aggregation2.DimensionLabel ||
-                       fact.Aggregation3 != null && filter.LevelId == fact.Aggregation3.LevelId && filter.DimensionLabel == fact.Aggregation3.DimensionLabel ||
-                       fact.Aggregation4 != null && filter.LevelId == fact.Aggregation4.LevelId && filter.DimensionLabel == fact.Aggregation4.DimensionLabel;
-    }
-
     private async Task<bool> GetFactExists(FactCreateDto fact)
     {
-        IEnumerable<FactDto> facts = await GetFacts(new GetFactFilterDto
-        {
-            DataTypeId = fact.DataTypeId,
-            Dimension1AggregationId = fact.Dimension1AggregationId,
-            Dimension2AggregationId = fact.Dimension2AggregationId,
-            Dimension3AggregationId = fact.Dimension3AggregationId,
-            Dimension4AggregationId = fact.Dimension4AggregationId,
-            TimeAggregationId = fact.TimeAggregationId
-        });
+        List<Fact> facts = await _context.Facts.Where(f => 
+            f.DataTypeId == fact.DataTypeId &&
+            f.Dimension1AggregationId == fact.Dimension1AggregationId &&
+            f.Dimension2AggregationId == fact.Dimension2AggregationId &&
+            f.Dimension3AggregationId == fact.Dimension3AggregationId &&
+            f.Dimension4AggregationId == fact.Dimension4AggregationId &&
+            f.TimeAggregationId == fact.TimeAggregationId
+        ).ToListAsync();
 
         return facts.Count() > 0;
     }
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_1_Dimensions(EnvironmentScopeDto scope)
     {
-        IQueryable<AxisBo> dim1 = GetDimensionAxis(scope, 1);
+        IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
         IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
 
         var resultQuery = from d1 in dim1
@@ -581,8 +485,8 @@ public class FactService : IFactService
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_2_Dimensions(EnvironmentScopeDto scope)
     {
-        IQueryable<AxisBo> dim1 = GetDimensionAxis(scope, 1);
-        IQueryable<AxisBo> dim2 = GetDimensionAxis(scope, 2);
+        IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
+        IQueryable<AxisBo> dim2 = GetDimension2Axis(scope);
         IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
 
         var resultQuery = from d1 in dim1
@@ -612,9 +516,9 @@ public class FactService : IFactService
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(EnvironmentScopeDto scope)
     {
-        IQueryable<AxisBo> dim1 = GetDimensionAxis(scope, 1);
-        IQueryable<AxisBo> dim2 = GetDimensionAxis(scope, 2);
-        IQueryable<AxisBo> dim3 = GetDimensionAxis(scope, 3);
+        IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
+        IQueryable<AxisBo> dim2 = GetDimension2Axis(scope);
+        IQueryable<AxisBo> dim3 = GetDimension3Axis(scope);
         IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
 
         var resultQuery = from d1 in dim1
@@ -646,10 +550,10 @@ public class FactService : IFactService
 
     private IQueryable<GetScopeDataDto> GetScopeDataFor_4_Dimensions(EnvironmentScopeDto scope)
     {
-        IQueryable<AxisBo> dim1 = GetDimensionAxis(scope, 1);
-        IQueryable<AxisBo> dim2 = GetDimensionAxis(scope, 2);
-        IQueryable<AxisBo> dim3 = GetDimensionAxis(scope, 3);
-        IQueryable<AxisBo> dim4 = GetDimensionAxis(scope, 4);
+        IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
+        IQueryable<AxisBo> dim2 = GetDimension2Axis(scope);
+        IQueryable<AxisBo> dim3 = GetDimension3Axis(scope);
+        IQueryable<AxisBo> dim4 = GetDimension4Axis(scope);
         IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
 
         var resultQuery = from d1 in dim1
@@ -681,21 +585,14 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    private IQueryable<AxisBo> GetDimensionAxis(EnvironmentScopeDto scope, int dimensionIndex)
+    private IQueryable<AxisBo> GetDimension1Axis(EnvironmentScopeDto scope)
     {
         return from fa in _context.Facts
                join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
-               join df in _context.AggregationFacts on fa.Id equals df.FactId
-               join dv in _context.Aggregations on df.AggregationId equals dv.Id
-               join lv in _context.Levels on dv.LevelId equals lv.Id
+               join agg in _context.Aggregations on fa.Dimension1AggregationId equals agg.Id
+               join lv in _context.Levels on agg.LevelId equals lv.Id
                join prod in _context.Dimensions on lv.DimensionId equals prod.Id
-               where prod.Id == (dimensionIndex == 1 
-                                    ? scope.Dimension1Id 
-                                    : dimensionIndex == 2 
-                                        ? scope.Dimension2Id 
-                                        : dimensionIndex == 3
-                                            ? scope.Dimension3Id
-                                            : scope.Dimension4Id)
+               where prod.Id == scope.Dimension1Id
                select new AxisBo
                {
                    FactId = fa.Id,
@@ -705,8 +602,74 @@ public class FactService : IFactService
                    LevelId = lv.Id,
                    Value = lv.Value,
                    DimensionId = prod.Id,
-                   AggregationValue = dv.Value,
-                   AggId = dv.Id
+                   AggregationValue = agg.Value,
+                   AggId = agg.Id
+               };
+    }
+
+    private IQueryable<AxisBo> GetDimension2Axis(EnvironmentScopeDto scope)
+    {
+        return from fa in _context.Facts
+               join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+               join agg in _context.Aggregations on fa.Dimension2AggregationId equals agg.Id
+               join lv in _context.Levels on agg.LevelId equals lv.Id
+               join prod in _context.Dimensions on lv.DimensionId equals prod.Id
+               where prod.Id == scope.Dimension2Id
+               select new AxisBo
+               {
+                   FactId = fa.Id,
+                   TypeLabel = dt.Label,
+                   TypeId = dt.Id,
+                   Amount = fa.Amount,
+                   LevelId = lv.Id,
+                   Value = lv.Value,
+                   DimensionId = prod.Id,
+                   AggregationValue = agg.Value,
+                   AggId = agg.Id
+               };
+    }
+
+    private IQueryable<AxisBo> GetDimension3Axis(EnvironmentScopeDto scope)
+    {
+        return from fa in _context.Facts
+               join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+               join agg in _context.Aggregations on fa.Dimension3AggregationId equals agg.Id
+               join lv in _context.Levels on agg.LevelId equals lv.Id
+               join prod in _context.Dimensions on lv.DimensionId equals prod.Id
+               where prod.Id == scope.Dimension3Id
+               select new AxisBo
+               {
+                   FactId = fa.Id,
+                   TypeLabel = dt.Label,
+                   TypeId = dt.Id,
+                   Amount = fa.Amount,
+                   LevelId = lv.Id,
+                   Value = lv.Value,
+                   DimensionId = prod.Id,
+                   AggregationValue = agg.Value,
+                   AggId = agg.Id
+               };
+    }
+
+    private IQueryable<AxisBo> GetDimension4Axis(EnvironmentScopeDto scope)
+    {
+        return from fa in _context.Facts
+               join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
+               join agg in _context.Aggregations on fa.Dimension4AggregationId equals agg.Id
+               join lv in _context.Levels on agg.LevelId equals lv.Id
+               join prod in _context.Dimensions on lv.DimensionId equals prod.Id
+               where prod.Id == scope.Dimension4Id
+               select new AxisBo
+               {
+                   FactId = fa.Id,
+                   TypeLabel = dt.Label,
+                   TypeId = dt.Id,
+                   Amount = fa.Amount,
+                   LevelId = lv.Id,
+                   Value = lv.Value,
+                   DimensionId = prod.Id,
+                   AggregationValue = agg.Value,
+                   AggId = agg.Id
                };
     }
 
@@ -723,7 +686,7 @@ public class FactService : IFactService
                    TypeId = dt.Id,
                    Amount = fa.Amount,
                    LevelId = lv.Id,
-                   Value = lv.Value,
+                   Value = lv.Label,
                    DimensionId = 0,
                    AggregationValue = dv.Value,
                    AggId = dv.Id
@@ -749,5 +712,118 @@ public class FactService : IFactService
         }
 
         return factsTable;
+    }
+
+    private void AddDimension1Axis(int? dimensionId, int levelId, List<IQueryable<AxisDto>> axises)
+    {
+        var axis = from fa in _context.Facts
+                   join agg in _context.Aggregations on fa.Dimension1AggregationId equals agg.Id
+                   join lv in _context.Levels on agg.LevelId equals lv.Id
+                   join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                   where (dimensionId != null)
+                        ? (dim.Id == dimensionId && lv.Id == levelId)
+                        : (dim.Id == dimensionId)
+                   select new AxisDto
+                   {
+                       FactId = fa.Id,
+                       LevelLabel = lv.Value,
+                       AggregationId = agg.Id,
+                       DimensionId = lv.DimensionId,
+                       DimensionLabel = lv.Dimension.Label,
+                       AggregationLabel = agg.Value,
+                   };
+
+        axises.Add(axis);
+    }
+
+    private void AddDimension2Axis(int? dimensionId, int? levelId, List<IQueryable<AxisDto>> axises)
+    {
+        if (dimensionId is null) return;
+
+        var axis = from fa in _context.Facts
+                   join agg in _context.Aggregations on fa.Dimension2AggregationId equals agg.Id
+                   join lv in _context.Levels on agg.LevelId equals lv.Id
+                   join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                   where (dimensionId != null)
+                        ? (dim.Id == dimensionId && lv.Id == levelId)
+                        : (dim.Id == dimensionId)
+                   select new AxisDto
+                   {
+                       FactId = fa.Id,
+                       LevelLabel = lv.Value,
+                       AggregationId = agg.Id,
+                       DimensionId = lv.DimensionId,
+                       DimensionLabel = lv.Dimension.Label,
+                       AggregationLabel = agg.Value,
+                   };
+
+        axises.Add(axis);
+    }
+
+    private void AddDimension3Axis(int? dimensionId, int? levelId, List<IQueryable<AxisDto>> axises)
+    {
+        if (dimensionId is null) return;
+
+        var axis = from fa in _context.Facts
+                   join agg in _context.Aggregations on fa.Dimension3AggregationId equals agg.Id
+                   join lv in _context.Levels on agg.LevelId equals lv.Id
+                   join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                   where (dimensionId != null)
+                        ? (dim.Id == dimensionId && lv.Id == levelId)
+                        : (dim.Id == dimensionId)
+                   select new AxisDto
+                   {
+                       FactId = fa.Id,
+                       LevelLabel = lv.Value,
+                       AggregationId = agg.Id,
+                       DimensionId = lv.DimensionId,
+                       DimensionLabel = lv.Dimension.Label,
+                       AggregationLabel = agg.Value,
+                   };
+
+        axises.Add(axis);
+    }
+
+    private void AddDimension4Axis(int? dimensionId, int? levelId, List<IQueryable<AxisDto>> axises)
+    {
+        if (dimensionId is null) return;
+
+        var axis = from fa in _context.Facts
+                   join agg in _context.Aggregations on fa.Dimension4AggregationId equals agg.Id
+                   join lv in _context.Levels on agg.LevelId equals lv.Id
+                   join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                   where (dimensionId != null)
+                        ? (dim.Id == dimensionId && lv.Id == levelId)
+                        : (dim.Id == dimensionId)
+                   select new AxisDto
+                   {
+                       FactId = fa.Id,
+                       LevelLabel = lv.Value,
+                       AggregationId = agg.Id,
+                       DimensionId = lv.DimensionId,
+                       DimensionLabel = lv.Dimension.Label,
+                       AggregationLabel = agg.Value,
+                   };
+
+        axises.Add(axis);
+    }
+
+    private void AddAxis(List<IQueryable<AxisDto>> axises, int dimensionId, int levelId)
+    {
+        var axis1 = from fa in _context.Facts
+                    join agg in _context.Aggregations on fa.Dimension1AggregationId equals agg.Id
+                    join lv in _context.Levels on agg.LevelId equals lv.Id
+                    join dim in _context.Dimensions on lv.DimensionId equals dim.Id
+                    where dim.Id == dimensionId && lv.Id == levelId
+                    select new AxisDto
+                    {
+                        FactId = fa.Id,
+                        LevelLabel = agg.Value,
+                        AggregationId = agg.Id,
+                        DimensionId = lv.DimensionId,
+                        DimensionLabel = lv.Dimension.Label,
+                    };
+
+        axises.Add(axis1);
     }
 }

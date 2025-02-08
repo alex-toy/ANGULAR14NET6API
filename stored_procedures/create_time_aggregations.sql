@@ -1,11 +1,11 @@
 
 -- Create time aggregations
 
-DECLARE @year_level_id INT = (SELECT Id FROM TimeLevels WHERE Value = 'YEAR');
-DECLARE @semester_level_id INT = (SELECT Id FROM TimeLevels WHERE Value = 'SEMESTER');
-DECLARE @timester_level_id INT = (SELECT Id FROM TimeLevels WHERE Value = 'TRIMESTER');
-DECLARE @month_level_id INT = (SELECT Id FROM TimeLevels WHERE Value = 'MONTH');
-DECLARE @week_level_id INT = (SELECT Id FROM TimeLevels WHERE Value = 'WEEK');
+DECLARE @year_level_id INT = (SELECT Id FROM TimeLevels WHERE Label = 'YEAR');
+DECLARE @semester_level_id INT = (SELECT Id FROM TimeLevels WHERE Label = 'SEMESTER');
+DECLARE @timester_level_id INT = (SELECT Id FROM TimeLevels WHERE Label = 'TRIMESTER');
+DECLARE @month_level_id INT = (SELECT Id FROM TimeLevels WHERE Label = 'MONTH');
+DECLARE @week_level_id INT = (SELECT Id FROM TimeLevels WHERE Label = 'WEEK');
 
 -- year
 MERGE INTO TimeAggregations AGG

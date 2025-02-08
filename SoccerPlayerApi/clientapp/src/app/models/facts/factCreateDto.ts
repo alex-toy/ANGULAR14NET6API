@@ -1,13 +1,27 @@
 export class FactCreateDto {
-    dataTypeId: number = 0;
-    amount : number = 0;
-    aggregationIds: number[] = [];
+    Amount: number;
+    DataTypeId: number;
+    Dimension1AggregationId: number;
+    Dimension2AggregationId?: number;
+    Dimension3AggregationId?: number;
+    Dimension4AggregationId?: number;
     TimeAggregationId: number;
 
-    constructor(t : number, a : number, d : number[], l : number){
-        this.dataTypeId = t;
-        this.amount = a;
-        this.aggregationIds = d;
-        this.TimeAggregationId = l;
+    constructor(
+        Amount: number,
+        DataTypeId: number,
+        TimeAggregationId: number,
+        Dimension1AggregationId: number,
+        Dimension2AggregationId?: number,
+        Dimension3AggregationId?: number,
+        Dimension4AggregationId?: number,
+    ) {
+        this.Amount = Amount;
+        this.DataTypeId = DataTypeId;
+        this.Dimension1AggregationId = Dimension1AggregationId;
+        this.Dimension2AggregationId = Dimension2AggregationId;
+        this.Dimension3AggregationId = Dimension3AggregationId;
+        this.Dimension4AggregationId = Dimension4AggregationId;
+        this.TimeAggregationId = TimeAggregationId;
     }
 }

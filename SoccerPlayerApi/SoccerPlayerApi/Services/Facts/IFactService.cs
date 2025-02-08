@@ -1,4 +1,5 @@
 ﻿using SoccerPlayerApi.Controllers;
+using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
 
@@ -11,7 +12,7 @@ public interface IFactService
     Task<IEnumerable<FactDto>> GetFacts(GetFactFilterDto filter);
     Task<IEnumerable<DataTypeDto>> GetFactTypes();
     Task<IEnumerable<GetScopeDataDto>> GetScopeData(EnvironmentScopeDto scope);
-    Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto? filter);
+    Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto filter);
     Task<IEnumerable<EnvironmentScopeDto>> GetScopesByEnvironmentId(int universeId);
     Task<IEnumerable<TimeAggregationDto>> GetTimeAggregations(int levelId);
     Task<IEnumerable<DataTypeDto>> GetDataTypes();

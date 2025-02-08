@@ -1,6 +1,6 @@
 export interface GetLevelDto {
     id: number;
-    value: string;
+    label: string;
     dimensionId: number;
     ancestorId?: number;
 }

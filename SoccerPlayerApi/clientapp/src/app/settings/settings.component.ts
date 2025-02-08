@@ -7,7 +7,7 @@ import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { CreateLevelDto } from '../models/levels/createLevelDto';
 import { LevelService } from '../services/level.service';
 import { GetLevelDto } from '../models/levels/getLevelDto';
-import { DataTypeDto } from '../models/facts/typeDto';
+import { DataTypeDto } from '../models/facts/DataTypeDto';
 import { FactService } from '../services/fact.service';
 import { AggregationCreateDto } from '../models/aggregations/aggregationCreateDto';
 import { AggregationService } from '../services/aggregation.service';
@@ -24,9 +24,9 @@ export class SettingsComponent implements OnInit {
   newSetting: SettingCreateDto = { key: '', value: '' };
 
   dimensions: DimensionDto[] = [];
-  newDimension: DimensionDto = { id: 0, value: '', levels: [] };
+  newDimension: DimensionDto = { id: 0, label: '', levels: [] };
 
-  newLevel: CreateLevelDto = { value: '', dimensionId: 0, ancestorId: null };
+  newLevel: CreateLevelDto = { label: '', dimensionId: 0, ancestorId: null };
   showLevelFormForDimension: number | null = null;
   ancestorId: number | null = null;
 
@@ -141,10 +141,10 @@ export class SettingsComponent implements OnInit {
   }
 
   addDimension(): void {
-    if (this.newDimension.value) {
+    if (this.newDimension.label) {
       this.dimensionsService.createDimension(this.newDimension).subscribe(
         response => {
-          this.newDimension = { id: 0, value: '', levels: [] };
+          this.newDimension = { id: 0, label: '', levels: [] };
           this.fetchDimensions();
         },
         error => {

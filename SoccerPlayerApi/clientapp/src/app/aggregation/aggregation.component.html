@@ -4,7 +4,7 @@
         <option value="">Select Level</option>
         <option *ngFor="let dimension of dimensions" 
             [value]="dimension.id"
-        >{{ dimension.value }}</option>
+        >{{ dimension.label }}</option>
     </select>
 </div>
 
@@ -14,7 +14,7 @@
         <option value="">Select Level</option>
         <option *ngFor="let level of levels" 
             [value]="level.id"
-        >{{ level.value }}</option>
+        >{{ level.label }}</option>
     </select>
 </div>
 

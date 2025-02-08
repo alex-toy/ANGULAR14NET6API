@@ -1,5 +1,5 @@
 export interface CreateLevelDto {
-    value: string;
+    label: string;
     dimensionId: number;
     ancestorId : number | null;
 }

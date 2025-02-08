@@ -2,5 +2,15 @@
 
 public class ScopeFilterDto
 {
-    public List<ScopeDimensionFilterDto> ScopeDimensionFilters { get; set; } = new List<ScopeDimensionFilterDto>();
+    public int Dimension1Id { get; set; }
+    public int Level1Id { get; set; }
+
+    public int? Dimension2Id { get; set; }
+    public int? Level2Id { get; set; }
+
+    public int? Dimension3Id { get; set; }
+    public int? Level3Id { get; set; }
+
+    public int? Dimension4Id { get; set; }
+    public int? Level4Id { get; set; }
 }

@@ -120,7 +120,7 @@ public class EnvironmentService : IEnvironmentService
             environment.LevelIdFilter1
         };
 
-        if (environment.LevelIdFilter2.HasValue)
+        if (environment.LevelIdFilter2 is not null)
         {
             levelCount++;
             levelIds.Add(environment.LevelIdFilter2.Value);
@@ -183,39 +183,20 @@ public class EnvironmentService : IEnvironmentService
 
     private static ScopeFilterDto SetScopeFilter(EnvironmentCreateDto environment)
     {
-        ScopeFilterDto filter = new ScopeFilterDto();
-        filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
+        ScopeFilterDto filter = new ScopeFilterDto()
         {
-            DimensionId = environment.Dimension1Id,
-            LevelId = environment.LevelIdFilter1
-        });
+            Dimension1Id = environment.Dimension1Id,
+            Level1Id = environment.LevelIdFilter1,
 
-        if (environment.Dimension2Id is not null && environment.LevelIdFilter2 is not null)
-        {
-            filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
-            {
-                DimensionId = environment.Dimension2Id.Value,
-                LevelId = environment.LevelIdFilter2.Value
-            });
-        }
+            Dimension2Id = environment.Dimension2Id,
+            Level2Id = environment.LevelIdFilter2,
 
-        if (environment.Dimension3Id is not null && environment.LevelIdFilter3 is not null)
-        {
-            filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
-            {
-                DimensionId = environment.Dimension3Id.Value,
-                LevelId = environment.LevelIdFilter3.Value
-            });
-        }
+            Dimension3Id = environment.Dimension3Id,
+            Level3Id = environment.LevelIdFilter3,
 
-        if (environment.Dimension4Id is not null && environment.LevelIdFilter4 is not null)
-        {
-            filter.ScopeDimensionFilters.Add(new ScopeDimensionFilterDto()
-            {
-                DimensionId = environment.Dimension4Id.Value,
-                LevelId = environment.LevelIdFilter4.Value
-            });
-        }
+            Dimension4Id = environment.Dimension4Id,
+            Level4Id = environment.LevelIdFilter4,
+        };
 
         return filter;
     }
