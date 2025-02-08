@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Dimensions;
 using SoccerPlayerApi.Dtos.Facts;
@@ -15,16 +14,12 @@ public class DimensionService : IDimensionService
 {
     private readonly ApplicationDbContext _context;
     private readonly IGenericRepo<Dimension> _dimensionRepo;
-    private readonly IGenericRepo<Aggregation> _dimensionValueRepo;
-    private readonly IGenericRepo<Fact> _factRepo;
     private readonly ILevelService _levelService;
 
-    public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, IGenericRepo<Fact> factRepo, IGenericRepo<Aggregation> dimensionValueRepo, ILevelService levelService)
+    public DimensionService(ApplicationDbContext context, IGenericRepo<Dimension> dimensionRepo, ILevelService levelService)
     {
         _context = context;
         _dimensionRepo = dimensionRepo;
-        _factRepo = factRepo;
-        _dimensionValueRepo = dimensionValueRepo;
         _levelService = levelService;
     }
 

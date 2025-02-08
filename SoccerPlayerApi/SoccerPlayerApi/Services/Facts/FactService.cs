@@ -212,6 +212,31 @@ public class FactService : IFactService
         return await facts.ToListAsync();
     }
 
+    public async Task<IEnumerable<object>> GetTimeSerie(GetFactFilterDto filter)
+    {
+        var facts = _context.Facts
+            .Where(f => f.TimeAggregationId == filter.TimeAggregationId)
+            .Include(f => f.Aggregation1)
+            .Include(f => f.Aggregation2)
+            .Include(f => f.Aggregation3)
+            .Include(f => f.Aggregation4)
+            .Where(f => f.Dimension1AggregationId == filter.Dimension1Id && 
+                        f.Dimension2AggregationId == filter.Dimension2Id && 
+                        f.Dimension3AggregationId == filter.Dimension3Id && 
+                        f.Dimension4AggregationId == filter.Dimension4Id &&
+                        f.DataTypeId == filter.DataTypeId &&
+                        f.TimeAggregation.TimeLevelId== filter.TimeLevelId)
+            .Select(fact => new
+            {
+                Id = fact.Id,
+                Amount = fact.Amount,
+                DataTypeId = fact.DataTypeId,
+                TimeLabel = fact.TimeAggregation.Label
+            });
+
+        return await facts.ToListAsync();
+    }
+
     public async Task<int> CreateFactAsync(FactCreateDto fact)
     {
         int dimensionCount = _context.Dimensions.Count();
@@ -302,13 +327,13 @@ public class FactService : IFactService
         string pastSpanString = _context.Settings.Where(s => s.Key == pastSpan).FirstOrDefault()!.Value;
         int.TryParse(pastSpanString, out int span);
 
-        return await _context.TimeAggregations.Where(a => string.Compare(a.Value, presentDate) <= 0 && a.TimeLevelId == levelId)
-                                               .OrderByDescending(a => a.Value)
+        return await _context.TimeAggregations.Where(a => string.Compare(a.Label, presentDate) <= 0 && a.TimeLevelId == levelId)
+                                               .OrderByDescending(a => a.Label)
                                                .Take(span)
                                                .Select(agg => new TimeAggregationDto
                                                {
                                                    TimeAggregationId = agg.Id,
-                                                   Label = agg.Value
+                                                   Label = agg.Label
                                                })
                                                .ToListAsync();
     }
@@ -688,7 +713,7 @@ public class FactService : IFactService
                    LevelId = lv.Id,
                    Value = lv.Label,
                    DimensionId = 0,
-                   AggregationValue = dv.Value,
+                   AggregationValue = dv.Label,
                    AggId = dv.Id
                };
     }

@@ -23,6 +23,7 @@ public class GetFactFilterDto
     public int? Dimension4LevelId { get; set; }
 
 
+    public int TimeLevelId { get; set; }
     public int TimeAggregationId { get; set; }
 
     public Expression<Func<FactDto, bool>> FactIsInAggregations()

@@ -8,5 +8,5 @@ public class TimeAggregation : Entity
     public int? MotherAggregationId { get; set; }
     public TimeAggregation? MotherAggregation { get; set; }
 
-    public string Value { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 }

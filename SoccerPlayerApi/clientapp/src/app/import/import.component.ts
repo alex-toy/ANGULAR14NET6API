@@ -52,11 +52,10 @@ export class ImportComponent {
         DataType: row[1],
         Dimension1Aggregation: row[2],
         Dimension2Aggregation: row[3],
-        TimeAggregation: row[4]
+        Dimension3Aggregation: row[4],
+        Dimension4Aggregation: row[5],
+        TimeAggregation: row[6]
       } as ImportFactDto));
-
-      this.factService.createImportFact(formattedData);
-
       
       this.factService.createImportFact(formattedData).subscribe({
         next: (response) => {
