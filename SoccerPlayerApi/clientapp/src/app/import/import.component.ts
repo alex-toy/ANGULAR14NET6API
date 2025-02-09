@@ -47,7 +47,8 @@ export class ImportComponent {
 
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       
-      const formattedData = jsonData.slice(1).map((row: any) => ({
+      const formattedData = jsonData.slice(1).map((row: any, index: number) => ({
+        RowNumber: index + 2,
         Amount: row[0],
         DataType: row[1],
         Dimension1Aggregation: row[2],

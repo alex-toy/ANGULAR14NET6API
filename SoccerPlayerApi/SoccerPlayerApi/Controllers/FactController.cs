@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SoccerPlayerApi.Dtos.Facts;
+using SoccerPlayerApi.Dtos.Imports;
 using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Services.Dimensions;
@@ -47,20 +48,6 @@ public class FactController
         catch (Exception ex)
         {
             return new ResponseDto<int> { IsSuccess = false, Message = ex.Message };
-        }
-    }
-
-    [HttpPost("createimportfact")]
-    public async Task<ResponseDto<IEnumerable<ImportFactCreateResultDto>>> CreateImportFact(IEnumerable<ImportFactDto> facts)
-    {
-        try
-        {
-            IEnumerable<ImportFactCreateResultDto> results = await _factService.CreateImportFactAsync(facts);
-            return new ResponseDto<IEnumerable<ImportFactCreateResultDto>> { Data = results, IsSuccess = true, Count = 1 };
-        }
-        catch (Exception ex)
-        {
-            return new ResponseDto<IEnumerable<ImportFactCreateResultDto>> { IsSuccess = false, Message = ex.Message };
         }
     }
 

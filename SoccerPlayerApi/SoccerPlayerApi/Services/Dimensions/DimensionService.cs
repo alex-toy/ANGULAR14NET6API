@@ -53,7 +53,7 @@ public class DimensionService : IDimensionService
     {
         return await _context.Aggregations
             .Where(dv => dv.LevelId == levelId)
-            .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Value })
+            .Select(dv => new GetAggregationDto { LevelId = dv.Id, Value = dv.Label })
             .ToListAsync();
     }
 

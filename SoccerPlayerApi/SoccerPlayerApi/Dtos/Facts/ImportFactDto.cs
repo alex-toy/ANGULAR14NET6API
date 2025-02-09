@@ -2,6 +2,7 @@
 {
     public class ImportFactDto
     {
+        public int RowNumber { get; set; }
         public decimal Amount { get; set; }
         public string DataType { get; set; }
         public string Dimension1Aggregation { get; set; }

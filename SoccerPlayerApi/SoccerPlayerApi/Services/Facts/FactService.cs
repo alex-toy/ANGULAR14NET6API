@@ -1,10 +1,7 @@
 ﻿using System.Data;
-using System.Linq.Expressions;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoccerPlayerApi.Bos;
-using SoccerPlayerApi.Controllers;
 using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
@@ -76,22 +73,22 @@ public class FactService : IFactService
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
                 Level1Label = es.Dimension1Aggregation.Level.Value,
-                Dimension1AggregationLabel = es.Dimension1Aggregation.Value,
+                Dimension1AggregationLabel = es.Dimension1Aggregation.Label,
 
                 Dimension2Id = es.Dimension2Id,
                 Dimension2AggregationId = es.Dimension2AggregationId,
                 Level2Label = es.Dimension2Aggregation.Level.Value,
-                Dimension2AggregationLabel = es.Dimension2Aggregation.Value,
+                Dimension2AggregationLabel = es.Dimension2Aggregation.Label,
 
                 Dimension3Id = es.Dimension3Id,
                 Dimension3AggregationId = es.Dimension3AggregationId,
                 Level3Label = es.Dimension3Aggregation.Level.Value,
-                Dimension3AggregationLabel = es.Dimension3Aggregation.Value,
+                Dimension3AggregationLabel = es.Dimension3Aggregation.Label,
 
                 Dimension4Id = es.Dimension4Id,
                 Dimension4AggregationId = es.Dimension4AggregationId,
                 Level4Label = es.Dimension4Aggregation.Level.Value,
-                Dimension4AggregationLabel = es.Dimension4Aggregation.Value,
+                Dimension4AggregationLabel = es.Dimension4Aggregation.Label,
 
                 SortingValue = es.SortingValue
             };
@@ -106,18 +103,18 @@ public class FactService : IFactService
             {
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
-                Level1Label = es.Dimension1Aggregation.Value,
-                Dimension1AggregationLabel = es.Dimension1Aggregation.Value,
+                Level1Label = es.Dimension1Aggregation.Label,
+                Dimension1AggregationLabel = es.Dimension1Aggregation.Label,
 
                 Dimension2Id = es.Dimension2Id,
                 Dimension2AggregationId = es.Dimension2AggregationId,
-                Level2Label = es.Dimension2Aggregation.Value,
-                Dimension2AggregationLabel = es.Dimension2Aggregation.Value,
+                Level2Label = es.Dimension2Aggregation.Label,
+                Dimension2AggregationLabel = es.Dimension2Aggregation.Label,
 
                 Dimension3Id = es.Dimension3Id,
                 Dimension3AggregationId = es.Dimension3AggregationId,
-                Level3Label = es.Dimension3Aggregation.Value,
-                Dimension3AggregationLabel = es.Dimension3Aggregation.Value,
+                Level3Label = es.Dimension3Aggregation.Label,
+                Dimension3AggregationLabel = es.Dimension3Aggregation.Label,
 
                 SortingValue = es.SortingValue
             };
@@ -129,13 +126,13 @@ public class FactService : IFactService
             {
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
-                Level1Label = es.Dimension1Aggregation.Value,
-                Dimension1AggregationLabel = es.Dimension1Aggregation.Value,
+                Level1Label = es.Dimension1Aggregation.Label,
+                Dimension1AggregationLabel = es.Dimension1Aggregation.Label,
 
                 Dimension2Id = es.Dimension2Id,
                 Dimension2AggregationId = es.Dimension2AggregationId,
-                Level2Label = es.Dimension2Aggregation.Value,
-                Dimension2AggregationLabel = es.Dimension2Aggregation.Value,
+                Level2Label = es.Dimension2Aggregation.Label,
+                Dimension2AggregationLabel = es.Dimension2Aggregation.Label,
 
                 SortingValue = es.SortingValue
             };
@@ -145,8 +142,8 @@ public class FactService : IFactService
         {
             Dimension1Id = es.Dimension1Id,
             Dimension1AggregationId = es.Dimension1AggregationId,
-            Level1Label = es.Dimension1Aggregation.Value,
-            Dimension1AggregationLabel = es.Dimension1Aggregation.Value,
+            Level1Label = es.Dimension1Aggregation.Label,
+            Dimension1AggregationLabel = es.Dimension1Aggregation.Label,
 
             SortingValue = es.SortingValue
         };
@@ -195,7 +192,7 @@ public class FactService : IFactService
                 Aggregation1 = new AggregationDto
                 {
                     Id = fact.Aggregation1.Id,
-                    Label = fact.Aggregation1.Value,
+                    Label = fact.Aggregation1.Label,
                     LevelId = fact.Aggregation1.Level.Id,
                     LevelLabel = fact.Aggregation1.Level.Value,
                     DimensionId = fact.Aggregation1.Level.DimensionId,
@@ -261,34 +258,6 @@ public class FactService : IFactService
 
         await _context.SaveChangesAsync();
         return entityId;
-    }
-
-    public async Task<IEnumerable<ImportFactCreateResultDto>> CreateImportFactAsync(IEnumerable<ImportFactDto> facts)
-    {
-        List<ImportFactCreateResultDto> result = new ();
-
-        DataTable factsTable = GetDataTable(facts);
-
-        using var connection = _context.Database.GetDbConnection();
-        await connection.OpenAsync();
-
-        using var command = connection.CreateCommand();
-        command.CommandType = CommandType.StoredProcedure;
-        command.CommandText = "CreateImportFacts";
-
-        SqlParameter factsParameter = new ()
-        {
-            ParameterName = "@facts",
-            SqlDbType = SqlDbType.Structured,
-            TypeName = "dbo.ImportFactType",
-            Value = factsTable
-        };
-
-        command.Parameters.Add(factsParameter);
-
-        await command.ExecuteNonQueryAsync();
-
-        return result;
     }
 
     public async Task<IEnumerable<DataTypeDto>> GetFactTypes()
@@ -627,7 +596,7 @@ public class FactService : IFactService
                    LevelId = lv.Id,
                    Value = lv.Value,
                    DimensionId = prod.Id,
-                   AggregationValue = agg.Value,
+                   AggregationValue = agg.Label,
                    AggId = agg.Id
                };
     }
@@ -649,7 +618,7 @@ public class FactService : IFactService
                    LevelId = lv.Id,
                    Value = lv.Value,
                    DimensionId = prod.Id,
-                   AggregationValue = agg.Value,
+                   AggregationValue = agg.Label,
                    AggId = agg.Id
                };
     }
@@ -671,7 +640,7 @@ public class FactService : IFactService
                    LevelId = lv.Id,
                    Value = lv.Value,
                    DimensionId = prod.Id,
-                   AggregationValue = agg.Value,
+                   AggregationValue = agg.Label,
                    AggId = agg.Id
                };
     }
@@ -693,7 +662,7 @@ public class FactService : IFactService
                    LevelId = lv.Id,
                    Value = lv.Value,
                    DimensionId = prod.Id,
-                   AggregationValue = agg.Value,
+                   AggregationValue = agg.Label,
                    AggId = agg.Id
                };
     }
@@ -718,27 +687,6 @@ public class FactService : IFactService
                };
     }
 
-    private static DataTable GetDataTable(IEnumerable<ImportFactDto> facts)
-    {
-        var factsTable = new DataTable();
-        factsTable.Columns.Add("Amount", typeof(decimal));
-        factsTable.Columns.Add("DataType", typeof(string));
-        factsTable.Columns.Add("Dimension1Aggregation", typeof(string));
-        factsTable.Columns.Add("Dimension2Aggregation", typeof(string));
-        factsTable.Columns.Add("Dimension3Aggregation", typeof(string));
-        factsTable.Columns.Add("Dimension4Aggregation", typeof(string));
-        factsTable.Columns.Add("TimeAggregation", typeof(string));
-
-        foreach (var fact in facts)
-        {
-            factsTable.Rows.Add(fact.Amount, fact.DataType, fact.Dimension1Aggregation,
-                                fact.Dimension2Aggregation, fact.Dimension3Aggregation,
-                                fact.Dimension4Aggregation, fact.TimeAggregation);
-        }
-
-        return factsTable;
-    }
-
     private void AddDimension1Axis(int? dimensionId, int levelId, List<IQueryable<AxisDto>> axises)
     {
         var axis = from fa in _context.Facts
@@ -755,7 +703,7 @@ public class FactService : IFactService
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
-                       AggregationLabel = agg.Value,
+                       AggregationLabel = agg.Label,
                    };
 
         axises.Add(axis);
@@ -779,7 +727,7 @@ public class FactService : IFactService
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
-                       AggregationLabel = agg.Value,
+                       AggregationLabel = agg.Label,
                    };
 
         axises.Add(axis);
@@ -803,7 +751,7 @@ public class FactService : IFactService
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
-                       AggregationLabel = agg.Value,
+                       AggregationLabel = agg.Label,
                    };
 
         axises.Add(axis);
@@ -827,7 +775,7 @@ public class FactService : IFactService
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
-                       AggregationLabel = agg.Value,
+                       AggregationLabel = agg.Label,
                    };
 
         axises.Add(axis);
@@ -843,7 +791,7 @@ public class FactService : IFactService
                     select new AxisDto
                     {
                         FactId = fa.Id,
-                        LevelLabel = agg.Value,
+                        LevelLabel = agg.Label,
                         AggregationId = agg.Id,
                         DimensionId = lv.DimensionId,
                         DimensionLabel = lv.Dimension.Label,

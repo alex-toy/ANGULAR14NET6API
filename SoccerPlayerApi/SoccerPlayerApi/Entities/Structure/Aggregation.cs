@@ -8,5 +8,5 @@ public class Aggregation : Entity
     public int? MotherAggregationId { get; set; }
     public Aggregation? MotherAggregation { get; set; }
 
-    public string Value { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 }

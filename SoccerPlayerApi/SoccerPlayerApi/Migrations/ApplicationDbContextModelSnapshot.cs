@@ -224,24 +224,24 @@ namespace SoccerPlayerApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("LevelId")
                         .HasColumnType("int");
 
                     b.Property<int?>("MotherAggregationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("Label")
+                        .IsUnique();
 
                     b.HasIndex("LevelId");
 
                     b.HasIndex("MotherAggregationId");
-
-                    b.HasIndex("Value")
-                        .IsUnique();
 
                     b.ToTable("Aggregations");
                 });

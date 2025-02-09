@@ -1,4 +1,5 @@
 export interface ImportFactDto {
+    RowNumber : number,
     Amount: number;
     DataType: string;
     Dimension1Aggregation: string;

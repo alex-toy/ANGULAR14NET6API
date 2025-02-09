@@ -21,9 +21,9 @@ public class AggregationService : IAggregationService
             .Include(a => a.MotherAggregation)
             .Select(agg => new GetAggregationDto { 
                 LevelId = agg.Id, 
-                Value = agg.Value,
+                Value = agg.Label,
                 MotherAggregationId = agg.MotherAggregationId,
-                MotherAggregationValue = agg.MotherAggregation != null ? agg.MotherAggregation.Value : string.Empty
+                MotherAggregationValue = agg.MotherAggregation != null ? agg.MotherAggregation.Label : string.Empty
             })
             .ToListAsync();
     }
@@ -44,7 +44,7 @@ public class AggregationService : IAggregationService
         EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation
         {
             LevelId = aggregation.LevelId,
-            Value = aggregation.Value,
+            Label = aggregation.Value,
             MotherAggregationId = aggregation.MotherAggregationId,
         });
         await _context.SaveChangesAsync();
@@ -60,7 +60,7 @@ public class AggregationService : IAggregationService
                      {
                          Id = agg.Id,
                          LevelId = agg.LevelId,
-                         Value = agg.Value,
+                         Value = agg.Label,
                          MotherAggregationId = agg.MotherAggregationId
                      };
 

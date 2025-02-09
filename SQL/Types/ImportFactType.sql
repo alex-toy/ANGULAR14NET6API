@@ -1,5 +1,6 @@
 CREATE TYPE dbo.ImportFactType AS TABLE
 (
+    RowNumber INT,
     Amount DECIMAL(18, 2),
     DataType NVARCHAR(50),
     Dimension1Aggregation NVARCHAR(50) NOT NULL,

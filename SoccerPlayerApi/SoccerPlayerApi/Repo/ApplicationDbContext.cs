@@ -50,7 +50,7 @@ public class ApplicationDbContext : DbContext
                .IsUnique();
 
         builder.Entity<Aggregation>()
-            .HasIndex(d => d.Value)
+            .HasIndex(d => d.Label)
             .IsUnique();
 
         SeedData(builder);
