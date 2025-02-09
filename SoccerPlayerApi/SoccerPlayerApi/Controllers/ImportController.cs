@@ -24,14 +24,8 @@ public class ImportController
     {
         try
         {
-            IEnumerable<ImportErrorDto> results = await _importService.CreateImportFactAsync(facts);
-            var importResult = new ImportFactCreateResultDto()
-            {
-                LinesCreatedCount = 1111,
-                ImportErrors = results.ToList(),
-                Message = results.Count() > 0 ? "errors occured" : "import ok"
-            };
-            return new ResponseDto<ImportFactCreateResultDto> { Data = importResult, IsSuccess = true, Count = 1 };
+            ImportFactCreateResultDto results = await _importService.CreateImportFactAsync(facts);
+            return new ResponseDto<ImportFactCreateResultDto> { Data = results, IsSuccess = true, Count = 1 };
         }
         catch (Exception ex)
         {

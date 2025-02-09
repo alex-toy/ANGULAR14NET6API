@@ -1,9 +1,9 @@
 export class ImportErrorDto {
-    RowNumber: number;
-    Description: string;
+    rowNumber: number;
+    description: string;
 
     constructor(rowNumber: number, description: string) {
-        this.RowNumber = rowNumber;
-        this.Description = description;
+        this.rowNumber = rowNumber;
+        this.description = description;
     }
 }

@@ -4,11 +4,8 @@ AS
 ------------------------------------------------------------------------
 --DECLARE @ImportFacts dbo.ImportFactType;
 
---INSERT INTO @ImportFacts VALUES 
---(1, 1111111, 'sales', 'auchan', 'france', 'home', '', '2024-M06'),
---(2, 2222222, 'sales', 'auchan', 'lyon', 'sport', '', '2024-M03'),
---(3, 3333333, 'sales', 'carrefour', 'marseille', 'alimentaire', '', '2024-M05'),
---(4, 4444444, 'sales', 'carrefour', 'marseille', 'alimentaire', '', '2023-M07')
+--INSERT INTO @ImportFacts VALUES
+--(1, 1111111, 'sales', 'carrefour', 'france', 'home', '', '2024-M02')
 ------------------------------------------------------------------------
 BEGIN
 	DECLARE @inserted_id INT;
@@ -22,7 +19,7 @@ BEGIN
 		IF OBJECT_ID('tempdb..#facts') IS NOT NULL DROP TABLE #facts;
 		CREATE TABLE #facts (RowNumber INT, Amount DECIMAL(18, 2), DataTypeId INT, Dimension1AggregationId INT, Dimension2AggregationId INT, Dimension3AggregationId INT, Dimension4AggregationId INT, TimeAggregationId INT);
 		INSERT INTO #facts (RowNumber, Amount, DataTypeId, Dimension1AggregationId, Dimension2AggregationId, Dimension3AggregationId, Dimension4AggregationId, TimeAggregationId)
-		SELECT 
+		SELECT
 			IMPF.RowNumber, IMPF.Amount, DT.Id AS DataTypeId,
 			CASE WHEN AGG1.Id IS NULL THEN -1 ELSE AGG1.Id END AS Dimension1AggregationId,
 			CASE WHEN AGG2.Id IS NULL THEN -1 ELSE AGG2.Id END AS Dimension2AggregationId,
@@ -64,8 +61,6 @@ BEGIN
 			FA.TimeAggregationId = TFA.TimeAggregationId
 		JOIN @importFacts IMPF ON IMPF.RowNumber = TFA.RowNumber
 		WHERE FA.Id IS NOT NULL;
-		
-		SELECT RowNumber, Description FROM #errors 
 
 		-- ok facts
 		INSERT INTO Facts (Amount, DataTypeId, Dimension1AggregationId, Dimension2AggregationId, Dimension3AggregationId, Dimension4AggregationId, TimeAggregationId)
@@ -78,9 +73,14 @@ BEGIN
 			CASE WHEN TFA.Dimension4AggregationId IS NULL THEN -1 ELSE TFA.Dimension4AggregationId END AS Dimension4AggregationId,
 			TFA.TimeAggregationId
 		FROM #facts TFA
-		JOIN #errors ERR ON ERR.RowNumber = TFA.RowNumber
+		LEFT JOIN #errors ERR ON ERR.RowNumber = TFA.RowNumber
 		WHERE ERR.RowNumber IS NULL;
-		
+		DECLARE @LinesCreatedCount INT = (SELECT @@ROWCOUNT);
+
+		-- return data
+		SELECT RowNumber, Description FROM #errors;
+		SELECT @LinesCreatedCount AS LinesCreatedCount;
+
 		UPDATE ExecutionLogs
 		SET EndTime = GETDATE(), Status = 'Ok'
 		WHERE LogID = @inserted_id;

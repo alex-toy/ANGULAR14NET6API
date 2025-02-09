@@ -5,6 +5,7 @@ using SoccerPlayerApi.Dtos.Imports;
 using System.Data;
 using SoccerPlayerApi.Repo;
 using System.Data.Common;
+using SoccerPlayerApi.Utils;
 
 namespace SoccerPlayerApi.Services.Imports;
 
@@ -17,9 +18,10 @@ public class ImportService : IImportService
         _context = context;
     }
 
-    public async Task<IEnumerable<ImportErrorDto>> CreateImportFactAsync(IEnumerable<ImportFactDto> facts)
+    public async Task<ImportFactCreateResultDto> CreateImportFactAsync(IEnumerable<ImportFactDto> facts)
     {
         List<ImportErrorDto> errors = new();
+        int linesCreatedCount = 0;
 
         DataTable factsTable = GetDataTable(facts);
 
@@ -28,11 +30,11 @@ public class ImportService : IImportService
 
         using DbCommand command = connection.CreateCommand();
         command.CommandType = CommandType.StoredProcedure;
-        command.CommandText = "CreateImportFacts";
+        command.CommandText = GlobalVar.CreateImportFacts;
 
         SqlParameter factsParameter = new()
         {
-            ParameterName = "@facts",
+            ParameterName = GlobalVar.importFacts,
             SqlDbType = SqlDbType.Structured,
             TypeName = "dbo.ImportFactType",
             Value = factsTable
@@ -40,25 +42,30 @@ public class ImportService : IImportService
 
         command.Parameters.Add(factsParameter);
 
-        await command.ExecuteNonQueryAsync();
         using DbDataReader reader = await command.ExecuteReaderAsync();
 
-        if (reader.HasRows)
+        while (await reader.ReadAsync())
         {
-            while (await reader.ReadAsync())
-            {
-                ImportErrorDto error = new()
-                {
-                    RowNumber = reader.GetInt32(reader.GetOrdinal("RowNumber")),
-                    Description = reader.GetString(reader.GetOrdinal("Description"))
-                };
-
-                errors.Add(error);
-            }
+            int rowNumber = reader.GetInt32(reader.GetOrdinal("RowNumber"));
+            string description = reader.GetString(reader.GetOrdinal("Description"));
+            errors.Add(new ImportErrorDto { RowNumber = rowNumber, Description = description });
         }
 
-        return errors;
+        reader.NextResult();
+
+        if (await reader.ReadAsync())
+        {
+            linesCreatedCount = reader.GetInt32(reader.GetOrdinal("LinesCreatedCount"));
+        }
+
+        return new ImportFactCreateResultDto
+        {
+            ImportErrors = errors,
+            LinesCreatedCount = linesCreatedCount,
+            Message = errors.Count > 0 ? "Errors occurred" : "Import successful"
+        };
     }
+
 
     private static DataTable GetDataTable(IEnumerable<ImportFactDto> facts)
     {

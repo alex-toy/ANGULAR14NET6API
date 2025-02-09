@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import * as XLSX from 'xlsx';
-import { ImportFactDto } from '../models/facts/ImportFactDto';
-import { FactService } from '../services/fact.service';
+import { ImportFactDto } from '../models/imports/ImportFactDto';
+import { ImportService } from '../services/import.service';
+import { ImportErrorDto } from '../models/imports/ImportErrorDto';
 
 @Component({
   selector: 'app-import',
@@ -14,10 +14,14 @@ export class ImportComponent {
   file: File | null = null;
   errorMessage: string = '';
   successMessage: string = '';
+  importErrors: ImportErrorDto[] = [];
+  linesCreatedCount: number = 0;
+  message: string = '';
+  isSuccess: boolean = false;
 
   constructor(
     private http: HttpClient,
-    private factService: FactService,
+    private importService: ImportService
   ) {}
 
   onFileChange(event: any): void {
@@ -58,9 +62,20 @@ export class ImportComponent {
         TimeAggregation: row[6]
       } as ImportFactDto));
       
-      this.factService.createImportFact(formattedData).subscribe({
+      this.importService.createImportFact(formattedData).subscribe({
         next: (response) => {
-          console.log(response)
+          this.linesCreatedCount = response.data.linesCreatedCount;
+          this.message = response.data.message;
+          this.importErrors = response.data.importErrors;
+          this.isSuccess = response.isSuccess;
+
+          if (this.isSuccess) {
+            this.successMessage = 'File imported successfully!';
+            this.errorMessage = '';
+          } else {
+            this.errorMessage = 'Errors occurred during import.';
+            this.successMessage = '';
+          }
         },
         error: (err) => {
           console.error('Error createImportFact:', err);
@@ -69,18 +84,5 @@ export class ImportComponent {
 
     };
     reader.readAsBinaryString(this.file);
-  }
-
-  uploadData(data: any): void {
-    this.http.post(`${environment.apiUrl}/upload`, data).subscribe({
-      next: (response) => {
-        this.successMessage = 'File uploaded successfully!';
-        this.errorMessage = ''; // Clear any previous error messages
-      },
-      error: (error) => {
-        this.errorMessage = 'Error uploading file. Please try again later.';
-        this.successMessage = ''; // Clear success message if error occurs
-      }
-    });
   }
 }

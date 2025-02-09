@@ -5,8 +5,6 @@ import { environment } from 'src/environments/environment';
 import { FactUpdateDto } from '../models/facts/factUpdateDto';
 import { ResponseDto } from '../models/responseDto';
 import { DataTypeDto } from '../models/facts/DataTypeDto';
-import { ImportFactDto } from '../models/facts/ImportFactDto';
-import { ImportFactCreateResultDto } from '../models/facts/ImportFactCreateResultDto';
 import { FactDto } from '../models/facts/FactDto';
 import { GetFactFilterDto } from '../models/facts/GetFactFilterDto';
 import { FactCreateDto } from '../models/facts/factCreateDto';
@@ -27,11 +25,6 @@ export class FactService {
   createFact(fact: FactCreateDto): Observable<ResponseDto<number>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
     return this.httpClient.post<ResponseDto<number>>(`${this.apiUrl}/createfact`, fact, { headers : header })
-  }
-
-  createImportFact(facts: ImportFactDto[]): Observable<ResponseDto<ImportFactCreateResultDto[]>> {
-    const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.post<ResponseDto<ImportFactCreateResultDto[]>>(`${this.apiUrl}/createimportfact`, facts, { headers : header })
   }
 
   updateFact(fact: FactUpdateDto): Observable<boolean> {
