@@ -38,7 +38,6 @@ BEGIN
 
 		DECLARE @dimensionCount INT = (SELECT COUNT(*) from Dimensions);
 
-	
 		IF @dimensionCount >= 2
 		BEGIN
 			SET @sql = REPLACE(@sql, '¤d2¤', N'JOIN Aggregations AGG_D2 ON AGG_D2.Id = ESCP.Dimension2AggregationId JOIN AggregationFact AF2 ON AF2.AggregationId = AGG_D2.Id');
