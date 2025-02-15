@@ -14,9 +14,9 @@ public class GetLevelDto
         return new Level
         {
             Id = Id,
-            Value = Label,
+            Label = Label,
             DimensionId = DimensionId,
-            AncestorId = AncestorId,
+            FatherId = AncestorId,
         };
     }
 }

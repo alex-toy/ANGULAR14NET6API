@@ -6,13 +6,13 @@ public class Level
 {
     public int Id { get; set; }
 
-    public string Value { get; set; }
+    public string Label { get; set; }
 
     public int DimensionId { get; set; }
     public Dimension Dimension { get; set; }
 
-    public int? AncestorId { get; set; }
-    public Level? Ancestor { get; set; }
+    public int? FatherId { get; set; }
+    public Level? Father { get; set; }
 
     public List<Level> Children { get; set; } = new List<Level>();
     public List<Aggregation> DimensionValues { get; set; } = new List<Aggregation>();
@@ -28,9 +28,9 @@ public class Level
         return new GetLevelDto
         {
             Id = Id,
-            Label = Value,
+            Label = Label,
             DimensionId = DimensionId,
-            AncestorId = AncestorId,
+            AncestorId = FatherId,
         };
     }
 }

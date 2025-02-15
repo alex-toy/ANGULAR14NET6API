@@ -166,6 +166,131 @@ namespace SoccerPlayerApi.Migrations
                     b.ToTable("EnvironmentSortings");
                 });
 
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Algorithms.Algorithm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Algorithms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "Average"
+                        });
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Algorithms.AlgorithmParameterKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AlgorithmId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlgorithmId");
+
+                    b.ToTable("AlgorithmParameterKeys");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AlgorithmId = 1,
+                            Key = "alpha"
+                        });
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Algorithms.AlgorithmParameterValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("SimulationFactId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SimulationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SimulationId");
+
+                    b.ToTable("AlgorithmParameterValues");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Simulation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AlgorithmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EnvironmentScopeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlgorithmId");
+
+                    b.ToTable("Simulations");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.SimulationFact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SimulationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeAggregationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SimulationId");
+
+                    b.ToTable("SimulationFacts");
+                });
+
             modelBuilder.Entity("SoccerPlayerApi.Entities.Setting", b =>
                 {
                     b.Property<int>("Id")
@@ -244,6 +369,68 @@ namespace SoccerPlayerApi.Migrations
                     b.HasIndex("MotherAggregationId");
 
                     b.ToTable("Aggregations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "all-client",
+                            LevelId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Label = "carrefour",
+                            LevelId = 2,
+                            MotherAggregationId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Label = "auchan",
+                            LevelId = 2,
+                            MotherAggregationId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Label = "all-location",
+                            LevelId = 7
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Label = "france",
+                            LevelId = 8,
+                            MotherAggregationId = 4
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Label = "espagne",
+                            LevelId = 8,
+                            MotherAggregationId = 4
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Label = "all-product",
+                            LevelId = 4
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Label = "home",
+                            LevelId = 5,
+                            MotherAggregationId = 7
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Label = "sport",
+                            LevelId = 5,
+                            MotherAggregationId = 7
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DataType", b =>
@@ -261,6 +448,13 @@ namespace SoccerPlayerApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DataTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "sales"
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Dimension", b =>
@@ -281,6 +475,23 @@ namespace SoccerPlayerApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Dimensions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "client"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Label = "product"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Label = "location"
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Fact", b =>
@@ -343,23 +554,85 @@ namespace SoccerPlayerApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("AncestorId")
-                        .HasColumnType("int");
-
                     b.Property<int>("DimensionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Value")
+                    b.Property<int?>("FatherId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AncestorId");
-
                     b.HasIndex("DimensionId");
 
+                    b.HasIndex("FatherId");
+
                     b.ToTable("Levels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DimensionId = 1,
+                            Label = "all-client"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DimensionId = 1,
+                            FatherId = 1,
+                            Label = "main client"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DimensionId = 1,
+                            FatherId = 2,
+                            Label = "client sku"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DimensionId = 2,
+                            Label = "all-product"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DimensionId = 2,
+                            FatherId = 4,
+                            Label = "family"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DimensionId = 2,
+                            FatherId = 6,
+                            Label = "product sku"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DimensionId = 3,
+                            Label = "all-location"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            DimensionId = 3,
+                            FatherId = 7,
+                            Label = "country"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            DimensionId = 3,
+                            FatherId = 8,
+                            Label = "city"
+                        });
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeAggregation", b =>
@@ -592,6 +865,42 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("Environment");
                 });
 
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Algorithms.AlgorithmParameterKey", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Forecasts.Algorithms.Algorithm", null)
+                        .WithMany("Keys")
+                        .HasForeignKey("AlgorithmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Algorithms.AlgorithmParameterValue", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Forecasts.Simulation", null)
+                        .WithMany("Values")
+                        .HasForeignKey("SimulationId");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Simulation", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Forecasts.Algorithms.Algorithm", "Algorithm")
+                        .WithMany()
+                        .HasForeignKey("AlgorithmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Algorithm");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.SimulationFact", b =>
+                {
+                    b.HasOne("SoccerPlayerApi.Entities.Forecasts.Simulation", null)
+                        .WithMany("SimulationFacts")
+                        .HasForeignKey("SimulationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Aggregation", b =>
                 {
                     b.HasOne("SoccerPlayerApi.Entities.Structure.Level", "Level")
@@ -659,20 +968,20 @@ namespace SoccerPlayerApi.Migrations
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.Level", b =>
                 {
-                    b.HasOne("SoccerPlayerApi.Entities.Structure.Level", "Ancestor")
-                        .WithMany("Children")
-                        .HasForeignKey("AncestorId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("SoccerPlayerApi.Entities.Structure.Dimension", "Dimension")
                         .WithMany("Levels")
                         .HasForeignKey("DimensionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Ancestor");
+                    b.HasOne("SoccerPlayerApi.Entities.Structure.Level", "Father")
+                        .WithMany("Children")
+                        .HasForeignKey("FatherId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Dimension");
+
+                    b.Navigation("Father");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.TimeAggregation", b =>
@@ -707,6 +1016,18 @@ namespace SoccerPlayerApi.Migrations
                     b.Navigation("EnvironmentScopes");
 
                     b.Navigation("EnvironmentSortings");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Algorithms.Algorithm", b =>
+                {
+                    b.Navigation("Keys");
+                });
+
+            modelBuilder.Entity("SoccerPlayerApi.Entities.Forecasts.Simulation", b =>
+                {
+                    b.Navigation("SimulationFacts");
+
+                    b.Navigation("Values");
                 });
 
             modelBuilder.Entity("SoccerPlayerApi.Entities.Structure.DataType", b =>

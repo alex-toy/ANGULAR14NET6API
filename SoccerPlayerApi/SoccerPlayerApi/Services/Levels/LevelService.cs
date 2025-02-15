@@ -24,7 +24,7 @@ public class LevelService : ILevelService
     {
         return await _context.Levels
             .Where(l => l.DimensionId == dimensionId)
-            .Select(l => new GetLevelDto { Id = l.Id, Label = l.Value, DimensionId = l.DimensionId, AncestorId = l.AncestorId })
+            .Select(l => new GetLevelDto { Id = l.Id, Label = l.Label, DimensionId = l.DimensionId, AncestorId = l.FatherId })
             .ToListAsync();
     }
 
@@ -42,21 +42,21 @@ public class LevelService : ILevelService
             .Select(d => new GetDimensionLevelDto() { 
                 DimensionId = d.Id, 
                 Value = d.Label, 
-                Levels = d.Levels.Select(l => new GetLevelDto() { Id = l.Id, Label = l.Value, AncestorId = l.AncestorId })
+                Levels = d.Levels.Select(l => new GetLevelDto() { Id = l.Id, Label = l.Label, AncestorId = l.FatherId })
             })
             .ToListAsync();
     }
 
     public async Task<int> CreateLevelAsync(CreateLevelDto level)
     {
-        Level? existingLabel = _context.Levels.FirstOrDefault(l => l.DimensionId == level.DimensionId && l.AncestorId == level.AncestorId);
+        Level? existingLabel = _context.Levels.FirstOrDefault(l => l.DimensionId == level.DimensionId && l.FatherId == level.AncestorId);
         if (existingLabel is not null) throw new Exception("there is an existing level for this dimension");
 
         EntityEntry<Level> entity = await _context.Levels.AddAsync(new Level
         {
             DimensionId = level.DimensionId,
-            Value = level.Label,
-            AncestorId = level.AncestorId,
+            Label = level.Label,
+            FatherId = level.AncestorId,
         });
 
         await _context.SaveChangesAsync();

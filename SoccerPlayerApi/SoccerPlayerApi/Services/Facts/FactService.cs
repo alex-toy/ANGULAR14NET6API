@@ -73,22 +73,22 @@ public class FactService : IFactService
             {
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
-                Level1Label = es.Dimension1Aggregation.Level.Value,
+                Level1Label = es.Dimension1Aggregation.Level.Label,
                 Dimension1AggregationLabel = es.Dimension1Aggregation.Label,
 
                 Dimension2Id = es.Dimension2Id,
                 Dimension2AggregationId = es.Dimension2AggregationId,
-                Level2Label = es.Dimension2Aggregation.Level.Value,
+                Level2Label = es.Dimension2Aggregation.Level.Label,
                 Dimension2AggregationLabel = es.Dimension2Aggregation.Label,
 
                 Dimension3Id = es.Dimension3Id,
                 Dimension3AggregationId = es.Dimension3AggregationId,
-                Level3Label = es.Dimension3Aggregation.Level.Value,
+                Level3Label = es.Dimension3Aggregation.Level.Label,
                 Dimension3AggregationLabel = es.Dimension3Aggregation.Label,
 
                 Dimension4Id = es.Dimension4Id,
                 Dimension4AggregationId = es.Dimension4AggregationId,
-                Level4Label = es.Dimension4Aggregation.Level.Value,
+                Level4Label = es.Dimension4Aggregation.Level.Label,
                 Dimension4AggregationLabel = es.Dimension4Aggregation.Label,
 
                 SortingValue = es.SortingValue
@@ -224,7 +224,7 @@ public class FactService : IFactService
                     Id = fact.Aggregation1.Id,
                     Label = fact.Aggregation1.Label,
                     LevelId = fact.Aggregation1.Level.Id,
-                    LevelLabel = fact.Aggregation1.Level.Value,
+                    LevelLabel = fact.Aggregation1.Level.Label,
                     DimensionId = fact.Aggregation1.Level.DimensionId,
                     DimensionLabel = fact.Aggregation1.Level.Dimension.Label,
                 }
@@ -624,7 +624,7 @@ public class FactService : IFactService
                    TypeId = dt.Id,
                    Amount = fa.Amount,
                    LevelId = lv.Id,
-                   Value = lv.Value,
+                   Value = lv.Label,
                    DimensionId = prod.Id,
                    AggregationValue = agg.Label,
                    AggId = agg.Id
@@ -646,7 +646,7 @@ public class FactService : IFactService
                    TypeId = dt.Id,
                    Amount = fa.Amount,
                    LevelId = lv.Id,
-                   Value = lv.Value,
+                   Value = lv.Label,
                    DimensionId = prod.Id,
                    AggregationValue = agg.Label,
                    AggId = agg.Id
@@ -668,7 +668,7 @@ public class FactService : IFactService
                    TypeId = dt.Id,
                    Amount = fa.Amount,
                    LevelId = lv.Id,
-                   Value = lv.Value,
+                   Value = lv.Label,
                    DimensionId = prod.Id,
                    AggregationValue = agg.Label,
                    AggId = agg.Id
@@ -690,7 +690,7 @@ public class FactService : IFactService
                    TypeId = dt.Id,
                    Amount = fa.Amount,
                    LevelId = lv.Id,
-                   Value = lv.Value,
+                   Value = lv.Label,
                    DimensionId = prod.Id,
                    AggregationValue = agg.Label,
                    AggId = agg.Id
@@ -729,7 +729,7 @@ public class FactService : IFactService
                    select new AxisDto
                    {
                        FactId = fa.Id,
-                       LevelLabel = lv.Value,
+                       LevelLabel = lv.Label,
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
@@ -753,7 +753,7 @@ public class FactService : IFactService
                    select new AxisDto
                    {
                        FactId = fa.Id,
-                       LevelLabel = lv.Value,
+                       LevelLabel = lv.Label,
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
@@ -777,7 +777,7 @@ public class FactService : IFactService
                    select new AxisDto
                    {
                        FactId = fa.Id,
-                       LevelLabel = lv.Value,
+                       LevelLabel = lv.Label,
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,
@@ -801,7 +801,7 @@ public class FactService : IFactService
                    select new AxisDto
                    {
                        FactId = fa.Id,
-                       LevelLabel = lv.Value,
+                       LevelLabel = lv.Label,
                        AggregationId = agg.Id,
                        DimensionId = lv.DimensionId,
                        DimensionLabel = lv.Dimension.Label,

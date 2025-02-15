@@ -21,6 +21,7 @@ import { CreateEnvironmentComponent } from './environments/create-environment/cr
 import { SettingsComponent } from './settings/settings.component';
 import { LevelModalComponent } from './settings/add-level-modal/add-level-modal.component';
 import { AggregationComponent } from './aggregation/aggregation.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { AggregationComponent } from './aggregation/aggregation.component';
     HttpClientModule,
     FormsModule,
     MatDialogModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule
   ],
   providers: [
   

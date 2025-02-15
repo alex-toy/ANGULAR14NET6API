@@ -1,28 +1,6 @@
---  EXEC generate_date_series '2022-01-01', '2026-12-31';
+-- EXEC generate_date_series '2022-01-01', '2026-12-31';
 
-
---CREATE TABLE DateSeries (
---    _day DATE,
---    _week INT,
---    _month INT,
---    _trimester INT,
---    _semester INT,
---    _year INT,
---    _week_label VARCHAR(10),     -- Week label (e.g., 2024-W03)
---    _month_label VARCHAR(10),    -- Month label (e.g., 2024-M01)
---    _trimester_label VARCHAR(10),-- Trimester label (e.g., 2024-T1)
---    _semester_label VARCHAR(10)  -- Semester label (e.g., 2024-S1)
---);
-
-
-
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'generate_date_series')
-BEGIN
-    DROP PROCEDURE generate_date_series;
-END
-GO
-
-CREATE PROCEDURE generate_date_series 
+CREATE OR ALTER PROCEDURE generate_date_series 
     @start_date DATE,
     @end_date DATE
 AS
@@ -93,5 +71,3 @@ BEGIN
         SET @current_date = DATEADD(DAY, 1, @current_date);
     END
 END;
-
-

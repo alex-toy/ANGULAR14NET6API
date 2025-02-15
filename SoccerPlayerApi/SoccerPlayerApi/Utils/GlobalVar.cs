@@ -10,6 +10,9 @@ public static class GlobalVar
     public static int MONTH_LEVEL_ID = 4;
     public static int WEEK_LEVEL_ID = 5;
 
+    public static int AVERAGE_ID = 1;
+    public static int KEY_ALPHA_ID = 1;
+
 
     public static string CreateImportFacts = "CreateImportFacts";
     public static string importFacts = "@importFacts";

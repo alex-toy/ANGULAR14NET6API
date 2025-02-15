@@ -27,8 +27,40 @@
         <td>
           <button class="btn btn-warning btn-action" (click)="updateEnvironment(environment.id)">Update</button>
           <button class="btn btn-danger btn-action" (click)="deleteEnvironment(environment.id)">Delete</button>
+          <button class="btn btn-success mb-3 float-right" (click)="openSimulationModal()">Create Simulation</button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
+
+<ngb-modal [(ngModel)]="isSimulationModalOpen">
+  <div class="modal-header">
+    <h4 class="modal-title">Create Simulation</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeSimulationModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="createSimulation()">
+      <div class="form-group">
+        <label for="algorithmSelect">Algorithm</label>
+        <select id="algorithmSelect" class="form-control" [(ngModel)]="simulationCreateDto.algorithmId" name="algorithmId">
+          <option *ngFor="let algorithm of algorithms" [value]="algorithm.id">{{ algorithm.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="simulationValue">Values</label>
+        <input type="text" class="form-control" [(ngModel)]="simulationCreateDto.values" name="values">
+      </div>
+
+      <div class="form-group">
+        <label for="simulationFacts">Simulation Facts</label>
+        <input type="text" class="form-control" [(ngModel)]="simulationCreateDto.simulationFacts" name="simulationFacts">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create Simulation</button>
+    </form>
+  </div>
+</ngb-modal>

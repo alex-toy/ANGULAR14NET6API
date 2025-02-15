@@ -44,19 +44,19 @@ public class Environment : Entity
 
         Dimension1Id = LevelFilter1.DimensionId,
         LevelIdFilter1 = LevelIdFilter1,
-        LevelLabel1 = LevelFilter1?.Value ?? string.Empty,
+        LevelLabel1 = LevelFilter1?.Label ?? string.Empty,
 
         Dimension2Id = LevelFilter2?.DimensionId,
         LevelIdFilter2 = LevelIdFilter2,
-        LevelLabel2 = LevelFilter2?.Value ?? string.Empty,
+        LevelLabel2 = LevelFilter2?.Label ?? string.Empty,
 
         Dimension3Id = LevelFilter3?.DimensionId,
         LevelIdFilter3 = LevelIdFilter3,
-        LevelLabel3 = LevelFilter3?.Value ?? string.Empty,
+        LevelLabel3 = LevelFilter3?.Label ?? string.Empty,
 
         Dimension4Id = LevelFilter4?.DimensionId,
         LevelIdFilter4 = LevelIdFilter4,
-        LevelLabel4 = LevelFilter4?.Value ?? string.Empty,
+        LevelLabel4 = LevelFilter4?.Label ?? string.Empty,
 
         EnvironmentSortings = EnvironmentSortings.Select(x => x.ToDto()).ToList(),
     };

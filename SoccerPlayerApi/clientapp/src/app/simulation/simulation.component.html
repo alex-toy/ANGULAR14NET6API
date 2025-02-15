@@ -1,1 +1,90 @@
-<p>simulation works!</p>
+<div class="history-container">
+    <!-- Left Section: Filters and Scopes -->
+    <div class="left-section">
+      <!-- Filter Mode Toggle -->
+      <div class="filter-mode-toggle">
+        <input type="radio" id="filterByDimensions" name="filterMode" [(ngModel)]="filterMode" value="dimensions">
+        <label for="filterByDimensions">Levels</label>
+        
+        <input type="radio" id="filterByEnvironment" name="filterMode" [(ngModel)]="filterMode" value="environment">
+        <label for="filterByEnvironment">Environment</label>
+      </div>
+      
+      <!-- Sliders Section (Dimensions Filter) -->
+      <div *ngIf="filterMode === 'dimensions'" class="scopes-list">
+        <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
+          <label for="levelSelect-{{dimension.dimensionId}}">{{ dimension.value }}</label>
+          <select id="levelSelect-{{dimension.dimensionId}}" (change)="onLevelChange(dimension.dimensionId, $event)">
+            <option value="">Select Level</option>
+            <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.label }}</option>
+          </select>
+        </div>
+        <button (click)="applyLevelFilter()" class="apply-filter-btn">Apply Filter</button>
+      </div>
+  
+      <!-- Environment Filter Section -->
+      <div *ngIf="filterMode === 'environment'" class="environment-filter">
+        <label for="environmentSelect">Select Environment:</label>
+        <select id="environmentSelect" (change)="onEnvironmentChange($event)">
+          <option value="">Select Environment</option>
+          <option *ngFor="let environment of environments" [value]="environment.id">{{ environment.name }}</option>
+        </select>
+        <button (click)="applyEnvironmentFilter()" class="apply-filter-btn">Apply Environment Filter</button>
+      </div>
+  
+      <!-- Scopes List -->
+      <div *ngIf="isLoading">Loading...</div>
+      <div *ngIf="!isLoading">
+        <ul class="scopes-list">
+          <li *ngFor="let scope of scopes" 
+            [class.selected]="scope === selectedScope" 
+            (click)="onSelectScope(scope)">
+            {{ scope.dimension1AggregationLabel }} - {{ scope.dimension2AggregationLabel }} - {{ scope.dimension3AggregationLabel }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <!-- Right Section: Content and Table -->
+    <div class="right-section">
+      <div class="filter">
+        <label for="timeAggregationLabel">Aggregation</label>
+        <select id="timeAggregationLabel" (change)="onTimeAggregationLabelChange($event)">
+          <option *ngFor="let label of uniqueTimeAggregationLabels" [value]="label">{{ label }}</option>
+        </select>
+      </div>
+  
+      <div class="history-content">
+        <div *ngIf="scopeDataByDataType">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th *ngFor="let year of timeAggregationDtos">{{ year.label }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let type of types">
+                <td>{{ type.label }}</td>
+                <td *ngFor="let timeAggregation of timeAggregationDtos">
+                  <span *ngIf="!isEditing[getEditKey(type.id, timeAggregation.timeAggregationId)]" 
+                    (click)="editAmount(type.id, timeAggregation.timeAggregationId)">
+                    {{ getAmountForTypeAndTime(type.id, timeAggregation.timeAggregationId) }}
+                  </span>
+                  <input class="number-input"
+                    *ngIf="isEditing[getEditKey(type.id, timeAggregation.timeAggregationId)]" 
+                    [value]="getAmountForTypeAndTime(type.id, timeAggregation.timeAggregationId)" 
+                    (blur)="saveAmount(type.id, timeAggregation, $event)" 
+                    (keydown.enter)="saveAmount(type.id, timeAggregation, $event)"
+                    (keydown.escape)="cancelEdit(type.id, timeAggregation.timeAggregationId)" 
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+  

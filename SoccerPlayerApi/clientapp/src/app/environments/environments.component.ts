@@ -6,6 +6,8 @@ import { DimensionsService } from '../services/dimensions.service';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { EnvironmentUpdateDto } from '../models/environments/environmentUpdateDto';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlgorithmDto } from '../models/forecasts/algorithms/algorithmDto';
+import { SimulationCreateDto } from '../models/forecasts/simulationCreateDto';
 
 @Component({
   selector: 'app-environments',
@@ -17,6 +19,10 @@ export class EnvironmentsComponent {
   dimensions: DimensionDto[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
+  isSimulationModalOpen: boolean = false;
+  algorithms : AlgorithmDto[] = []
+
+  simulationCreateDto: SimulationCreateDto = new SimulationCreateDto(0, 0, [], []);
 
   constructor(
     private environmentService: EnvironmentService,
@@ -85,5 +91,24 @@ export class EnvironmentsComponent {
         this.errorMessage = 'Error updating environment. Please try again.';
       }
     });
+  }
+
+  openSimulationModal(): void {
+    this.isSimulationModalOpen = true;
+  }
+
+  closeSimulationModal(): void {
+    this.isSimulationModalOpen = false;
+  }
+
+  createSimulation(): void {
+    const simulationData = new SimulationCreateDto(
+      this.simulationCreateDto.environmentScopeId,
+      this.simulationCreateDto.algorithmId,
+      this.simulationCreateDto.values,
+      this.simulationCreateDto.simulationFacts
+    );
+
+    // call service
   }
 }

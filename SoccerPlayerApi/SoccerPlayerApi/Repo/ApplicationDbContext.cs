@@ -1,7 +1,8 @@
-﻿using System.Reflection.Emit;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities;
 using SoccerPlayerApi.Entities.Environments;
+using SoccerPlayerApi.Entities.Forecasts;
+using SoccerPlayerApi.Entities.Forecasts.Algorithms;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Utils;
 
@@ -68,6 +69,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<Setting> Settings { get; set; }
     public DbSet<EnvironmentScope> EnvironmentScopes { get; set; }
     public DbSet<EnvironmentSorting> EnvironmentSortings { get; set; }
+
+    // forecast
+    public DbSet<Algorithm> Algorithms { get; set; }
+    public DbSet<AlgorithmParameterKey> AlgorithmParameterKeys { get; set; }
+    public DbSet<AlgorithmParameterValue> AlgorithmParameterValues { get; set; }
+    public DbSet<Simulation> Simulations { get; set; }
+    public DbSet<SimulationFact> SimulationFacts { get; set; }
 
     private static void ConfigureDimension(ModelBuilder builder)
     {
@@ -136,9 +144,9 @@ public class ApplicationDbContext : DbContext
     private static void ConfigureLevel(ModelBuilder builder)
     {
         builder.Entity<Level>()
-            .HasOne(l => l.Ancestor)
+            .HasOne(l => l.Father)
             .WithMany(l => l.Children)
-            .HasForeignKey(l => l.AncestorId)
+            .HasForeignKey(l => l.FatherId)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<Level>()
@@ -241,6 +249,57 @@ public class ApplicationDbContext : DbContext
             new TimeLevel { Id = GlobalVar.TRIMESTER_LEVEL_ID, Label = "TRIMESTER", AncestorId = GlobalVar.SEMESTER_LEVEL_ID },
             new TimeLevel { Id = GlobalVar.MONTH_LEVEL_ID, Label = "MONTH", AncestorId = GlobalVar.TRIMESTER_LEVEL_ID },
             new TimeLevel { Id = GlobalVar.WEEK_LEVEL_ID, Label = "WEEK", AncestorId = GlobalVar.MONTH_LEVEL_ID }
+        );
+
+        builder.Entity<Algorithm>().HasData(
+            new Algorithm { Id = GlobalVar.AVERAGE_ID, Label = "Average" }
+        );
+
+        builder.Entity<AlgorithmParameterKey>().HasData(
+            new AlgorithmParameterKey { Id = GlobalVar.KEY_ALPHA_ID, AlgorithmId = GlobalVar.AVERAGE_ID, Key = "alpha" }
+        );
+
+        SeedTestData(builder);
+    }
+
+    private static void SeedTestData(ModelBuilder builder)
+    {
+        builder.Entity<Dimension>().HasData(
+            new Dimension { Id = 1, Label = "client" },
+            new Dimension { Id = 2, Label = "product" },
+            new Dimension { Id = 3, Label = "location" }
+        );
+
+        builder.Entity<Level>().HasData(
+            new Level { Id = 1, Label = "all-client", DimensionId = 1, FatherId = null },
+            new Level { Id = 2, Label = "main client", DimensionId = 1, FatherId = 1 },
+            new Level { Id = 3, Label = "client sku", DimensionId = 1, FatherId = 2 },
+
+            new Level { Id = 4, Label = "all-product", DimensionId = 2, FatherId = null },
+            new Level { Id = 5, Label = "family", DimensionId = 2, FatherId = 4 },
+            new Level { Id = 6, Label = "product sku", DimensionId = 2, FatherId = 6 },
+
+            new Level { Id = 7, Label = "all-location", DimensionId = 3, FatherId = null },
+            new Level { Id = 8, Label = "country", DimensionId = 3, FatherId = 7 },
+            new Level { Id = 9, Label = "city", DimensionId = 3, FatherId = 8 }
+        );
+
+        builder.Entity<Aggregation>().HasData(
+            new Aggregation { Id = 1, Label = "all-client", LevelId = 1, MotherAggregationId = null },
+            new Aggregation { Id = 2, Label = "carrefour", LevelId = 2, MotherAggregationId = 1 },
+            new Aggregation { Id = 3, Label = "auchan", LevelId = 2, MotherAggregationId = 1 },
+
+            new Aggregation { Id = 4, Label = "all-location", LevelId = 7, MotherAggregationId = null },
+            new Aggregation { Id = 5, Label = "france", LevelId = 8, MotherAggregationId = 4 },
+            new Aggregation { Id = 6, Label = "espagne", LevelId = 8, MotherAggregationId = 4 },
+
+            new Aggregation { Id = 7, Label = "all-product", LevelId = 4, MotherAggregationId = null },
+            new Aggregation { Id = 8, Label = "home", LevelId = 5, MotherAggregationId = 7 },
+            new Aggregation { Id = 9, Label = "sport", LevelId = 5, MotherAggregationId = 7 }
+        );
+
+        builder.Entity<DataType>().HasData(
+            new DataType { Id = 1, Label = "sales" }
         );
     }
 }

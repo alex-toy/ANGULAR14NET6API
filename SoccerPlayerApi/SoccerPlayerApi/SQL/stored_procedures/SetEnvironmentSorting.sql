@@ -14,7 +14,7 @@ BEGIN
     BEGIN TRY
 		IF OBJECT_ID('tempdb..#environmentSortingIds') IS NOT NULL DROP TABLE #environmentSortingIds;
 		SELECT 
-			ESRT.Id AS EnvironmentSortingId, ESRT.TimeLevelId, T_AGG_S.Value AS StartTimeLabel, T_AGG_E.Value AS EndTimeLabel, 
+			ESRT.Id AS EnvironmentSortingId, ESRT.TimeLevelId, T_AGG_S.Label AS StartTimeLabel, T_AGG_E.Label AS EndTimeLabel, 
 			ESRT.Aggregator, ESRT.DataTypeId, ESRT.OrderIndex, ESRT.IsAscending
 		INTO #environmentSortingIds
 		FROM environmentSortings ESRT

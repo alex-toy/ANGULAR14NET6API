@@ -31,8 +31,7 @@ export class HistoryComponent {
   isEditing: { [key: string]: boolean } = {};
 
   scopes: EnvironmentScopeDto[] = [];
-  selectedScope: EnvironmentScopeDto | null = null; // The selected scope
-  scopeData: GetScopeDataDto[] = [];
+  selectedScope: EnvironmentScopeDto | null = null;
   scopeDataByDataType: scopeByDataTypeDto = {};
   types: DataTypeDto[] = [];
 
@@ -202,15 +201,6 @@ export class HistoryComponent {
   }
 
   fetchScopeData(): void {
-    this.historyService.getScopeData(this.selectedScope!).subscribe({
-      next: (response: ResponseDto<GetScopeDataDto[]>) => {
-        this.scopeData = response.data;
-      },
-      error: (err) => {
-        console.error('Error fetching scope data', err);
-      }
-    });
-
     this.historyService.getScopeDataTest(this.selectedScope!).subscribe({
       next: (response) => {
         this.scopeDataByDataType = response.data;

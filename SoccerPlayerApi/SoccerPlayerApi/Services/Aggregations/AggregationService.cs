@@ -38,7 +38,7 @@ public class AggregationService : IAggregationService
             Aggregation? motherAggregation = _context.Aggregations.Include(x => x.Level).FirstOrDefault(x => x.Id == aggregation.MotherAggregationId);
             if (motherAggregation is null) throw new Exception("invalid mother aggregation");
             
-            if (motherAggregation.LevelId != level.AncestorId) throw new Exception("invalid ancestor level");
+            if (motherAggregation.LevelId != level.FatherId) throw new Exception("invalid ancestor level");
         }
 
         EntityEntry<Aggregation> entity = await _context.Aggregations.AddAsync(new Aggregation
@@ -54,7 +54,7 @@ public class AggregationService : IAggregationService
     public async Task<IEnumerable<GetAggregationDto>> GetMotherAggregations(int levelId)
     {
         var result = from agg in _context.Aggregations
-                     join lv in _context.Levels on agg.LevelId equals lv.AncestorId
+                     join lv in _context.Levels on agg.LevelId equals lv.FatherId
                      where lv.Id == levelId
                      select new GetAggregationDto
                      {
