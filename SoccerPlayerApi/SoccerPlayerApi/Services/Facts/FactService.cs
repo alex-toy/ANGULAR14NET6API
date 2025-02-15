@@ -5,6 +5,7 @@ using SoccerPlayerApi.Bos;
 using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
+using SoccerPlayerApi.Dtos.Structure;
 using SoccerPlayerApi.Entities.Environments;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
@@ -174,6 +175,35 @@ public class FactService : IFactService
         }
 
         return await resultQuery.ToListAsync();
+    }
+
+    public async Task<Dictionary<int, List<GetScopeDataDto>>> GetScopeDataTest(EnvironmentScopeDto scope)
+    {
+        int dimensionCount = _context.Dimensions.Count();
+
+        if (dimensionCount == 0) throw new Exception("no dimensions exist");
+
+        IQueryable<GetScopeDataDto> resultQuery;
+        if (dimensionCount == 4)
+        {
+            resultQuery = GetScopeDataFor_4_Dimensions(scope);
+        }
+        else if (dimensionCount == 3)
+        {
+            resultQuery = GetScopeDataFor_3_Dimensions(scope);
+        }
+        else if (dimensionCount == 2)
+        {
+            resultQuery = GetScopeDataFor_2_Dimensions(scope);
+        }
+        else
+        {
+            resultQuery = GetScopeDataFor_1_Dimensions(scope);
+        }
+
+        var facts = await resultQuery.ToListAsync();
+
+        return facts.ToLookup(f => f.DataTypeId).ToDictionary(group => group.Key, group => group.ToList());
     }
 
     public async Task<IEnumerable<FactDto>> GetFacts(GetFactFilterDto filter)
@@ -461,7 +491,7 @@ public class FactService : IFactService
                           select new GetScopeDataDto
                           {
                               FactId = d1.FactId,
-                              TypeId = d1.TypeId,
+                              DataTypeId = d1.TypeId,
                               TypeLabel = d1.TypeLabel,
                               Amount = d1.Amount,
                               AggregationIds = new() { d1.AggId },
@@ -492,7 +522,7 @@ public class FactService : IFactService
                           select new GetScopeDataDto
                           {
                               FactId = d1.FactId,
-                              TypeId = d1.TypeId,
+                              DataTypeId = d1.TypeId,
                               TypeLabel = d1.TypeLabel,
                               Amount = d1.Amount,
                               AggregationIds = new() { d1.AggId, d2.AggId },
@@ -526,7 +556,7 @@ public class FactService : IFactService
                           select new GetScopeDataDto
                           {
                               FactId = d1.FactId,
-                              TypeId = d1.TypeId,
+                              DataTypeId = d1.TypeId,
                               TypeLabel = d1.TypeLabel,
                               Amount = d1.Amount,
                               AggregationIds = new() { d1.AggId, d2.AggId, d3.AggId },
@@ -563,7 +593,7 @@ public class FactService : IFactService
                           select new GetScopeDataDto
                           {
                               FactId = d1.FactId,
-                              TypeId = d1.TypeId,
+                              DataTypeId = d1.TypeId,
                               TypeLabel = d1.TypeLabel,
                               Amount = d1.Amount,
                               AggregationIds = new() { d1.AggId, d2.AggId, d3.AggId, d4.AggId },

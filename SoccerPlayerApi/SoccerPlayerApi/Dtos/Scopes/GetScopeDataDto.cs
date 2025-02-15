@@ -3,7 +3,7 @@
 public class GetScopeDataDto
 {
     public int FactId { get; set; }
-    public int TypeId { get; set; }
+    public int DataTypeId { get; set; }
     public string TypeLabel { get; set; }
     public decimal Amount { get; set; }
     public TimeDimensionDto TimeDimension { get; set; }

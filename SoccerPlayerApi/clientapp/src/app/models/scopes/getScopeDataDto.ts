@@ -2,7 +2,7 @@ import { TimeDimensionDto } from "./timeDimensionDto";
 
 export interface GetScopeDataDto {
     factId: number;
-    typeId: number;
+    dataTypeId: number;
     typeLabel: string;
     amount: number;
     timeDimension: TimeDimensionDto ;

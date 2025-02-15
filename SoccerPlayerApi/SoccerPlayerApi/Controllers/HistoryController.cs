@@ -40,6 +40,20 @@ public class HistoryController
         return new ResponseDto<IEnumerable<GetScopeDataDto>> { Data = facts, IsSuccess = true };
     }
 
+    [HttpPost("scopedata")]
+    public async Task<ResponseDto<Dictionary<int, List<GetScopeDataDto>>>> GetScopeDataTest(EnvironmentScopeDto scope)
+    {
+        try
+        {
+            Dictionary<int, List<GetScopeDataDto>> facts = await _factService.GetScopeDataTest(scope);
+            return new ResponseDto<Dictionary<int, List<GetScopeDataDto>>> { Data = facts, IsSuccess = true, Count = facts.Count };
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDto<Dictionary<int, List<GetScopeDataDto>>> { IsSuccess = false, Count = 0, Message = ex.Message };
+        }
+    }
+
     [HttpGet("timeaggregations/{levelId}")]
     public async Task<ResponseDto<IEnumerable<TimeAggregationDto>>> GetTimeAggregations(int levelId)
     {

@@ -19,6 +19,7 @@ import { TimeAggregationDto } from '../models/facts/timeAggregationDto';
 import { DataTypeDto } from '../models/facts/DataTypeDto';
 import { GetLevelDto } from '../models/levels/getLevelDto';
 import { EnvironmentScopeDto } from '../models/scopes/environmentScopeDto';
+import { scopeByDataTypeDto } from '../models/scopes/scopeByDataTypeDto';
 
 @Component({
   selector: 'app-history',
@@ -32,6 +33,7 @@ export class HistoryComponent {
   scopes: EnvironmentScopeDto[] = [];
   selectedScope: EnvironmentScopeDto | null = null; // The selected scope
   scopeData: GetScopeDataDto[] = [];
+  scopeDataByDataType: scopeByDataTypeDto = {};
   types: DataTypeDto[] = [];
 
   filterMode: string = 'dimensions';
@@ -65,7 +67,6 @@ export class HistoryComponent {
   ngOnInit(): void {
     this.fetchTimeLevels();
     this.fetchSettings();
-    this.fetchScopes();
     this.fetchDimensions();
     this.fetchDimensionLevels();
     this.fetchEnvironments();
@@ -209,6 +210,15 @@ export class HistoryComponent {
         console.error('Error fetching scope data', err);
       }
     });
+
+    this.historyService.getScopeDataTest(this.selectedScope!).subscribe({
+      next: (response) => {
+        this.scopeDataByDataType = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching scope data', err);
+      }
+    });
   }
 
   fetchTimeAggregations(): void {
@@ -235,8 +245,9 @@ export class HistoryComponent {
     });
   }
 
-  getAmountForTypeAndTime(typeId: number, year: number): number | null {
-    const item = this.scopeData.find(data => data.typeId === typeId && data.timeDimension.timeAggregationId === year);
+  getAmountForTypeAndTime(typeId: number, timeAggregationId: number): number | null {
+    if (this.scopeDataByDataType[typeId] === undefined) return 0;
+    const item = this.scopeDataByDataType[typeId].find(data => data.timeDimension.timeAggregationId === timeAggregationId);
     return item ? item.amount : 0;
   }
 
@@ -275,18 +286,17 @@ export class HistoryComponent {
   saveAmount(typeId: number, timeLabel: TimeAggregationDto, event: any): void {
     const newAmount = +event.target.value;
     if (newAmount !== this.getAmountForTypeAndTime(typeId, timeLabel.timeAggregationId)) {
-      let scope : GetScopeDataDto | null = this.scopeData.find(s => s.timeDimension.timeAggregationId == timeLabel.timeAggregationId && s.typeId == typeId) || null;
+      let scope : GetScopeDataDto | null = this.scopeDataByDataType[typeId].find(s => s.timeDimension.timeAggregationId == timeLabel.timeAggregationId) || null;
       if (scope == null) {
         // a refaire !!!!!!!!!
         const newFact = new FactCreateDto(
           newAmount, typeId, 
           timeLabel.timeAggregationId, 
-          this.scopeData[0].aggregationIds[0],
-          this.scopeData[0].aggregationIds[1] ?? null,
-          this.scopeData[0].aggregationIds[2] ?? null,
-          this.scopeData[0].aggregationIds[3] ?? null
+          this.scopeDataByDataType[typeId][0].aggregationIds[0],
+          this.scopeDataByDataType[typeId][0].aggregationIds[1] ?? null,
+          this.scopeDataByDataType[typeId][0].aggregationIds[2] ?? null,
+          this.scopeDataByDataType[typeId][0].aggregationIds[3] ?? null
         );
-        console.log(newFact)
         this.factService.createFact(newFact).subscribe({
           next: (response) => {
             this.fetchScopeData();

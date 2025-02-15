@@ -17,4 +17,5 @@ public interface IFactService
     Task<IEnumerable<TimeAggregationDto>> GetTimeAggregations(int levelId);
     Task<IEnumerable<DataTypeDto>> GetDataTypes();
     Task<bool> UpdateFactAsync(FactUpdateDto fact);
+    Task<Dictionary<int, List<GetScopeDataDto>>> GetScopeDataTest(EnvironmentScopeDto scope);
 }
