@@ -1,10 +1,9 @@
-﻿using SoccerPlayerApi.Dtos.Environment;
-using SoccerPlayerApi.Entities.Environments;
+﻿using SoccerPlayerApi.Dtos.Frames;
 using SoccerPlayerApi.Entities.Structure;
 
-namespace SoccerPlayerApi.Entities;
+namespace SoccerPlayerApi.Entities.Frames;
 
-public class Environment : Entity
+public class Frame : Entity
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -22,21 +21,21 @@ public class Environment : Entity
     public int? LevelIdFilter4 { get; set; }
     public Level? LevelFilter4 { get; set; }
 
-    public List<EnvironmentScope> EnvironmentScopes { get; set; }
+    public List<FrameScope> FrameScopes { get; set; }
 
-    public List<EnvironmentSorting> EnvironmentSortings { get; set; }
+    public List<FrameSorting> FrameSortings { get; set; }
 
-    public void Map(EnvironmentUpdateDto environment)
+    public void Map(FrameUpdateDto frame)
     {
-       Name = environment.Name;
-       Description = environment.Description;
-       LevelIdFilter1 = environment.LevelIdFilter1;
-       LevelIdFilter2 = environment.LevelIdFilter2;
-       LevelIdFilter3 = environment.LevelIdFilter3;
-       LevelIdFilter4 = environment.LevelIdFilter4;
+        Name = frame.Name;
+        Description = frame.Description;
+        LevelIdFilter1 = frame.LevelIdFilter1;
+        LevelIdFilter2 = frame.LevelIdFilter2;
+        LevelIdFilter3 = frame.LevelIdFilter3;
+        LevelIdFilter4 = frame.LevelIdFilter4;
     }
 
-    public EnvironmentDto ToDto() => new EnvironmentDto
+    public FrameDto ToDto() => new FrameDto
     {
         Id = Id,
         Name = Name,
@@ -58,6 +57,6 @@ public class Environment : Entity
         LevelIdFilter4 = LevelIdFilter4,
         LevelLabel4 = LevelFilter4?.Label ?? string.Empty,
 
-        EnvironmentSortings = EnvironmentSortings.Select(x => x.ToDto()).ToList(),
+        FrameSortings = FrameSortings.Select(x => x.ToDto()).ToList(),
     };
 }

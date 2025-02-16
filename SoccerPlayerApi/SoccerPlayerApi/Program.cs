@@ -4,11 +4,12 @@ using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
 using SoccerPlayerApi.Services.Aggregations;
 using SoccerPlayerApi.Services.Dimensions;
-using SoccerPlayerApi.Services.Environments;
 using SoccerPlayerApi.Services.Facts;
+using SoccerPlayerApi.Services.Frames;
 using SoccerPlayerApi.Services.Imports;
 using SoccerPlayerApi.Services.Levels;
 using SoccerPlayerApi.Services.Settings;
+using SoccerPlayerApi.Services.Simulations;
 
 namespace SoccerPlayerApi;
 
@@ -33,9 +34,10 @@ public class Program
         builder.Services.AddScoped<IAggregationService, AggregationService>();
         builder.Services.AddScoped<IFactService, FactService>();
         builder.Services.AddScoped<ILevelService, LevelService>();
-        builder.Services.AddScoped<IEnvironmentService, EnvironmentService>();
+        builder.Services.AddScoped<IFrameService, FrameService>();
         builder.Services.AddScoped<ISettingsService, SettingsService>();
         builder.Services.AddScoped<IImportService, ImportService>();
+        builder.Services.AddScoped<ISimulationService, SimulationService>();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -65,7 +67,7 @@ public class Program
             CreateType(dbContext, "ImportFactType");
             CreateStoredProcedure(dbContext, "GetTimeSeries");
             CreateStoredProcedure(dbContext, "CreateImportFacts");
-            CreateStoredProcedure(dbContext, "SetEnvironmentSorting");
+            CreateStoredProcedure(dbContext, "SetFrameSorting");
             CreateStoredProcedure(dbContext, "create_time_aggregations");
             CreateStoredProcedure(dbContext, "generate_dates");
 
@@ -127,6 +129,7 @@ public class Program
 
     public static void ExecuteCreate_time_aggregations(ApplicationDbContext dbContext)
     {
-        dbContext.Database.ExecuteSqlRaw("EXEC create_time_aggregations;");
+        // erruer quand executé une deuxième fois
+        //dbContext.Database.ExecuteSqlRaw("EXEC create_time_aggregations;");
     }
 }

@@ -1,14 +1,14 @@
-CREATE OR ALTER PROCEDURE SetEnvironmentSorting
-    @EnvironmentId INT
+CREATE OR ALTER PROCEDURE SetFrameSorting
+    @frameId INT
 AS
 ------------------------------------------------------------------------
---declare @EnvironmentId int = 11;
+--declare @frameId int = 11;
 ------------------------------------------------------------------------
 BEGIN
 	DECLARE @inserted_id INT;
 
     INSERT INTO ExecutionLogs (ProcedureName, ParameterValues, StartTime) 
-	VALUES ('SetEnvironmentSorting', CAST(@EnvironmentId AS NVARCHAR(MAX)), GETDATE());
+	VALUES ('SetFrameSorting', CAST(@frameId AS NVARCHAR(MAX)), GETDATE());
 	SET @inserted_id = SCOPE_IDENTITY();
 
     BEGIN TRY
@@ -20,11 +20,11 @@ BEGIN
 		FROM environmentSortings ESRT
 		JOIN TimeAggregations T_AGG_S ON T_AGG_S.Id = ESRT.StartTimeSpan
 		JOIN TimeAggregations T_AGG_E ON T_AGG_E.Id = ESRT.EndTimeSpan 
-		WHERE environmentId = @EnvironmentId;
+		WHERE frameId = @frameId;
 		
 		IF OBJECT_ID('tempdb..#timeSeries') IS NOT NULL DROP TABLE #timeSeries;
 		CREATE TABLE #timeSeries (TimeLabel NVARCHAR(100), TimeLevelId INT, Amount DECIMAL(18, 2), DataTypeId INT, EnvironmentScopeId INT);
-		EXEC GetTimeSeries @EnvironmentId;
+		EXEC GetTimeSeries @frameId;
 
 		IF OBJECT_ID('tempdb..#aggregatedValues') IS NOT NULL DROP TABLE #aggregatedValues;
 		SELECT 

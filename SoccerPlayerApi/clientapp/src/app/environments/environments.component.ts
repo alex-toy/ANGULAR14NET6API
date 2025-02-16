@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { EnvironmentService } from '../services/environment.service';
 import { ResponseDto } from '../models/responseDto';
-import { EnvironmentDto } from '../models/environments/environmentDto';
+import { EnvironmentDto as FrameDto } from '../models/environments/environmentDto';
 import { DimensionsService } from '../services/dimensions.service';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { EnvironmentUpdateDto } from '../models/environments/environmentUpdateDto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlgorithmDto } from '../models/forecasts/algorithms/algorithmDto';
-import { SimulationCreateDto } from '../models/forecasts/simulationCreateDto';
+import { FrameSimulationCreateDto } from '../models/forecasts/FrameSimulationCreateDto';
+import { SimulationService } from '../services/simulation.service';
 
 @Component({
   selector: 'app-environments',
@@ -15,18 +16,20 @@ import { SimulationCreateDto } from '../models/forecasts/simulationCreateDto';
   styleUrls: ['./environments.component.css']
 })
 export class EnvironmentsComponent {
-  environments: EnvironmentDto[] = [];
+  environments: FrameDto[] = [];
   dimensions: DimensionDto[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
   isSimulationModalOpen: boolean = false;
-  algorithms : AlgorithmDto[] = []
+  algorithms : AlgorithmDto[] = [];
+  selectedAlgorithm: AlgorithmDto | null = null;
 
-  simulationCreateDto: SimulationCreateDto = new SimulationCreateDto(0, 0, [], []);
+  simulationCreateDto: FrameSimulationCreateDto = new FrameSimulationCreateDto(0, 0, []);
 
   constructor(
     private environmentService: EnvironmentService,
     private dimensionService: DimensionsService,
+    private simulationService: SimulationService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -34,6 +37,7 @@ export class EnvironmentsComponent {
   ngOnInit(): void {
     this.fetchDimensions();
     this.fetchEnvironments();
+    this.fetchAlgorithms();
   }
 
   fetchDimensions(): void {
@@ -47,10 +51,21 @@ export class EnvironmentsComponent {
     });
   }
 
+  fetchAlgorithms(): void {
+    this.simulationService.getAlgorithms().subscribe({
+      next: (response: ResponseDto<AlgorithmDto[]>) => {
+        this.algorithms = response.data;
+      },
+      error: (err) => {
+        console.error('Error fetching levels', err);
+      }
+    });
+  }
+
   fetchEnvironments(): void {
     this.isLoading = true;
     this.environmentService.getEnvironments().subscribe({
-      next: (response: ResponseDto<EnvironmentDto[]>) => {
+      next: (response: ResponseDto<FrameDto[]>) => {
         this.environments = response.data;
         this.isLoading = false;
       },
@@ -66,7 +81,6 @@ export class EnvironmentsComponent {
     if (confirm('Are you sure you want to delete this environment?')) {
       this.environmentService.deleteEnvironment(id).subscribe({
         next: () => {
-          // Filter out the deleted environment from the list
           this.environments = this.environments.filter(env => env.id !== id);
         },
         error: (err) => {
@@ -78,8 +92,7 @@ export class EnvironmentsComponent {
   }
 
   updateEnvironment(environementId: number): void {
-
-    let environment: EnvironmentDto = this.environments.find(e => e.id === environementId)!;
+    let environment: FrameDto = this.environments.find(e => e.id === environementId)!;
     let updateEnvironment = { ...environment } as EnvironmentUpdateDto;
 
     this.environmentService.updateEnvironment(updateEnvironment).subscribe({
@@ -93,20 +106,21 @@ export class EnvironmentsComponent {
     });
   }
 
-  openSimulationModal(): void {
+  openSimulationModal(frameId: number): void {
+    this.simulationCreateDto.frameId = frameId;
     this.isSimulationModalOpen = true;
   }
 
   closeSimulationModal(): void {
+    this.simulationCreateDto.frameId = 0;
     this.isSimulationModalOpen = false;
   }
 
   createSimulation(): void {
-    const simulationData = new SimulationCreateDto(
-      this.simulationCreateDto.environmentScopeId,
+    const simulationData = new FrameSimulationCreateDto(
+      this.simulationCreateDto.frameId,
       this.simulationCreateDto.algorithmId,
-      this.simulationCreateDto.values,
-      this.simulationCreateDto.simulationFacts
+      this.simulationCreateDto.values
     );
 
     // call service

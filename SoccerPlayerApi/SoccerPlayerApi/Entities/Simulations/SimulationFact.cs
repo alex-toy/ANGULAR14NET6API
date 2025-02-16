@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace SoccerPlayerApi.Entities.Forecasts;
+namespace SoccerPlayerApi.Entities.Simulations;
 
 public class SimulationFact : Entity
 {

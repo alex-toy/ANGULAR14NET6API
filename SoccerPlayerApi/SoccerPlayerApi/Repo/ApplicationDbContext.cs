@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoccerPlayerApi.Entities;
-using SoccerPlayerApi.Entities.Environments;
-using SoccerPlayerApi.Entities.Forecasts;
-using SoccerPlayerApi.Entities.Forecasts.Algorithms;
+using SoccerPlayerApi.Entities.Frames;
+using SoccerPlayerApi.Entities.Simulations;
+using SoccerPlayerApi.Entities.Simulations.Algorithms;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Utils;
 
@@ -24,37 +24,24 @@ public class ApplicationDbContext : DbContext
 
         ConfigureDimension(builder);
 
-        builder.Entity<Aggregation>()
-            .HasOne(l => l.MotherAggregation)
-            .WithMany()
-            .HasForeignKey(l => l.MotherAggregationId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<TimeAggregation>()
-            .HasOne(l => l.MotherAggregation)
-            .WithMany()
-            .HasForeignKey(l => l.MotherAggregationId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<TimeAggregation>()
-            .HasOne(l => l.TimeLevel)
-            .WithMany()
-            .HasForeignKey(l => l.TimeLevelId)
-            .OnDelete(DeleteBehavior.NoAction);
+        ConfigureAggregations(builder);
 
         ConfigureEnvironment(builder);
 
-        ConfigureEnvironmentScope(builder);
+        ConfigureFrameScope(builder);
 
+        ConfigureFrameSimulation(builder);
+
+        ConfigureSettings(builder);
+
+        SeedData(builder);
+    }
+
+    private static void ConfigureSettings(ModelBuilder builder)
+    {
         builder.Entity<Setting>()
                .HasIndex(s => s.Key)
                .IsUnique();
-
-        builder.Entity<Aggregation>()
-            .HasIndex(d => d.Label)
-            .IsUnique();
-
-        SeedData(builder);
     }
 
     public DbSet<TimeDimension> DateSeries { get; set; }
@@ -65,16 +52,16 @@ public class ApplicationDbContext : DbContext
     public DbSet<TimeAggregation> TimeAggregations { get; set; }
     public DbSet<Level> Levels { get; set; }
     public DbSet<TimeLevel> TimeLevels { get; set; }
-    public DbSet<Entities.Environment> Environments { get; set; }
+    public DbSet<Frame> Environments { get; set; }
     public DbSet<Setting> Settings { get; set; }
-    public DbSet<EnvironmentScope> EnvironmentScopes { get; set; }
-    public DbSet<EnvironmentSorting> EnvironmentSortings { get; set; }
+    public DbSet<FrameScope> EnvironmentScopes { get; set; }
+    public DbSet<FrameSorting> EnvironmentSortings { get; set; }
 
     // forecast
     public DbSet<Algorithm> Algorithms { get; set; }
     public DbSet<AlgorithmParameterKey> AlgorithmParameterKeys { get; set; }
     public DbSet<AlgorithmParameterValue> AlgorithmParameterValues { get; set; }
-    public DbSet<Simulation> Simulations { get; set; }
+    public DbSet<FrameSimulation> Simulations { get; set; }
     public DbSet<SimulationFact> SimulationFacts { get; set; }
 
     private static void ConfigureDimension(ModelBuilder builder)
@@ -162,76 +149,119 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
     }
 
+    private static void ConfigureAggregations(ModelBuilder builder)
+    {
+        builder.Entity<Aggregation>()
+            .HasOne(l => l.MotherAggregation)
+            .WithMany()
+            .HasForeignKey(l => l.MotherAggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<Aggregation>()
+            .HasIndex(d => d.Label)
+            .IsUnique();
+
+        builder.Entity<TimeAggregation>()
+            .HasOne(l => l.MotherAggregation)
+            .WithMany()
+            .HasForeignKey(l => l.MotherAggregationId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<TimeAggregation>()
+            .HasOne(l => l.TimeLevel)
+            .WithMany()
+            .HasForeignKey(l => l.TimeLevelId)
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
     private static void ConfigureEnvironment(ModelBuilder builder)
     {
-        builder.Entity<Entities.Environment>()
+        builder.Entity<Frame>()
             .HasOne(e => e.LevelFilter1)
-            .WithMany(l => l.Environment1s)
+            .WithMany(l => l.Frame1s)
             .HasForeignKey(e => e.LevelIdFilter1)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Entities.Environment>()
+        builder.Entity<Frame>()
             .HasOne(e => e.LevelFilter2)
-            .WithMany(l => l.Environment2s)
+            .WithMany(l => l.Frame2s)
             .HasForeignKey(e => e.LevelIdFilter2)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Entities.Environment>()
+        builder.Entity<Frame>()
             .HasOne(e => e.LevelFilter3)
-            .WithMany(l => l.Environment3s)
+            .WithMany(l => l.Frame3s)
             .HasForeignKey(e => e.LevelIdFilter3)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Entities.Environment>()
+        builder.Entity<Frame>()
             .HasOne(e => e.LevelFilter4)
-            .WithMany(l => l.Environment4s)
+            .WithMany(l => l.Frame4s)
             .HasForeignKey(e => e.LevelIdFilter4)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<EnvironmentSorting>()
-            .HasOne(e => e.Environment)
+        builder.Entity<FrameSorting>()
+            .HasOne(e => e.Frame)
             .WithMany()
-            .HasForeignKey(e => e.EnvironmentId)
+            .HasForeignKey(e => e.FrameId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<Entities.Environment>()
-            .HasMany(l => l.EnvironmentSortings)
-            .WithOne(l => l.Environment)
-            .HasForeignKey(l => l.EnvironmentId)
+        builder.Entity<Frame>()
+            .HasMany(l => l.FrameSortings)
+            .WithOne(l => l.Frame)
+            .HasForeignKey(l => l.FrameId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<EnvironmentSorting>()
+        builder.Entity<FrameSorting>()
             .HasOne(e => e.DataType)
             .WithMany()
             .HasForeignKey(e => e.DataTypeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private static void ConfigureEnvironmentScope(ModelBuilder builder)
+    private static void ConfigureFrameScope(ModelBuilder builder)
     {
-        builder.Entity<EnvironmentScope>()
+        builder.Entity<FrameScope>()
             .HasOne(e => e.Dimension1Aggregation)
             .WithMany()
             .HasForeignKey(e => e.Dimension1AggregationId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<EnvironmentScope>()
+        builder.Entity<FrameScope>()
             .HasOne(e => e.Dimension2Aggregation)
             .WithMany()
             .HasForeignKey(e => e.Dimension2AggregationId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<EnvironmentScope>()
+        builder.Entity<FrameScope>()
             .HasOne(e => e.Dimension3Aggregation)
             .WithMany()
             .HasForeignKey(e => e.Dimension3AggregationId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<EnvironmentScope>()
+        builder.Entity<FrameScope>()
             .HasOne(e => e.Dimension4Aggregation)
             .WithMany()
             .HasForeignKey(e => e.Dimension4AggregationId)
             .OnDelete(DeleteBehavior.NoAction);
+    }
+
+    private static void ConfigureFrameSimulation(ModelBuilder builder)
+    {
+        builder.Entity<FrameSimulation>()
+            .HasOne(e => e.Frame)
+            .WithMany()
+            .HasForeignKey(e => e.FrameId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<FrameSimulation>()
+            .HasOne(e => e.Algorithm)
+            .WithMany()
+            .HasForeignKey(e => e.AlgorithmId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<FrameSimulation>()
+            .HasMany(e => e.Values);
     }
 
     private static void SeedData(ModelBuilder builder)

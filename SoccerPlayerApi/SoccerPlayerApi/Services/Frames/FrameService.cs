@@ -1,104 +1,104 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using SoccerPlayerApi.Dtos.Environment;
+using SoccerPlayerApi.Dtos.Frames;
 using SoccerPlayerApi.Dtos.Scopes;
-using SoccerPlayerApi.Entities.Environments;
+using SoccerPlayerApi.Entities.Frames;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Services.Facts;
 using System.Data;
 
-namespace SoccerPlayerApi.Services.Environments;
+namespace SoccerPlayerApi.Services.Frames;
 
-public class EnvironmentService : IEnvironmentService
+public class FrameService : IFrameService
 {
     private readonly ApplicationDbContext _context;
     private readonly IFactService _factService;
     private readonly string _connectionString;
 
-    public EnvironmentService(ApplicationDbContext context, IFactService factService, IConfiguration configuration)
+    public FrameService(ApplicationDbContext context, IFactService factService, IConfiguration configuration)
     {
         _context = context;
         _factService = factService;
         _connectionString = configuration.GetConnectionString("default")!;
     }
 
-    public async Task<EnvironmentDto?> GetEnvironmentById(int id)
+    public async Task<FrameDto?> GetFrameById(int id)
     {
-        Entities.Environment? environment = await _context.Environments
+        Frame? environment = await _context.Environments
             .Include(e => e.LevelFilter1)
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
-            .Include(e => e.EnvironmentSortings)
+            .Include(e => e.FrameSortings)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         return environment?.ToDto();
     }
 
-    public async Task<IEnumerable<EnvironmentDto>> GetEnvironments()
+    public async Task<IEnumerable<FrameDto>> GetFrames()
     {
-        IEnumerable<Entities.Environment> environments = await _context.Environments
+        IEnumerable<Frame> environments = await _context.Environments
             .Include(e => e.LevelFilter1)
             .Include(e => e.LevelFilter2)
             .Include(e => e.LevelFilter3)
             .Include(e => e.LevelFilter4)
-            .Include(e => e.EnvironmentSortings)
+            .Include(e => e.FrameSortings)
             .ToListAsync();
 
         return environments.Select(x => x.ToDto());
     }
 
-    public async Task<int> CreateEnvironment(EnvironmentCreateDto environmentDto)
+    public async Task<int> CreateFrame(FrameCreateDto environmentDto)
     {
         CheckDimensionsNotOverlapped(environmentDto);
 
-        Entities.Environment environmentDb = environmentDto.ToDb();
+        Frame environmentDb = environmentDto.ToDb();
 
-        EntityEntry<Entities.Environment> entity = await _context.Environments.AddAsync(environmentDb);
+        EntityEntry<Frame> entity = await _context.Environments.AddAsync(environmentDb);
         await _context.SaveChangesAsync();
         var environmentId = entity.Entity.Id;
 
         await CreateRelatedEnvironmentScopes(environmentDto, environmentId);
-        await CreateEnvironmentSortings(environmentDto.EnvironmentSortings, environmentId);
+        await CreateEnvironmentSortings(environmentDto.FrameSortings, environmentId);
 
         return environmentId;
     }
 
-    public async Task<bool> CreateEnvironmentSortings(IEnumerable<EnvironmentSortingDto> environmentSortings, int environmentId)
+    public async Task<bool> CreateEnvironmentSortings(IEnumerable<FrameSortingDto> environmentSortings, int environmentId)
     {
-        IEnumerable<EnvironmentSorting> environmentSortingDbs = environmentSortings.Select(es => es.ToDb(environmentId));
+        IEnumerable<FrameSorting> environmentSortingDbs = environmentSortings.Select(es => es.ToDb(environmentId));
 
         await _context.EnvironmentSortings.AddRangeAsync(environmentSortingDbs);
         await _context.SaveChangesAsync();
 
-        ExecuteSetEnvironmentSortingFor3Dimensions(environmentId);
+        ExecuteSetFrameSorting(environmentId);
 
         return true;
     }
 
     public async Task<bool> DeleteById(int id)
     {
-        Entities.Environment? entity = await _context.Environments.FirstOrDefaultAsync(x => x.Id == id);
+        Frame? entity = await _context.Environments.FirstOrDefaultAsync(x => x.Id == id);
         if (entity is not null) _context.Environments.Remove(entity);
         await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<int> UpdateAsync(EnvironmentUpdateDto environment)
+    public async Task<int> UpdateAsync(FrameUpdateDto environment)
     {
-        Entities.Environment? environmentDb = await _context.Environments.FirstOrDefaultAsync(x => x.Id == environment.Id);
+        Frame? environmentDb = await _context.Environments.FirstOrDefaultAsync(x => x.Id == environment.Id);
 
         if (environmentDb is null) return -1;
 
         environmentDb.Map(environment);
-        EntityEntry<Entities.Environment> entity = _context.Environments.Update(environmentDb);
+        EntityEntry<Frame> entity = _context.Environments.Update(environmentDb);
 
         await DeleteRelatedEnvironmentScopes(environment.Id);
         await CreateRelatedEnvironmentScopes(environment.ToCeateDto(), environment.Id);
 
         await DeleteEnvironmentSortings(environment.Id);
-        await CreateEnvironmentSortings(environment.EnvironmentSortings, environment.Id);
+        await CreateEnvironmentSortings(environment.FrameSortings, environment.Id);
 
         await _context.SaveChangesAsync();
         return entity.Entity.Id;
@@ -106,13 +106,13 @@ public class EnvironmentService : IEnvironmentService
 
     private async Task<bool> DeleteEnvironmentSortings(int environmentId)
     {
-        IQueryable<EnvironmentSorting>? entity = _context.EnvironmentSortings.Where(x => x.EnvironmentId == environmentId);
+        IQueryable<FrameSorting>? entity = _context.EnvironmentSortings.Where(x => x.FrameId == environmentId);
         if (entity is not null) _context.EnvironmentSortings.RemoveRange(entity);
         await _context.SaveChangesAsync();
         return true;
     }
 
-    private void CheckDimensionsNotOverlapped(EnvironmentCreateDto environment)
+    private void CheckDimensionsNotOverlapped(FrameCreateDto environment)
     {
         int levelCount = 1;
         List<int> levelIds = new()
@@ -147,14 +147,14 @@ public class EnvironmentService : IEnvironmentService
         if (levelCount > dimensionIds) throw new Exception("dimensions are overlapping");
     }
 
-    private async Task CreateRelatedEnvironmentScopes(EnvironmentCreateDto environment, int environmentId)
+    private async Task CreateRelatedEnvironmentScopes(FrameCreateDto environment, int environmentId)
     {
         ScopeFilterDto filter = SetScopeFilter(environment);
-        IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopes(filter);
+        IEnumerable<FrameScopeDto> scopes = await _factService.GetScopes(filter);
 
-        IEnumerable<EnvironmentScope> environmentScopes = scopes.Select(s => new EnvironmentScope
+        IEnumerable<FrameScope> environmentScopes = scopes.Select(s => new FrameScope
         {
-            EnvironmentId = environmentId,
+            FrameId = environmentId,
 
             Dimension1Id = s.Dimension1Id,
             Dimension1AggregationId = s.Dimension1AggregationId,
@@ -175,13 +175,13 @@ public class EnvironmentService : IEnvironmentService
 
     private async Task<bool> DeleteRelatedEnvironmentScopes(int environmentId)
     {
-        List<EnvironmentScope>? entity = await _context.EnvironmentScopes.Where(x => x.EnvironmentId == environmentId).ToListAsync();
+        List<FrameScope>? entity = await _context.EnvironmentScopes.Where(x => x.FrameId == environmentId).ToListAsync();
         if (entity is not null) _context.EnvironmentScopes.RemoveRange(entity);
         await _context.SaveChangesAsync();
         return true;
     }
 
-    private static ScopeFilterDto SetScopeFilter(EnvironmentCreateDto environment)
+    private static ScopeFilterDto SetScopeFilter(FrameCreateDto environment)
     {
         ScopeFilterDto filter = new ScopeFilterDto()
         {
@@ -201,15 +201,15 @@ public class EnvironmentService : IEnvironmentService
         return filter;
     }
 
-    private void ExecuteSetEnvironmentSortingFor3Dimensions(int environmentId)
+    private void ExecuteSetFrameSorting(int environmentId)
     {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        using SqlCommand command = new SqlCommand("SetEnvironmentSorting", connection);
+        using SqlCommand command = new SqlCommand("SetFrameSorting", connection);
         command.CommandType = CommandType.StoredProcedure;
 
-        command.Parameters.Add(new SqlParameter("@EnvironmentId", SqlDbType.Int)).Value = environmentId;
+        command.Parameters.Add(new SqlParameter("@frameId", SqlDbType.Int)).Value = environmentId;
 
         _ = command.ExecuteNonQuery();
     }

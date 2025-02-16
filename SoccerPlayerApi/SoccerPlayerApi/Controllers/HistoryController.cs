@@ -20,28 +20,28 @@ public class HistoryController
     }
 
     [HttpPost("scopes")]
-    public async Task<ResponseDto<IEnumerable<EnvironmentScopeDto>>> GetScopes(ScopeFilterDto? filter)
+    public async Task<ResponseDto<IEnumerable<FrameScopeDto>>> GetScopes(ScopeFilterDto? filter)
     {
-        IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopes(filter);
-        return new ResponseDto<IEnumerable<EnvironmentScopeDto>> { Data = scopes, IsSuccess = true };
+        IEnumerable<FrameScopeDto> scopes = await _factService.GetScopes(filter);
+        return new ResponseDto<IEnumerable<FrameScopeDto>> { Data = scopes, IsSuccess = true };
     }
 
-    [HttpGet("scopesbyenvironmentid/{environmentId}")]
-    public async Task<ResponseDto<IEnumerable<EnvironmentScopeDto>>> GetScopesByEnvironmentId(int environmentId)
+    [HttpGet("scopesbyframeid/{frameId}")]
+    public async Task<ResponseDto<IEnumerable<FrameScopeDto>>> GetScopesByFrameId(int frameId)
     {
-        IEnumerable<EnvironmentScopeDto> scopes = await _factService.GetScopesByEnvironmentId(environmentId);
-        return new ResponseDto<IEnumerable<EnvironmentScopeDto>> { Data = scopes, IsSuccess = true };
+        IEnumerable<FrameScopeDto> scopes = await _factService.GetScopesByFrameId(frameId);
+        return new ResponseDto<IEnumerable<FrameScopeDto>> { Data = scopes, IsSuccess = true };
     }
 
     [HttpPost("data")]
-    public async Task<ResponseDto<IEnumerable<GetScopeDataDto>>> GetScopeData(EnvironmentScopeDto scope)
+    public async Task<ResponseDto<IEnumerable<GetScopeDataDto>>> GetScopeData(FrameScopeDto scope)
     {
         IEnumerable<GetScopeDataDto> facts = await _factService.GetScopeData(scope);
         return new ResponseDto<IEnumerable<GetScopeDataDto>> { Data = facts, IsSuccess = true };
     }
 
     [HttpPost("scopedata")]
-    public async Task<ResponseDto<Dictionary<int, List<GetScopeDataDto>>>> GetScopeDataTest(EnvironmentScopeDto scope)
+    public async Task<ResponseDto<Dictionary<int, List<GetScopeDataDto>>>> GetScopeDataTest(FrameScopeDto scope)
     {
         try
         {

@@ -1,8 +1,8 @@
 ﻿namespace SoccerPlayerApi.Dtos.Scopes;
 
-public class EnvironmentScopeDto
+public class FrameScopeDto
 {
-    public int EnvironmentId { get; set; }
+    public int FrameId { get; set; }
 
     public int Dimension1Id { get; set; }
     public int Dimension1AggregationId { get; set; }

@@ -1,10 +1,10 @@
-﻿using SoccerPlayerApi.Entities.Environments;
+﻿using SoccerPlayerApi.Entities.Frames;
 
-namespace SoccerPlayerApi.Dtos.Environment;
+namespace SoccerPlayerApi.Dtos.Frames;
 
-public class EnvironmentSortingDto
+public class FrameSortingDto
 {
-    public int EnvironmentId { get; set; }
+    public int FrameId { get; set; }
     public int OrderIndex { get; set; }
     public int Aggregator { get; set; } // 0 pour SUM, 1 pour AVERAGE, 3 pour Alphabetique
     public int StartTimeSpan { get; set; }
@@ -14,16 +14,16 @@ public class EnvironmentSortingDto
     public int DataTypeId { get; set; }
     public int TimeLevelId { get; set; }
 
-    public EnvironmentSorting ToDb(int environmentId)
+    public FrameSorting ToDb(int frameId)
     {
-        return new EnvironmentSorting
+        return new FrameSorting
         {
-            EnvironmentId = environmentId, 
+            FrameId = frameId,
             OrderIndex = OrderIndex,
-            Aggregator = Aggregator, 
-            StartTimeSpan = StartTimeSpan,      
-            EndTimeSpan = EndTimeSpan, 
-            IsAscending = IsAscending, 
+            Aggregator = Aggregator,
+            StartTimeSpan = StartTimeSpan,
+            EndTimeSpan = EndTimeSpan,
+            IsAscending = IsAscending,
             TimeSpanBase = TimeSpanBase,
             DataTypeId = DataTypeId,
             TimeLevelId = TimeLevelId,

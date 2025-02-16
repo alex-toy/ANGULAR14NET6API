@@ -1,12 +1,12 @@
-﻿using SoccerPlayerApi.Dtos.Environment;
+﻿using SoccerPlayerApi.Dtos.Frames;
 using SoccerPlayerApi.Entities.Structure;
 
-namespace SoccerPlayerApi.Entities.Environments;
+namespace SoccerPlayerApi.Entities.Frames;
 
-public class EnvironmentSorting : Entity
+public class FrameSorting : Entity
 {
-    public int EnvironmentId { get; set; }
-    public Environment Environment { get; set; }
+    public int FrameId { get; set; }
+    public Frame Frame { get; set; }
 
     public int OrderIndex { get; set; }
     public int Aggregator { get; set; } // 0 pour SUM, 1 pour AVERAGE, 3 pour Alphabetique
@@ -18,11 +18,11 @@ public class EnvironmentSorting : Entity
     public int DataTypeId { get; set; }
     public DataType DataType { get; set; }
 
-    public EnvironmentSortingDto ToDto()
+    public FrameSortingDto ToDto()
     {
         return new()
         {
-            EnvironmentId = EnvironmentId,
+            FrameId = FrameId,
             OrderIndex = OrderIndex,
             Aggregator = Aggregator,
             StartTimeSpan = StartTimeSpan,

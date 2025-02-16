@@ -1,11 +1,11 @@
 ﻿using SoccerPlayerApi.Entities.Structure;
 
-namespace SoccerPlayerApi.Entities.Environments;
+namespace SoccerPlayerApi.Entities.Frames;
 
-public class EnvironmentScope : Entity
+public class FrameScope : Entity
 {
-    public int EnvironmentId { get; set; }
-    public Environment Environment { get; set; }
+    public int FrameId { get; set; }
+    public Frame Frame { get; set; }
 
     public int Dimension1Id { get; set; }
     public int Dimension1AggregationId { get; set; }

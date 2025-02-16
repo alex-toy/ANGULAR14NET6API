@@ -28,7 +28,7 @@
 
     <!-- Environment Sorting Section -->
     <h3>Environment Sortings</h3>
-    <div *ngFor="let sorting of environment.environmentSortings; let i = index" class="form-group">
+    <div *ngFor="let sorting of environment.frameSortings; let i = index" class="form-group">
       <p><strong>Sorting {{ i + 1 }}</strong></p>
       <p>Aggregator: {{ sorting.aggregator === 0 ? 'SUM' : sorting.aggregator === 1 ? 'AVERAGE' : 'Alphabetical' }} 
       | Start Time: {{ sorting.startTimeSpan }} | End Time: {{ sorting.endTimeSpan }} 

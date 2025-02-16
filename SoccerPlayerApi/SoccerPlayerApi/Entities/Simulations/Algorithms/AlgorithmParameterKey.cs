@@ -1,4 +1,4 @@
-﻿namespace SoccerPlayerApi.Entities.Forecasts.Algorithms;
+﻿namespace SoccerPlayerApi.Entities.Simulations.Algorithms;
 
 public class AlgorithmParameterKey : Entity
 {

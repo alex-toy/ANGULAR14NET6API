@@ -11,11 +11,11 @@ public interface IFactService
     Task<DataTypeDto> CreateTypeAsync(DataTypeCreateDto fact);
     Task<IEnumerable<FactDto>> GetFacts(GetFactFilterDto filter);
     Task<IEnumerable<DataTypeDto>> GetFactTypes();
-    Task<IEnumerable<GetScopeDataDto>> GetScopeData(EnvironmentScopeDto scope);
-    Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto filter);
-    Task<IEnumerable<EnvironmentScopeDto>> GetScopesByEnvironmentId(int universeId);
+    Task<IEnumerable<GetScopeDataDto>> GetScopeData(FrameScopeDto scope);
+    Task<IEnumerable<FrameScopeDto>> GetScopes(ScopeFilterDto filter);
+    Task<IEnumerable<FrameScopeDto>> GetScopesByFrameId(int universeId);
     Task<IEnumerable<TimeAggregationDto>> GetTimeAggregations(int levelId);
     Task<IEnumerable<DataTypeDto>> GetDataTypes();
     Task<bool> UpdateFactAsync(FactUpdateDto fact);
-    Task<Dictionary<int, List<GetScopeDataDto>>> GetScopeDataTest(EnvironmentScopeDto scope);
+    Task<Dictionary<int, List<GetScopeDataDto>>> GetScopeDataTest(FrameScopeDto scope);
 }

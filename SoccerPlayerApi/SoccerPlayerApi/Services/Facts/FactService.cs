@@ -5,8 +5,7 @@ using SoccerPlayerApi.Bos;
 using SoccerPlayerApi.Dtos.Aggregations;
 using SoccerPlayerApi.Dtos.Facts;
 using SoccerPlayerApi.Dtos.Scopes;
-using SoccerPlayerApi.Dtos.Structure;
-using SoccerPlayerApi.Entities.Environments;
+using SoccerPlayerApi.Entities.Frames;
 using SoccerPlayerApi.Entities.Structure;
 using SoccerPlayerApi.Repo;
 using SoccerPlayerApi.Repo.Generics;
@@ -27,7 +26,7 @@ public class FactService : IFactService
         _dimensionService = dimensionService;
     }
 
-    public async Task<IEnumerable<EnvironmentScopeDto>> GetScopes(ScopeFilterDto scopeFilter)
+    public async Task<IEnumerable<FrameScopeDto>> GetScopes(ScopeFilterDto scopeFilter)
     {
         List<int> dimensionIds = _context.Dimensions.Select(d => d.Id).ToList();
         int dimensionCount = dimensionIds.Count();
@@ -38,30 +37,30 @@ public class FactService : IFactService
         AddDimension3Axis(scopeFilter.Dimension3Id, scopeFilter.Level3Id, axises);
         AddDimension4Axis(scopeFilter.Dimension4Id, scopeFilter.Level4Id, axises);
 
-        IQueryable<EnvironmentScopeDto> result = JoinAxes(axises, dimensionCount);
+        IQueryable<FrameScopeDto> result = JoinAxes(axises, dimensionCount);
 
-        List<EnvironmentScopeDto> distinctResult = await result.Distinct().ToListAsync();
-        return distinctResult ?? new List<EnvironmentScopeDto>();
+        List<FrameScopeDto> distinctResult = await result.Distinct().ToListAsync();
+        return distinctResult ?? new List<FrameScopeDto>();
     }
 
-    public async Task<IEnumerable<EnvironmentScopeDto>> GetScopesByEnvironmentId(int environmentId)
+    public async Task<IEnumerable<FrameScopeDto>> GetScopesByFrameId(int environmentId)
     {
-        List<EnvironmentScope>? environmentScopes = await _context.EnvironmentScopes
+        List<FrameScope>? environmentScopes = await _context.EnvironmentScopes
                                                                         .Include(es => es.Dimension1Aggregation)
                                                                         .Include(es => es.Dimension2Aggregation)
                                                                         .Include(es => es.Dimension3Aggregation)
                                                                         .Include(es => es.Dimension4Aggregation)
-                                                                        .Where(d => d.EnvironmentId == environmentId)
+                                                                        .Where(d => d.FrameId == environmentId)
                                                                         .ToListAsync();
 
         if (environmentScopes is null) throw new Exception("environment scopes don't exist");
 
-        IEnumerable<EnvironmentScopeDto> scopes = environmentScopes.Select(es => ExtractScopeDto(es));
+        IEnumerable<FrameScopeDto> scopes = environmentScopes.Select(es => ExtractScopeDto(es));
 
-        return scopes ?? new List<EnvironmentScopeDto>();
+        return scopes ?? new List<FrameScopeDto>();
     }
 
-    private static EnvironmentScopeDto ExtractScopeDto(EnvironmentScope es)
+    private static FrameScopeDto ExtractScopeDto(FrameScope es)
     {
         if (
             es.Dimension4Id is not null && es.Dimension4AggregationId is not null && es.Dimension4Aggregation is not null &&
@@ -69,7 +68,7 @@ public class FactService : IFactService
             es.Dimension2Id is not null && es.Dimension2AggregationId is not null && es.Dimension2Aggregation is not null
         )
         {
-            return new EnvironmentScopeDto
+            return new FrameScopeDto
             {
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
@@ -100,7 +99,7 @@ public class FactService : IFactService
             es.Dimension2Id is not null && es.Dimension2AggregationId is not null && es.Dimension2Aggregation is not null
         )
         {
-            return new EnvironmentScopeDto
+            return new FrameScopeDto
             {
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
@@ -123,7 +122,7 @@ public class FactService : IFactService
 
         if (es.Dimension2Id is not null && es.Dimension2AggregationId is not null && es.Dimension2Aggregation is not null)
         {
-            return new EnvironmentScopeDto
+            return new FrameScopeDto
             {
                 Dimension1Id = es.Dimension1Id,
                 Dimension1AggregationId = es.Dimension1AggregationId,
@@ -139,7 +138,7 @@ public class FactService : IFactService
             };
         }
 
-        return new EnvironmentScopeDto
+        return new FrameScopeDto
         {
             Dimension1Id = es.Dimension1Id,
             Dimension1AggregationId = es.Dimension1AggregationId,
@@ -150,7 +149,7 @@ public class FactService : IFactService
         };
     }
 
-    public async Task<IEnumerable<GetScopeDataDto>> GetScopeData(EnvironmentScopeDto scope)
+    public async Task<IEnumerable<GetScopeDataDto>> GetScopeData(FrameScopeDto scope)
     {
         int dimensionCount = _context.Dimensions.Count();
 
@@ -177,7 +176,7 @@ public class FactService : IFactService
         return await resultQuery.ToListAsync();
     }
 
-    public async Task<Dictionary<int, List<GetScopeDataDto>>> GetScopeDataTest(EnvironmentScopeDto scope)
+    public async Task<Dictionary<int, List<GetScopeDataDto>>> GetScopeDataTest(FrameScopeDto scope)
     {
         int dimensionCount = _context.Dimensions.Count();
 
@@ -360,7 +359,7 @@ public class FactService : IFactService
         return new DataTypeDto { Id = entityId.Entity.Id, Label = type.Label };
     }
 
-    private static IQueryable<EnvironmentScopeDto> JoinAxes(List<IQueryable<AxisDto>> axises, int dimensionCount)
+    private static IQueryable<FrameScopeDto> JoinAxes(List<IQueryable<AxisDto>> axises, int dimensionCount)
     {
         if (dimensionCount == 1) return JoinAxisFor1Dimensions(axises);
 
@@ -371,13 +370,13 @@ public class FactService : IFactService
         return JoinAxisFor4Dimensions(axises);
     }
 
-    private static IQueryable<EnvironmentScopeDto> JoinAxisFor4Dimensions(List<IQueryable<AxisDto>> axises)
+    private static IQueryable<FrameScopeDto> JoinAxisFor4Dimensions(List<IQueryable<AxisDto>> axises)
     {
         return from d1 in axises[0]
                join d2 in axises[1] on d1.FactId equals d2.FactId
                join d3 in axises[2] on d1.FactId equals d3.FactId
                join d4 in axises[3] on d1.FactId equals d4.FactId
-               select new EnvironmentScopeDto
+               select new FrameScopeDto
                {
                    Dimension1Id = d1.DimensionId,
                    Dimension1AggregationId = d1.AggregationId,
@@ -405,12 +404,12 @@ public class FactService : IFactService
                };
     }
 
-    private static IQueryable<EnvironmentScopeDto> JoinAxisFor3Dimensions(List<IQueryable<AxisDto>> axises)
+    private static IQueryable<FrameScopeDto> JoinAxisFor3Dimensions(List<IQueryable<AxisDto>> axises)
     {
         return from d1 in axises[0]
                join d2 in axises[1] on d1.FactId equals d2.FactId
                join d3 in axises[2] on d1.FactId equals d3.FactId
-               select new EnvironmentScopeDto
+               select new FrameScopeDto
                {
                    Dimension1Id = d1.DimensionId,
                    Dimension1AggregationId = d1.AggregationId,
@@ -432,11 +431,11 @@ public class FactService : IFactService
                };
     }
 
-    private static IQueryable<EnvironmentScopeDto> JoinAxisFor2Dimensions(List<IQueryable<AxisDto>> axises)
+    private static IQueryable<FrameScopeDto> JoinAxisFor2Dimensions(List<IQueryable<AxisDto>> axises)
     {
         return from d1 in axises[0]
                join d2 in axises[1] on d1.FactId equals d2.FactId
-               select new EnvironmentScopeDto
+               select new FrameScopeDto
                {
                    Dimension1Id = d1.DimensionId,
                    Dimension1AggregationId = d1.AggregationId,
@@ -452,10 +451,10 @@ public class FactService : IFactService
                };
     }
 
-    private static IQueryable<EnvironmentScopeDto> JoinAxisFor1Dimensions(List<IQueryable<AxisDto>> axises)
+    private static IQueryable<FrameScopeDto> JoinAxisFor1Dimensions(List<IQueryable<AxisDto>> axises)
     {
         return from d1 in axises[0]
-               select new EnvironmentScopeDto
+               select new FrameScopeDto
                {
                    Dimension1Id = d1.DimensionId,
                    Dimension1AggregationId = d1.AggregationId,
@@ -479,7 +478,7 @@ public class FactService : IFactService
         return facts.Count() > 0;
     }
 
-    private IQueryable<GetScopeDataDto> GetScopeDataFor_1_Dimensions(EnvironmentScopeDto scope)
+    private IQueryable<GetScopeDataDto> GetScopeDataFor_1_Dimensions(FrameScopeDto scope)
     {
         IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
         IQueryable<AxisBo> timeDimension = GetTimeDimensionAxis();
@@ -507,7 +506,7 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    private IQueryable<GetScopeDataDto> GetScopeDataFor_2_Dimensions(EnvironmentScopeDto scope)
+    private IQueryable<GetScopeDataDto> GetScopeDataFor_2_Dimensions(FrameScopeDto scope)
     {
         IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
         IQueryable<AxisBo> dim2 = GetDimension2Axis(scope);
@@ -538,7 +537,7 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(EnvironmentScopeDto scope)
+    private IQueryable<GetScopeDataDto> GetScopeDataFor_3_Dimensions(FrameScopeDto scope)
     {
         IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
         IQueryable<AxisBo> dim2 = GetDimension2Axis(scope);
@@ -572,7 +571,7 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    private IQueryable<GetScopeDataDto> GetScopeDataFor_4_Dimensions(EnvironmentScopeDto scope)
+    private IQueryable<GetScopeDataDto> GetScopeDataFor_4_Dimensions(FrameScopeDto scope)
     {
         IQueryable<AxisBo> dim1 = GetDimension1Axis(scope);
         IQueryable<AxisBo> dim2 = GetDimension2Axis(scope);
@@ -609,7 +608,7 @@ public class FactService : IFactService
         return resultQuery;
     }
 
-    private IQueryable<AxisBo> GetDimension1Axis(EnvironmentScopeDto scope)
+    private IQueryable<AxisBo> GetDimension1Axis(FrameScopeDto scope)
     {
         return from fa in _context.Facts
                join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
@@ -631,7 +630,7 @@ public class FactService : IFactService
                };
     }
 
-    private IQueryable<AxisBo> GetDimension2Axis(EnvironmentScopeDto scope)
+    private IQueryable<AxisBo> GetDimension2Axis(FrameScopeDto scope)
     {
         return from fa in _context.Facts
                join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
@@ -653,7 +652,7 @@ public class FactService : IFactService
                };
     }
 
-    private IQueryable<AxisBo> GetDimension3Axis(EnvironmentScopeDto scope)
+    private IQueryable<AxisBo> GetDimension3Axis(FrameScopeDto scope)
     {
         return from fa in _context.Facts
                join dt in _context.DataTypes on fa.DataTypeId equals dt.Id
@@ -675,7 +674,7 @@ public class FactService : IFactService
                };
     }
 
-    private IQueryable<AxisBo> GetDimension4Axis(EnvironmentScopeDto scope)
+    private IQueryable<AxisBo> GetDimension4Axis(FrameScopeDto scope)
     {
         return from fa in _context.Facts
                join dt in _context.DataTypes on fa.DataTypeId equals dt.Id

@@ -1,29 +1,9 @@
 <div class="history-container">
     <!-- Left Section: Filters and Scopes -->
     <div class="left-section">
-      <!-- Filter Mode Toggle -->
-      <div class="filter-mode-toggle">
-        <input type="radio" id="filterByDimensions" name="filterMode" [(ngModel)]="filterMode" value="dimensions">
-        <label for="filterByDimensions">Levels</label>
-        
-        <input type="radio" id="filterByEnvironment" name="filterMode" [(ngModel)]="filterMode" value="environment">
-        <label for="filterByEnvironment">Environment</label>
-      </div>
-      
-      <!-- Sliders Section (Dimensions Filter) -->
-      <div *ngIf="filterMode === 'dimensions'" class="scopes-list">
-        <div *ngFor="let dimension of dimensionLevels" class="dimension-item">
-          <label for="levelSelect-{{dimension.dimensionId}}">{{ dimension.value }}</label>
-          <select id="levelSelect-{{dimension.dimensionId}}" (change)="onLevelChange(dimension.dimensionId, $event)">
-            <option value="">Select Level</option>
-            <option *ngFor="let level of dimension.levels" [value]="level.id">{{ level.label }}</option>
-          </select>
-        </div>
-        <button (click)="applyLevelFilter()" class="apply-filter-btn">Apply Filter</button>
-      </div>
   
       <!-- Environment Filter Section -->
-      <div *ngIf="filterMode === 'environment'" class="environment-filter">
+      <div class="environment-filter">
         <label for="environmentSelect">Select Environment:</label>
         <select id="environmentSelect" (change)="onEnvironmentChange($event)">
           <option value="">Select Environment</option>

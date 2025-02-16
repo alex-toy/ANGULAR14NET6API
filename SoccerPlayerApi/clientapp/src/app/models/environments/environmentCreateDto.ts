@@ -1,6 +1,6 @@
-import { EnvironmentSortingDto } from "./environmentSortingDto";
+import { EnvironmentSortingDto as FrameSortingDto } from "./environmentSortingDto";
 
-export interface EnvironmentCreateDto {
+export interface FrameCreateDto {
     name: string;
     description: string;
 
@@ -16,5 +16,5 @@ export interface EnvironmentCreateDto {
     dimension4Id : number | null;
     levelIdFilter4: number | null;
     
-    environmentSortings : EnvironmentSortingDto[];
+    frameSortings : FrameSortingDto[];
 }

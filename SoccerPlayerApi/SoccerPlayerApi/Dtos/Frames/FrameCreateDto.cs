@@ -1,6 +1,8 @@
-﻿namespace SoccerPlayerApi.Dtos.Environment;
+﻿using SoccerPlayerApi.Entities.Frames;
 
-public class EnvironmentCreateDto
+namespace SoccerPlayerApi.Dtos.Frames;
+
+public class FrameCreateDto
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -17,11 +19,11 @@ public class EnvironmentCreateDto
     public int? Dimension4Id { get; set; }
     public int? LevelIdFilter4 { get; set; }
 
-    public List<EnvironmentSortingDto> EnvironmentSortings { get; set; } = new List<EnvironmentSortingDto>();
+    public List<FrameSortingDto> FrameSortings { get; set; } = new List<FrameSortingDto>();
 
-    public Entities.Environment ToDb()
+    public Frame ToDb()
     {
-        return new Entities.Environment
+        return new Frame
         {
             Name = Name,
             Description = Description,

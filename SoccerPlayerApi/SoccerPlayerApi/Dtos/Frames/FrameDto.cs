@@ -1,6 +1,6 @@
-﻿namespace SoccerPlayerApi.Dtos.Environment;
+﻿namespace SoccerPlayerApi.Dtos.Frames;
 
-public class EnvironmentDto
+public class FrameDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -22,5 +22,5 @@ public class EnvironmentDto
     public int? LevelIdFilter4 { get; set; }
     public string LevelLabel4 { get; set; } = string.Empty;
 
-    public List<EnvironmentSortingDto> EnvironmentSortings { get; set; } = new List<EnvironmentSortingDto>();
+    public List<FrameSortingDto> FrameSortings { get; set; } = new List<FrameSortingDto>();
 }

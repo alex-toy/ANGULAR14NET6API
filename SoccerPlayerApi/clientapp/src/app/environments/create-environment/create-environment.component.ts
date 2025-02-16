@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EnvironmentCreateDto } from 'src/app/models/environments/environmentCreateDto';
+import { FrameCreateDto } from 'src/app/models/environments/environmentCreateDto';
 import { GetDimensionLevelDto } from 'src/app/models/levels/getDimensionLevelDto';
 import { EnvironmentService } from 'src/app/services/environment.service';
 import { LevelService } from 'src/app/services/level.service';
@@ -26,7 +26,7 @@ export class CreateEnvironmentComponent {
   timeLevels : GetLevelDto[] = [];
   selectedTimeLevel : GetLevelDto = { id : 0, dimensionId : 0, label : "" };
 
-  environment: EnvironmentCreateDto = {
+  environment: FrameCreateDto = {
     name: '',
     description: '',
     dimension1Id: 0,
@@ -37,7 +37,7 @@ export class CreateEnvironmentComponent {
     levelIdFilter3: null,
     dimension4Id: null,
     levelIdFilter4: null,
-    environmentSortings: []
+    frameSortings: []
   };
 
   newSorting: EnvironmentSortingDto = {
@@ -181,11 +181,11 @@ export class CreateEnvironmentComponent {
   }
 
   addSorting(): void {
-    const maxOrderIndex = this.environment.environmentSortings.length > 0
-        ? Math.max(...this.environment.environmentSortings.map(x => x.orderIndex))
+    const maxOrderIndex = this.environment.frameSortings.length > 0
+        ? Math.max(...this.environment.frameSortings.map(x => x.orderIndex))
         : 0;
     this.newSorting.orderIndex = maxOrderIndex + 1;
-    this.environment.environmentSortings.push({ ...this.newSorting });
+    this.environment.frameSortings.push({ ...this.newSorting });
     this.resetSortingForm();
   }
 
@@ -206,6 +206,6 @@ export class CreateEnvironmentComponent {
 
   // Remove a sorting configuration by its index
   removeSorting(index: number): void {
-    this.environment.environmentSortings.splice(index, 1);
+    this.environment.frameSortings.splice(index, 1);
   }
 }

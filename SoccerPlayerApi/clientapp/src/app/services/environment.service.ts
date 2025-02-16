@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
 import { ResponseDto } from '../models/responseDto';
 import { EnvironmentDto } from '../models/environments/environmentDto';
-import { EnvironmentCreateDto } from '../models/environments/environmentCreateDto';
+import { FrameCreateDto } from '../models/environments/environmentCreateDto';
 import { EnvironmentUpdateDto } from '../models/environments/environmentUpdateDto';
 import { EnvironmentSortingDto } from '../models/environments/environmentSortingDto';
 
@@ -12,20 +12,20 @@ import { EnvironmentSortingDto } from '../models/environments/environmentSorting
   providedIn: 'root'
 })
 export class EnvironmentService {
-  private apiUrl = `${environment.apiUrl}/Environment`;
+  private apiUrl = `${environment.apiUrl}/Frame`;
 
   constructor(private httpClient: HttpClient) {}
       
   getEnvironments(): Observable<ResponseDto<EnvironmentDto[]>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
-    return this.httpClient.post<ResponseDto<EnvironmentDto[]>>(`${this.apiUrl}/environments`, { headers : header });
+    return this.httpClient.post<ResponseDto<EnvironmentDto[]>>(`${this.apiUrl}/frames`, { headers : header });
   }
 
   getEnvironmentById(id: number): Observable<ResponseDto<EnvironmentDto>> {
-    return this.httpClient.get<ResponseDto<EnvironmentDto>>(`${this.apiUrl}/environment/${id}`);
+    return this.httpClient.get<ResponseDto<EnvironmentDto>>(`${this.apiUrl}/frame/${id}`);
   }
 
-  createEnvironment(environment: EnvironmentCreateDto): Observable<ResponseDto<number>> {
+  createEnvironment(environment: FrameCreateDto): Observable<ResponseDto<number>> {
     const header = new HttpHeaders().set('Content-type', 'application/json');
     return this.httpClient.post<ResponseDto<number>>(`${this.apiUrl}/create`, environment, { headers : header });
   }
