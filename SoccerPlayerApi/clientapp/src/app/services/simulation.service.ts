@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AlgorithmDto } from '../models/forecasts/algorithms/algorithmDto';
+import { AlgorithmDto } from '../models/simulations/algorithms/algorithmDto';
 import { ResponseDto } from '../models/responseDto';
 
 @Injectable({

@@ -6,9 +6,10 @@ import { DimensionsService } from '../services/dimensions.service';
 import { DimensionDto } from '../models/dimensions/dimensionDto';
 import { EnvironmentUpdateDto } from '../models/environments/environmentUpdateDto';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlgorithmDto } from '../models/forecasts/algorithms/algorithmDto';
-import { FrameSimulationCreateDto } from '../models/forecasts/FrameSimulationCreateDto';
+import { AlgorithmDto } from '../models/simulations/algorithms/algorithmDto';
+import { FrameSimulationCreateDto } from '../models/simulations/FrameSimulationCreateDto';
 import { SimulationService } from '../services/simulation.service';
+import { AlgorithmParameterValueDto } from '../models/simulations/algorithms/algorithmParameterValueDto';
 
 @Component({
   selector: 'app-environments',
@@ -23,6 +24,7 @@ export class EnvironmentsComponent {
   isSimulationModalOpen: boolean = false;
   algorithms : AlgorithmDto[] = [];
   selectedAlgorithm: AlgorithmDto | null = null;
+  userInputValueDto : AlgorithmParameterValueDto[] = [];
 
   simulationCreateDto: FrameSimulationCreateDto = new FrameSimulationCreateDto(0, 0, []);
 

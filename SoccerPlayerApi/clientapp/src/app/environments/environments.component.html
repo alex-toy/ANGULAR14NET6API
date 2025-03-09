@@ -45,22 +45,15 @@
     <form (ngSubmit)="createSimulation()">
       <div class="form-group">
         <label for="algorithmSelect">Algorithm</label>
-        <select id="algorithmSelect" class="form-control" [(ngModel)]="selectedAlgorithm" name="algorithmId">
-          <option *ngFor="let algorithm of algorithms" [value]="algorithm">{{ algorithm.label }}</option>
+        <select id="algorithmSelect" class="form-control" name="algorithmId" [(ngModel)]="selectedAlgorithm">
+          <option *ngFor="let algorithm of algorithms" [ngValue]="algorithm">{{ algorithm.label }}</option>
         </select>
       </div>
 
-      AAAA{{ selectedAlgorithm !== null ?  selectedAlgorithm.label : 'jjj' }}SSS
-
-      <div class="form-group" *ngIf="selectedAlgorithm && selectedAlgorithm.keys">
-        <label for="simulationValue">Values</label>
+      <div *ngIf="selectedAlgorithm">
         <div *ngFor="let key of selectedAlgorithm.keys">{{ key.value }}</div>
+        <input id="newValue" name="value" required />
       </div>
-
-      <!-- <div class="form-group">
-        <label for="simulationValue">Values</label>
-        <input type="text" class="form-control" [(ngModel)]="simulationCreateDto.values" name="values">
-      </div> -->
 
       <button type="submit" class="btn btn-primary">Create Simulation</button>
     </form>
